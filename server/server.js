@@ -1,16 +1,26 @@
 import express from 'express';
 import { endpointChampionships, fetchCompetitions } from './api/api.js';
+import cors from 'cors';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
+const corsOptions = {
+    origin: "http://localhost:5173"
+};
+app.use(cors(corsOptions))
 app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('Hello from Express');
+  });
+  
 
 app.get('/competitions/FL1/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.ligue1);
-        console.log(result)
-        res.send(result);
+        console.log('Data fetched:', result)
+        res.json(result);
     } catch(e){
         console.error('error', e)
         res.status(500).send('Error fetching data')
@@ -20,8 +30,7 @@ app.get('/competitions/FL1/teams', async (req, res) => {
 app.get('/competitions/PL/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.eng);
-        console.log(result)
-        res.send(result);
+        res.json(result);
     } catch(e){
         console.error('error', e)
         res.status(500).send('Error fetching data')
