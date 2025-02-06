@@ -1,6 +1,7 @@
 //import { useState, useEffect } from 'react';
 import { Input } from "./components/forms/input"
 import { useState, useEffect } from "react";
+import logo from './assets/menu.svg'
 
 function App() {
   // const [message, setMessage] = useState(null);
@@ -41,9 +42,12 @@ function App() {
 
   return (
     <>
-    <div className="h-20 w-100% border flex justify-center items-center">
+    <div className="h-20 w-100% border flex justify-between items-center p-5">
     <SearchBar />
-    <h1 className="font-sans text-4xl bold">Match Master</h1>
+    <h1 className="font-sans text-4xl bold text-white">Match Master</h1>
+    <div className="svg-color-white">
+    <img src={logo} alt="Menu hamberger" className="svg-color-white"/>
+    </div>
     </div>
       {/* {data ? <p>{data}</p> : <p>Loading...</p>} */}
     </>
@@ -52,7 +56,7 @@ function App() {
 
 const SearchBar = () => {
   return <div>
-      <Input className="border" value="" Onchange={() => null} placeholder="Rechercher..."/>
+      <Input value="" Onchange={() => null} placeholder="Rechercher..."/>
   </div>
 }
 
