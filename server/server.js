@@ -20,7 +20,7 @@ app.get('/competitions/FL1/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.ligue1);
         console.log('Data fetched:', result)
-        res.json(result);
+        res.send(result);
     } catch(e){
         console.error('error', e)
         res.status(500).send('Error fetching data')
@@ -30,7 +30,7 @@ app.get('/competitions/FL1/teams', async (req, res) => {
 app.get('/competitions/PL/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.eng);
-        res.json(result);
+        res.send(result);
     } catch(e){
         console.error('error', e)
         res.status(500).send('Error fetching data')

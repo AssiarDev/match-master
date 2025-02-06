@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+//import { useState, useEffect } from 'react';
+import { Input } from "./components/forms/input"
+import { useState, useEffect } from "react";
 
 function App() {
   // const [message, setMessage] = useState(null);
@@ -25,7 +26,7 @@ function App() {
   useEffect(() => {
     const fetchAPI = async () => {
       try {
-        const response = await fetch("/competitions/FL1/teams");
+        const response = await fetch("http://localhost:3000/competitions/FL1/teams");
         if(!response.ok){
           throw new Error('Impossible d\'acceder à la reponse');
         }
@@ -40,10 +41,19 @@ function App() {
 
   return (
     <>
-    <h1>Data from Express API</h1>
-      {data ? <p>{data}</p> : <p>Loading...</p>}
+    <div className="h-20 w-100% border flex justify-center items-center">
+    <SearchBar />
+    <h1 className="font-sans text-4xl bold">Match Master</h1>
+    </div>
+      {/* {data ? <p>{data}</p> : <p>Loading...</p>} */}
     </>
   )
+}
+
+const SearchBar = () => {
+  return <div>
+      <Input className="border" value="" Onchange={() => null} placeholder="Rechercher..."/>
+  </div>
 }
 
 export default App
