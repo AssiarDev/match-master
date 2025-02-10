@@ -2,7 +2,7 @@ import logo from '../../assets/search.png';
 
 // eslint-disable-next-line react/prop-types
 export const Input = ({placeholder, value, onChange}) => {
-    return <div className='relative'>
+    return <div className='relative text-white'>
         <input 
             className="border-1 border-white placeholder-white rounded-sm px-2 py-1 mx-2"
             type="text"

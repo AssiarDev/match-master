@@ -6,6 +6,7 @@ const token = process.env.API_TOKEN;
 
 const headers = new Headers();
 headers.append("X-Auth-Token", token);
+headers.append('Content-Type', 'application/json');
 
 const requestOption = {
     method: "GET",
@@ -27,6 +28,21 @@ export const endpointChampionships = {
     liga: "PD/teams",
     worldCup: "WC/teams"
 };
+
+export const fetchAllCompetitions = async () => {
+    try {
+        const url = 'https://api.football-data.org/v4/competitions';
+        const response = await fetch(url, requestOption);
+        if(!response.ok){
+            console.log('Error, api failed');
+            throw new Error('Error, api failed');
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de l\'appel de l\'API', error)
+    }
+}
 
 export const fetchCompetitions = async (endpoint) => {
     try {

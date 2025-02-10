@@ -1,34 +1,16 @@
-import { Input } from "./components/forms/input"
-import { useState, useEffect } from "react";
+import { SearchBar } from "./components/forms/searchbar";
+import { useState } from "react";
 import logo from './assets/menu.svg';
-
-const apiUrl = import.meta.env.VITE_API_URL
+import { SelectorLeague } from "./components/leagueSelector";
 
 function App() {
 
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchAllCompetitions = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/competitions`);
-        if(!response.ok){
-          throw new Error('Impossible d\'acceder à la reponse');
-        }
-        const result = await response.json()
-        console.log(result)
-        setData(result)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-    fetchAllCompetitions()
-  }, [])
+  const [search, setSearch] = useState('');
 
   return (
     <>
     <div className="h-20 w-full border-none shadow-md flex justify-between items-center">
-      <SearchBar />
+      <SearchBar search={search} onSearchChange={setSearch}/>
       <div className=" w-full flex justify-center">
         <h1 className="font-sans text-4xl font-bold text-white">Match Master</h1>
       </div>
@@ -36,15 +18,11 @@ function App() {
         <img src={logo} alt="Menu hamberger" className="svg-color-white"/>
       </div>
     </div>
-        {/* {data ? <p>{data.competition}</p> : <p>Loading...</p>} */}
+    <div className="w-80 h-60 border border-white">
+      <SelectorLeague />
+    </div>
     </>
   )
-}
-
-const SearchBar = () => {
-  return <div>
-      <Input value="" Onchange={() => null} placeholder="Rechercher..."/>
-  </div>
 }
 
 export default App
