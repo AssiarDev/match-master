@@ -4,7 +4,7 @@ import logo from '../../assets/search.png';
 export const Input = ({placeholder, value, onChange}) => {
     return <div className='relative text-white'>
         <input 
-            className="border-1 border-white placeholder-white rounded-sm px-2 py-1 mx-2"
+            className="border-1 border-gray-600 placeholder-white rounded-sm px-2 py-1 mx-2"
             type="text"
             value={value}
             placeholder={placeholder}
