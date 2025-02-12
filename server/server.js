@@ -1,5 +1,5 @@
 import express from 'express';
-import { endpointChampionships, fetchAllCompetitions, fetchCompetitions } from './api/api.js';
+import { endpointChampionships, fetchAllCompetitions, fetchCompetitions, fetchTeams } from './api/api.js';
 import cors from 'cors';
 
 const app = express();
@@ -42,6 +42,17 @@ app.get('/competitions/FL1/teams', async (req, res) => {
 app.get('/competitions/PL/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.eng);
+        res.send(result);
+    } catch(e){
+        console.error('error', e)
+        res.status(500).send('Error fetching data')
+    }
+})
+
+app.get('/competitions/:competitionId/teams', async (req, res) => {
+    const {competitionId} = req.params
+    try{
+        const result = await fetchTeams(competitionId);
         res.send(result);
     } catch(e){
         console.error('error', e)
