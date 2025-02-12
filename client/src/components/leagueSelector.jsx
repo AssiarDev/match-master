@@ -30,7 +30,6 @@ export const SelectorLeague = () => {
                     code: league.code
                 }));
             setleagues(filteredLeague);
-            console.log(filteredLeague)
             } catch (error) {
             console.error('Error fetching data:', error);
             }
@@ -42,19 +41,11 @@ export const SelectorLeague = () => {
         if(selectedLeague){
             const fetchTeams = async () => {
                 try {
-                    console.log('>>>>>', `${apiURL}/competitions/${selectedLeague}/teams`)
                     const response = await fetch(`${apiURL}/competitions/${selectedLeague}/teams`);
-                    console.log('Fetching teams with URL:', response)
-                    // if(!response.ok){
-                    //     throw new Error('Impossible d\'acceder à la réponse');
-                    // }
-
                     const result = await response.json();
-                    //console.log('result: ',result.teams)
                     const teams = result.teams
                         .filter(team => team.name)
                     setTeams(teams)
-                    console.log('teams', teams)
                 } catch (error){
                     console.error('Error fetching data:', error);
                 }
@@ -70,7 +61,7 @@ export const SelectorLeague = () => {
             ))}
         </select>
 
-        <select name="selected teams" id="" className="border border-gray-600 rounded-sm text-white w-50">
+        <select name="selected teams"  className="border border-gray-600 rounded-sm text-white w-50">
             {teams.map((team, i) => (
                 <option key={i} value={team} className="text-black">{team.name}</option>
             ))}
