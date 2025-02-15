@@ -27,8 +27,10 @@ export const SelectorLeague = () => {
                 .filter(league => league.name)
                 .map(league => ({
                     name: league.name,
-                    code: league.code
+                    code: league.code, 
+                    logo: league.emblem
                 }));
+            console.log('filtered league: ', filteredLeague)
             setleagues(filteredLeague);
             } catch (error) {
             console.error('Error fetching data:', error);
@@ -55,13 +57,13 @@ export const SelectorLeague = () => {
     }, [selectedLeague])
 
     return <>
-        <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-gray-600 rounded-sm text-white w-50">
+        <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-gray-600 rounded-sm text-white w-60">
             {leagues.map((data, i) => (
                 <option key={i} value={data.code} className="text-black">{data.name}</option>
             ))}
         </select>
 
-        <select name="selected teams"  className="border border-gray-600 rounded-sm text-white w-50">
+        <select name="selected teams"  className="border border-gray-600 rounded-sm text-white w-60">
             {teams.map((team, i) => (
                 <option key={i} value={team} className="text-black">{team.name}</option>
             ))}
