@@ -59,7 +59,7 @@ export const fetchCompetitions = async (endpoint) => {
     }
 }
 
-export const fetchTeams = async (competitionsId) => {
+export const fetchTeamsOfCompetitions = async (competitionsId) => {
     try {
         const url = `https://api.football-data.org/v4/competitions/${competitionsId}/teams`;
         const response = await fetch(url, requestOption);
@@ -73,4 +73,36 @@ export const fetchTeams = async (competitionsId) => {
         console.error('Erreur lors de l\'appel de l\'API', error)
         throw error;
     }
-}
+};
+
+export const fetchTeams = async () => {
+    try {
+        const url = `https://api.football-data.org/v4/teams`;
+        const response = await fetch(url, requestOption);
+        if(!response.ok){
+            console.log('Error, api failed');
+            throw new Error('Error, api failed');
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de l\'appel de l\'API', error);
+        throw error
+    }
+};
+
+export const fetchTeamsTest = async (id) => {
+    try {
+        const url = `https://api.football-data.org/v4/teams/${id}`;
+        const response = await fetch(url, requestOption);
+        if(!response.ok){
+            console.log('Error, api failed');
+            throw new Error('Error, api failed');
+        }
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Erreur lors de l\'appel de l\'API', error);
+        throw error
+    }
+};

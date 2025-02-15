@@ -1,5 +1,5 @@
 import express from 'express';
-import { endpointChampionships, fetchAllCompetitions, fetchCompetitions, fetchTeams } from './api/api.js';
+import { endpointChampionships, fetchAllCompetitions, fetchCompetitions, fetchTeams, fetchTeamsOfCompetitions, fetchTeamsTest } from './api/api.js';
 import cors from 'cors';
 
 const app = express();
@@ -49,10 +49,33 @@ app.get('/competitions/PL/teams', async (req, res) => {
     }
 })
 
+app.get('/v4/teams', async (req, res) => {
+    // const teamCode = req.params;
+    try {
+        const result = await fetchTeams();
+        res.send(result);
+    } catch (e){
+        console.error('error', e);
+        res.status(500).send('Error fetching data')
+    }
+})
+
+app.get('/v4/teams', async (req, res) => {
+    const {teamCode} = req.params;
+    try {
+        const result = await fetchTeamsTest(teamCode);
+        res.send(result);
+    } catch (e){
+        console.error('error', e);
+        res.status(500).send('Error fetching data')
+    }
+})
+
+
 app.get('/competitions/:competitionId/teams', async (req, res) => {
     const {competitionId} = req.params
     try{
-        const result = await fetchTeams(competitionId);
+        const result = await fetchTeamsOfCompetitions(competitionId);
         res.send(result);
     } catch(e){
         console.error('error', e)
