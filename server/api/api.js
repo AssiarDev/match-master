@@ -3,6 +3,7 @@ import 'dotenv/config';
 
 // Appel de l'api
 const token = process.env.API_TOKEN;
+const urlAPI = process.env.URL_API;
 
 const headers = new Headers();
 headers.append("X-Auth-Token", token);
@@ -31,7 +32,7 @@ export const endpointChampionships = {
 
 export const fetchAllCompetitions = async () => {
     try {
-        const url = 'https://api.football-data.org/v4/competitions';
+        const url = `${urlAPI}/competitions`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -46,7 +47,7 @@ export const fetchAllCompetitions = async () => {
 
 export const fetchCompetitions = async (endpoint) => {
     try {
-        const url = `https://api.football-data.org/v4/competitions/${endpoint}`;
+        const url = `${urlAPI}/competitions/${endpoint}`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -61,7 +62,7 @@ export const fetchCompetitions = async (endpoint) => {
 
 export const fetchTeamsOfCompetitions = async (competitionsId) => {
     try {
-        const url = `https://api.football-data.org/v4/competitions/${competitionsId}/teams`;
+        const url = `${urlAPI}/competitions/${competitionsId}/teams`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -77,7 +78,7 @@ export const fetchTeamsOfCompetitions = async (competitionsId) => {
 
 export const fetchTeams = async () => {
     try {
-        const url = `https://api.football-data.org/v4/teams`;
+        const url = `${urlAPI}/v4/teams`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -93,7 +94,7 @@ export const fetchTeams = async () => {
 
 export const fetchTeamsTest = async (id) => {
     try {
-        const url = `https://api.football-data.org/v4/teams/${id}`;
+        const url = `${urlAPI}/teams/${id}`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
