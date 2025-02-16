@@ -57,13 +57,13 @@ export const SelectorLeague = () => {
     }, [selectedLeague])
 
     return <>
-        <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-gray-600 rounded-sm text-white w-60">
+        <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-stone-800 rounded-sm text-white w-80 h-10">
             {leagues.map((data, i) => (
                 <option key={i} value={data.code} className="text-black">{data.name}</option>
             ))}
         </select>
 
-        <select name="selected teams"  className="border border-gray-600 rounded-sm text-white w-60">
+        <select name="selected teams"  className="border border-stone-800 rounded-sm text-white w-80 h-10">
             {teams.map((team, i) => (
                 <option key={i} value={team} className="text-black">{team.name}</option>
             ))}
