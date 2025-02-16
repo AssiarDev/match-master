@@ -8,8 +8,9 @@ export const SearchBar = () => {
   const [query, setQuery] = useState('');
   const [teams, setTeams] = useState([]);
   const [filteredTeam, setFilteredTeam] = useState([]);
-  // const [selectedTeamId, setSelectedTeamId] = useState(null);
-
+  //const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTeamId, setSelectedTeamId] = useState(null);
+ 
   // TODO : TROUVER COMMENT AFFICHER TOUTES LES EQUIPES DES CHAMPIONNATS
 
   const handleSearch = (e) => {
@@ -34,42 +35,63 @@ export const SearchBar = () => {
     fetchTeams()
   }, []);
 
-  // const handleSelectTeam = (id) => {
-  //   setSelectedTeamId(id);
-  // };
+  useEffect(() => {
+    console.log('query: ', query)
+    console.log('teams: ', teams)
+    if (query.length > 0) {
+      const filtered = teams
+        .filter(team =>
+        team.name.toLowerCase().includes(query.toLowerCase())
+      )
+      console.log('filtered teams: ', filtered)
+      setFilteredTeam(filtered);
+    } else {
+      setFilteredTeam([])
+    }
+  }, [query, teams]);
+
+  const handleSelectTeam = (id) => {
+    setSelectedTeamId(id);
+  };
 
   // useEffect(() => {
   //   const fetchTeamsTest = async (id) => {
   //     try {
   //       const response = await fetch(`${apiURL}/v4/teams/${id}`);
   //       const result = await response.json();
+  //       console.log('result: ', result)
   //       const teams = result.teams
   //         .map(team => ({
   //           name: team.name,
   //           logo: team.crest,
   //           id: team.id 
   //         }))
+  //       console.log('teams: ', teams)
   //       setTeams(teams)
   //     } catch (e){
   //       console.error('Error fetching data:', e);
   //     };
   //   }
   //   if(selectedTeamId){
+  //     console.log('selected team id: ', selectedTeamId)
   //     fetchTeamsTest(selectedTeamId)
   //   }
   // }, [selectedTeamId]);
 
-  useEffect(() => {
-    if (query.length > 0) {
-      const filtered = teams
-        .filter(team =>
-        team.name.toLowerCase().includes(query.toLowerCase())
-      )
-      setFilteredTeam(filtered);
-    } else {
-      setFilteredTeam([])
-    }
-  }, [query, teams]);
+  // const filteredTeams = teams.filter(team => 
+  //   team.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+  // console.log('filtered team: ', filteredTeams)
+
+  // const handleSearchChange = (e) => {
+  //   setSearchTerm(e.target.value);
+  // };
+
+  // const handleTeamSelect = (id) => {
+  //   console.log('team selected: ', id)
+  //   setSelectedTeamId(id);
+  // };
 
     return <div>
         <Input 
@@ -78,6 +100,14 @@ export const SearchBar = () => {
           onChange={handleSearch} 
           placeholder="Rechercher..."
           />
+          {/* <ul>
+          {filteredTeams.map(team => (
+            <li key={team.id} onClick={() => handleTeamSelect(team.id)}>
+              <img src={team.logo} alt={`${team.name} logo`} />
+              <span>{team.name}</span>
+            </li>
+          ))}
+          </ul> */}
           {query && filteredTeam.length > 0 && (
             <ul className="absolute top-16 w-54 max-h-48 overflow-y-auto bg-white border border-gray-300 rounded shadow-lg">
             {filteredTeam.map((item, i) => (

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
+ // TODO : TROUVER COMMENT AFFICHER LES LOGOS DES CLUBS DANS LES SELECTS
+
 export const SelectorLeague = () => {
 
     const [leagues, setleagues] = useState([]);
@@ -30,7 +32,7 @@ export const SelectorLeague = () => {
                     code: league.code, 
                     logo: league.emblem
                 }));
-            console.log('filtered league: ', filteredLeague)
+            //console.log('filtered league: ', filteredLeague)
             setleagues(filteredLeague);
             } catch (error) {
             console.error('Error fetching data:', error);
@@ -59,7 +61,9 @@ export const SelectorLeague = () => {
     return <>
         <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-stone-800 rounded-sm text-white w-80 h-10">
             {leagues.map((data, i) => (
-                <option key={i} value={data.code} className="text-black">{data.name}</option>
+                <option key={i} value={data.code} className="text-black">
+                    {data.name}
+                </option>
             ))}
         </select>
 
