@@ -4,8 +4,11 @@ import { Favoris } from "./components/favoris";
 import { Competitions } from "./components/competitions";
 import { Connexion } from "./components/connexion";
 import { NoMatch } from "./components/noMatch";
+//import { useNavigate } from "react-router-dom";
 
 function App() {
+
+  //const navigate = useNavigate()
 
   return (
       <>

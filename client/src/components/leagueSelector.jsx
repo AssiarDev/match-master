@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
  // TODO : TROUVER COMMENT AFFICHER LES LOGOS DES CLUBS DANS LES SELECTS
 
 export const SelectorLeague = () => {
+
+    const navigate = useNavigate()
 
     const [leagues, setleagues] = useState([]);
     const [teams, setTeams] = useState([]);
@@ -58,7 +61,7 @@ export const SelectorLeague = () => {
         }
     }, [selectedLeague])
 
-    return <>
+    return <div className="flex flex-col gap-3 w-full items-center">
         <select value={selectedLeague} onChange={handleSelectChange} name="selected league" className="border border-stone-800 rounded-sm text-white w-80 h-10">
             {leagues.map((data, i) => (
                 <option key={i} value={data.code} className="text-black">
@@ -72,6 +75,7 @@ export const SelectorLeague = () => {
                 <option key={i} value={team} className="text-black">{team.name}</option>
             ))}
         </select>
+        <button className="border border-stone-800 bg-orange-700 hover:bg-orange-600 w-60 h-15 rounded-md text-white text-xl cursor-pointer" onClick={() => navigate('competitions')}>Entrer</button>
+    </div>
         
-    </>
 }
