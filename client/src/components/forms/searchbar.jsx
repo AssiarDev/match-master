@@ -22,6 +22,7 @@ export const SearchBar = () => {
       try {
         const response = await fetch(`${apiURL}/v4/teams`);
         const result = await response.json();
+        console.log('result: ', result)
         const teams = result.teams
           .map(team => ({
             name: team.name,
@@ -50,9 +51,9 @@ export const SearchBar = () => {
     }
   }, [query, teams]);
 
-  const handleSelectTeam = (id) => {
-    setSelectedTeamId(id);
-  };
+  // const handleSelectTeam = (team) => {
+  //   setSelectedTeamId(team.id);
+  // };
 
   // useEffect(() => {
   //   const fetchTeamsTest = async (id) => {
