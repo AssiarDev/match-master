@@ -3,13 +3,14 @@ import 'dotenv/config';
 
 // Appel de l'api
 const token = process.env.API_TOKEN;
-const urlAPI = process.env.URL_API;
+export const urlAPI = process.env.URL_API;
 
 const headers = new Headers();
 headers.append("X-Auth-Token", token);
 headers.append('Content-Type', 'application/json');
+//headers.append("X-Unfold-Goals", "true");
 
-const requestOption = {
+export const requestOption = {
     method: "GET",
     headers: headers
 };
@@ -60,9 +61,55 @@ export const fetchCompetitions = async (endpoint) => {
     }
 }
 
-export const fetchTeamsOfCompetitions = async (competitionsId) => {
+export const fetchChampionshipIds = async () => {
     try {
-        const url = `${urlAPI}/competitions/${competitionsId}/teams`;
+        const response = await fetch(`${urlAPI}/competitions`, requestOption);
+        if (!response.ok) {
+            throw new Error('Impossible d\'accéder aux compétitions');
+        }
+        const text = await response.text();
+        if (text.startsWith('<')) {
+            console.error('Received HTML response instead of JSON:', text);
+            return [];
+        }
+        const result = JSON.parse(text);
+        const ids = result.competitions.map(comp => comp.id);
+        console.log('Championship IDs:', ids);
+        return ids;
+    } catch (error) {
+        console.error('Error fetching championship IDs: ', error);
+        return [];
+    }
+};
+
+export const fetchTeams = async (ids) => {
+    try {
+        const urls = ids.map(id => `${urlAPI}/competitions/${id}/teams`);
+
+        const responses = await Promise.all(
+            urls.map(url => fetch(url, requestOption))
+        );
+
+        const results = await Promise.all(
+            responses.map(response => {
+                if(!response.ok){
+                    console.log('Error, api failed');
+                    throw new Error('Error, api failed');
+                }
+                return response.json();
+            })
+        ) 
+        return results;
+    } catch (error) {
+        console.error('Erreur lors de l\'appel de l\'API', error);
+        throw error
+    }
+};
+
+export const fetchCompetitionsMatches = async (id) => {
+    try {
+        const url = `${urlAPI}/competitions/${id}/matches?status=SCHEDULED`;
+        console.log('url: ', url)
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -76,34 +123,17 @@ export const fetchTeamsOfCompetitions = async (competitionsId) => {
     }
 };
 
-export const fetchTeams = async () => {
+export const fetchTeamsId = async (id) => {
     try {
-        const url = `${urlAPI}/v4/teams`;
-        const response = await fetch(url, requestOption);
+        const url = `${urlAPI}/v4/teams/${id}`;
+        const response = await fetch(url, requestOption)
         if(!response.ok){
-            console.log('Error, api failed');
             throw new Error('Error, api failed');
         }
         const result = await response.json();
         return result;
-    } catch (error) {
+    } catch {
         console.error('Erreur lors de l\'appel de l\'API', error);
         throw error
     }
-};
-
-export const fetchTeamsTest = async (id) => {
-    try {
-        const url = `${urlAPI}/teams/${id}`;
-        const response = await fetch(url, requestOption);
-        if(!response.ok){
-            console.log('Error, api failed');
-            throw new Error('Error, api failed');
-        }
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Erreur lors de l\'appel de l\'API', error);
-        throw error
-    }
-};
+}

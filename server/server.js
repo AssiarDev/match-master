@@ -1,13 +1,59 @@
 import express from 'express';
-import { endpointChampionships, fetchAllCompetitions, fetchCompetitions, fetchTeams, fetchTeamsOfCompetitions, fetchTeamsTest } from './api/api.js';
+import { 
+    endpointChampionships, 
+    fetchAllCompetitions, 
+    //fetchChampionshipIds, 
+    fetchCompetitions, 
+    fetchCompetitionsMatches, 
+    fetchTeams, 
+    fetchTeamsId } from './api/api.js';
 import cors from 'cors';
+import { initializeDatabase } from './db/db.js';
+//import { insertCompetition } from './insert-db/insertCompetitions.js';
+//import { insertClub } from './insert-db/insertClub.js';
 
 const app = express();
 const port = process.env.PORT;
 const urlServerClient = process.env.URL_SERVER_CLIENT;
+const urlDb = process.env.URL_DB;
+
+// Gerer la base de donnée 
+const main = async () => {
+    try{
+        // Intégration de ma db
+        const db = initializeDatabase(urlDb);
+
+        // Récupération des competitions
+        // const competitionData = await fetchAllCompetitions();
+        // if(competitionData && Array.isArray(competitionData.competitions)){
+        //     const competitions = competitionData.competitions;
+
+        //     insertCompetition(db, competitions);
+        // } else {
+        //     console.error('Aucune competition trouvée dans les données. ');
+        // }
+
+        // Récupération des clubs
+        // const championshipIds = await fetchChampionshipIds();
+        // const clubData = await fetchTeams(championshipIds);
+
+        // clubData.forEach((teamsData, index) => {
+        //     const competitionsId = championshipIds[index];
+        //     insertClub(db, teamsData.teams, {competitions: {id: competitionsId}})
+        // })
+
+        db.close();
+        console.log('Base de données fermée avec succès.')
+    } catch (e) {
+        console.error('Erreur dans le processus principal :', e.message)
+    }
+
+};
+
+main();
 
 const corsOptions = {
-    origin: urlServerClient
+    origin: [urlServerClient, `http://localhost:${port}`]
 };
 app.use(cors(corsOptions))
 app.use(express.json());
@@ -19,6 +65,19 @@ app.get('/', (req, res) => {
 app.get('/competitions', async (req, res) => {
     try{
         const result = await fetchAllCompetitions();
+        console.log('Data fetched:', result)
+        res.send(result);
+    } catch(e){
+        console.error('error', e)
+        res.status(500).send('Error fetching data')
+    }
+})
+
+app.get('/competitions/:id/matches', async (req, res) => {
+    const competitionCode = req.params.id;
+    const status = req.query.status
+    try{
+        const result = await fetchCompetitionsMatches(competitionCode, status);
         console.log('Data fetched:', result)
         res.send(result);
     } catch(e){
@@ -49,39 +108,38 @@ app.get('/competitions/PL/teams', async (req, res) => {
     }
 })
 
-app.get('/v4/teams', async (req, res) => {
-    // const teamCode = req.params;
+app.get('/v4/competitions/:id/teams', async (req, res) => {
+    const teamId = req.params.id;
     try {
-        const result = await fetchTeams();
+        const result = await fetchTeams(teamId);
+        res.send(result);
+    } catch (e){
+        console.error('error', e);
+        res.status(500).send('Error fetching data')
+    }
+});
+
+app.get('/v4/teams/:id', async (req, res) => {
+    const teamCode = req.params;
+    try {
+        const result = await fetchTeamsId(teamCode);
         res.send(result);
     } catch (e){
         console.error('error', e);
         res.status(500).send('Error fetching data')
     }
 })
-
-app.get('/v4/teams', async (req, res) => {
-    const {teamCode} = req.params;
-    try {
-        const result = await fetchTeamsTest(teamCode);
-        res.send(result);
-    } catch (e){
-        console.error('error', e);
-        res.status(500).send('Error fetching data')
-    }
-})
-
 
 app.get('/competitions/:competitionId/teams', async (req, res) => {
     const {competitionId} = req.params
     try{
-        const result = await fetchTeamsOfCompetitions(competitionId);
+        const result = await fetchTeamDetails(competitionId);
         res.send(result);
     } catch(e){
         console.error('error', e)
         res.status(500).send('Error fetching data')
     }
-})
+});
 
 
 app.listen(port, () => {
