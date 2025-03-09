@@ -5,10 +5,12 @@ import {
     //fetchChampionshipIds, 
     fetchCompetitions, 
     fetchCompetitionsMatches, 
-    fetchTeams, 
-    fetchTeamsId } from './api/api.js';
+    fetchTeams,
+    //fetchPlayersForTeams 
+} from './api/api.js';
 import cors from 'cors';
 import { initializeDatabase } from './db/db.js';
+//import { insertTeam } from './insert-db/insertTeams.js';
 //import { insertCompetition } from './insert-db/insertCompetitions.js';
 //import { insertClub } from './insert-db/insertClub.js';
 
@@ -41,6 +43,54 @@ const main = async () => {
         //     const competitionsId = championshipIds[index];
         //     insertClub(db, teamsData.teams, {competitions: {id: competitionsId}})
         // })
+
+        // Récupération des équipes
+        // const competitionIds = await fetchChampionshipIds();
+
+        // if (!competitionIds || competitionIds.length === 0) {
+        //     console.error("Aucune compétition trouvée.");
+        //     return;
+        // }
+
+        // const players = await fetchPlayersForTeams(competitionIds);
+
+        // if (players.length === 0) {
+        //     console.warn("Aucun joueur récupéré.");
+        //     return;
+        // }
+
+        // insertTeam(db, players);
+
+        const getTeamByClubName = (db, clubName) => {
+            const query = `
+                SELECT 
+                    t.id_team,
+                    t.name AS player_name,
+                    t.position,
+                    t.date_of_birth,
+                    t.nationality,
+                    c.name AS club_name
+                FROM 
+                    team t
+                JOIN 
+                    club c
+                ON 
+                    t.id_club = c.id_club
+                WHERE 
+                    c.name = ?;
+            `;
+        
+            try {
+                const team = db.prepare(query).all(clubName);
+                return team;
+            } catch (error) {
+                console.error("Erreur lors de la récupération de l'équipe :", error.message);
+                throw error;
+            }
+        };
+        
+        const psgTeam = getTeamByClubName(db, "Paris Saint-Germain FC");
+        console.log("Équipe du PSG :", psgTeam);
 
         db.close();
         console.log('Base de données fermée avec succès.')
@@ -118,17 +168,6 @@ app.get('/v4/competitions/:id/teams', async (req, res) => {
         res.status(500).send('Error fetching data')
     }
 });
-
-app.get('/v4/teams/:id', async (req, res) => {
-    const teamCode = req.params;
-    try {
-        const result = await fetchTeamsId(teamCode);
-        res.send(result);
-    } catch (e){
-        console.error('error', e);
-        res.status(500).send('Error fetching data')
-    }
-})
 
 app.get('/competitions/:competitionId/teams', async (req, res) => {
     const {competitionId} = req.params
