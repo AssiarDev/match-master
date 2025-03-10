@@ -1,4 +1,7 @@
-export const insertClub = (db, teams, competitionData) => {
+import { db } from "../server.js";
+import { fetchChampionshipIds, fetchTeams } from "../api/api.js";
+
+export const insertClub = (teams, competitionData) => {
     try{
         db.exec(`
             CREATE TABLE IF NOT EXISTS club (
@@ -38,4 +41,13 @@ export const insertClub = (db, teams, competitionData) => {
     } catch(e){
         console.error('Erreur lors de l\'insertion des clubs: ', e);
     }
-}
+};
+
+// Récupération des clubs
+const championshipIds = await fetchChampionshipIds();
+const clubData = await fetchTeams(championshipIds);
+
+clubData.forEach((teamsData, index) => {
+        const competitionsId = championshipIds[index];
+        insertClub(teamsData.teams, {competitions: {id: competitionsId}})
+})

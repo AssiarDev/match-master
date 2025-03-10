@@ -1,4 +1,7 @@
-export const insertTeam = (db, players) => {
+import { db } from "../server.js";
+import { fetchChampionshipIds, fetchPlayersForTeams } from "../api/api.js";
+
+export const insertTeam = (players) => {
     try {
         db.exec(`
             CREATE TABLE IF NOT EXISTS players (
@@ -42,3 +45,20 @@ export const insertTeam = (db, players) => {
         console.error('Erreur lors de l\'insertion des équipes: ', e.message)
     };
 };
+
+// Récupération des équipes
+const competitionIds = await fetchChampionshipIds();
+
+if (!competitionIds || competitionIds.length === 0) {
+        console.error("Aucune compétition trouvée.");
+        return;
+}
+
+const players = await fetchPlayersForTeams(competitionIds);
+
+if (players.length === 0) {
+        console.warn("Aucun joueur récupéré.");
+        return;
+}
+
+insertTeam(players);
