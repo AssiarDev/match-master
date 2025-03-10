@@ -1,4 +1,4 @@
-export const insterTrainer = (db, trainers) => {
+export const insertTrainer = (db, trainers) => {
     try {
         db.exec(`
             CREATE TABLE IF NOT EXISTS trainers (
@@ -34,8 +34,8 @@ export const insterTrainer = (db, trainers) => {
                 trainer.name,
                 trainer.date_of_birth,
                 trainer.nationality,
-                trainer.contract.start,
-                trainer.contract.end,
+                trainer.contract_start,
+                trainer.contract_end,
                 trainer.id_club
             )
         });

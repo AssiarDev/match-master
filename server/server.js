@@ -1,16 +1,18 @@
 import express from 'express';
 import { 
     endpointChampionships, 
-    fetchAllCompetitions, 
-    //fetchChampionshipIds, 
+    fetchAllCompetitions,  
+    // fetchChampionshipIds, 
     fetchCompetitions, 
     fetchCompetitionsMatches, 
     fetchTeams,
-    //fetchPlayersForTeams 
+    // fetchTrainersForTeams,
+    // fetchPlayersForTeams 
 } from './api/api.js';
 import cors from 'cors';
 import { initializeDatabase } from './db/db.js';
-//import { insertTeam } from './insert-db/insertTeams.js';
+// import { insertTrainer } from './insert-db/insertTrainer.js';
+// import { insertTeam } from './insert-db/insertTeams.js';
 //import { insertCompetition } from './insert-db/insertCompetitions.js';
 //import { insertClub } from './insert-db/insertClub.js';
 
@@ -61,21 +63,38 @@ const main = async () => {
 
         // insertTeam(db, players);
 
+        // Récupération des entraineurs 
+        // const competitionIds = await fetchChampionshipIds();
+
+        // if (!competitionIds || competitionIds.length === 0) {
+        //     console.error("Aucune compétition trouvée.");
+        //     return;
+        // };
+        
+        // const trainers = await fetchTrainersForTeams(competitionIds);
+
+        // if (trainers.length === 0) {
+        //     console.warn("Aucun joueur récupéré.");
+        //     return;
+        // }; 
+
+        // insertTrainer(db, trainers)
+
         const getTeamByClubName = (db, clubName) => {
             const query = `
                 SELECT 
-                    t.id_team,
-                    t.name AS player_name,
-                    t.position,
-                    t.date_of_birth,
-                    t.nationality,
+                    p.id_player,
+                    p.name AS player_name,
+                    p.position,
+                    p.date_of_birth,
+                    p.nationality,
                     c.name AS club_name
                 FROM 
-                    team t
+                    players p
                 JOIN 
                     club c
                 ON 
-                    t.id_club = c.id_club
+                    p.id_club = c.id_club
                 WHERE 
                     c.name = ?;
             `;

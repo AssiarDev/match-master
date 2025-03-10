@@ -186,34 +186,36 @@ export const fetchTrainersForTeams = async (competitionIds) => {
                 result.teams.forEach(team => {
                     const clubId = team.id
 
-                    if (team.squad && team.squad.length > 0) {
-                        const players = team.squad.map(player => ({
-                            id: player.id,
-                            name: player.name,
-                            position: player.position,
-                            date_of_birth: player.dateOfBirth,
-                            nationality: player.nationality,
+                    if (team.coach) {
+                        const trainers = {
+                            id: team.coach.id,
+                            name: team.coach.name,
+                            date_of_birth: team.coach.dateOfBirth,
+                            nationality: team.coach.nationality,
+                            contract_start: team.coach.contract.start || 'Date inconnue',
+                            contract_end: team.coach.contract.until || 'Date inconnue',
                             id_club: clubId 
-                        }));
+                        };
 
-                        console.log(`Joueurs pour l'équipe ${team.name}:`, players);
-                        allPlayers.push(...players); 
+                        console.log(`Entraineur pour l'équipe ${team.name}:`, trainers);
+                        allTrainers.push(trainers); 
                     } else {
-                        console.log(`Pas de squad trouvé pour l'équipe ${team.name} (ID ${team.id}).`);
+                        console.log(`Pas d'entraineur trouvé pour l'équipe ${team.name} (ID ${team.id}).`);
                     }
                 });
             } else {
-                console.log('Aucune équipe trouvée dans les données du résultat.');
+                console.log('Aucune entraineur trouvé dans les données du résultat.');
             }
         });
 
-        return allPlayers; 
+        console.log('allTrainers: ', allTrainers)
+
+        return allTrainers; 
     } catch (error) {
-        console.error('Erreur lors de l\'appel de l\'API pour récupérer les joueurs :', error.message);
+        console.error('Erreur lors de l\'appel de l\'API pour récupérer les entraineurs :', error.message);
         throw error;
     }
 };
-
 
 export const fetchCompetitionsMatches = async (id) => {
     try {

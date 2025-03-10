@@ -1,8 +1,8 @@
 export const insertTeam = (db, players) => {
     try {
         db.exec(`
-            CREATE TABLE IF NOT EXISTS team (
-            id_team INTEGER PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS players (
+            id_player INTEGER PRIMARY KEY,
             name VARCHAR,
             position VARCHAR,
             date_of_birth DATE,
@@ -12,8 +12,8 @@ export const insertTeam = (db, players) => {
         )`);
 
         const insertStmt = db.prepare(`
-            INSERT OR IGNORE INTO team (
-            id_team,
+            INSERT OR IGNORE INTO players (
+            id_player,
             name,
             position,
             date_of_birth,
