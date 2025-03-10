@@ -1,17 +1,18 @@
-import { NavLink } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 export const Navbar = () => {
+    //const {teamId} = useParams()
     return (
     <nav>
         <ul className="flex justify-center items-center gap-10 text-white text-2xl">
             <li>
-                <NavLink to="/favoris">Favoris</NavLink>
+                <Link to={`/competitions/2015/matches`}>Matchs</Link>
             </li>
             <li>
-                <NavLink to="/competitions">Compétitions</NavLink>
+                <Link to="/competitions">Compétitions</Link>
             </li>
             <li>
-                <NavLink to="/connexion">Connexion</NavLink>
+                <Link to="/connexion">Se connecter</Link>
             </li>
         </ul>
     </nav>
