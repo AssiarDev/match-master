@@ -108,17 +108,14 @@ export const fetchTeams = async (ids) => {
 
 export const fetchPlayersForTeams = async (competitionIds) => {
     try {
-        const allPlayers = []; // Stockage global de tous les joueurs
+        const allPlayers = []; 
 
-        // Construire les URLs pour récupérer les équipes associées aux compétitions
         const urls = competitionIds.map(id => `${urlAPI}/competitions/${id}/teams`);
 
-        // Récupérer les équipes pour chaque compétition
         const responses = await Promise.all(
             urls.map(url => fetch(url, requestOption))
         );
 
-        // Vérification et conversion des réponses en JSON
         const results = await Promise.all(
             responses.map(response => {
                 if (!response.ok) {
@@ -129,7 +126,60 @@ export const fetchPlayersForTeams = async (competitionIds) => {
             })
         );
 
-        // Parcourir les données des équipes récupérées
+        results.forEach(result => {
+
+            if (result.teams && result.teams.length > 0) {
+                result.teams.forEach(team => {
+                    const clubId = team.id
+
+                    if (team.squad && team.squad.length > 0) {
+                        const players = team.squad.map(player => ({
+                            id: player.id,
+                            name: player.name,
+                            position: player.position,
+                            date_of_birth: player.dateOfBirth,
+                            nationality: player.nationality,
+                            id_club: clubId 
+                        }));
+
+                        console.log(`Joueurs pour l'équipe ${team.name}:`, players);
+                        allPlayers.push(...players); 
+                    } else {
+                        console.log(`Pas de squad trouvé pour l'équipe ${team.name} (ID ${team.id}).`);
+                    }
+                });
+            } else {
+                console.log('Aucune équipe trouvée dans les données du résultat.');
+            }
+        });
+
+        return allPlayers; 
+    } catch (error) {
+        console.error('Erreur lors de l\'appel de l\'API pour récupérer les joueurs :', error.message);
+        throw error;
+    }
+};
+
+export const fetchTrainersForTeams = async (competitionIds) => {
+    try {
+        const allTrainers = []; 
+
+        const urls = competitionIds.map(id => `${urlAPI}/competitions/${id}/teams`);
+
+        const responses = await Promise.all(
+            urls.map(url => fetch(url, requestOption))
+        );
+
+        const results = await Promise.all(
+            responses.map(response => {
+                if (!response.ok) {
+                    console.log('Error, API failed');
+                    throw new Error('Error, API failed');
+                }
+                return response.json();
+            })
+        );
+
         results.forEach(result => {
 
             if (result.teams && result.teams.length > 0) {
