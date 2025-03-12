@@ -34,11 +34,11 @@ const apiURL = import.meta.env.VITE_API_URL;
             const result = await response.json();
             // Je filtre result pour récupérer les noms des ligues et 
             // je fais une copie avec map pour obtenir les noms dans un nouveau tableau
-            const filteredLeague = result.competitions
+            const filteredLeague = result
                 .filter(league => league.name)
                 .map(league => ({
                     name: league.name,
-                    code: league.code, 
+                    code: league.id_competition, 
                     logo: league.emblem
                 }));
             setleagues(filteredLeague);
@@ -55,11 +55,11 @@ const apiURL = import.meta.env.VITE_API_URL;
                 try {
                     const response = await fetch(`${apiURL}/competitions/${selectedLeague}/teams`);
                     const result = await response.json();
-                    const teams = result.teams
+                    const teams = result
                         // .filter(team => team.name)
                         .map(ligue => ({
                             name: ligue.name, 
-                            id: ligue.id
+                            id: ligue.id_competition
                         }))
                     console.log('teams: ', teams)
                     setTeams(teams)
@@ -96,3 +96,4 @@ const apiURL = import.meta.env.VITE_API_URL;
         <button className="border border-stone-800 bg-orange-700 hover:bg-orange-600 w-60 h-15 rounded-md text-white text-xl cursor-pointer" onClick={handleNavigate}>Entrer</button>
     </div>     
 }
+
