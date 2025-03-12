@@ -39,23 +39,52 @@ app.get('/teams', (req, res) => {
     `;
     const rows = db.prepare(query).all();
     res.json(rows);
-    db.close()
     }catch(e){
-        console.error('Erreur lors de l\'exécution de la requête :', error.message);
+        console.error('Erreur lors de l\'exécution de la requête :', e.message);
         res.status(500).send('Erreur serveur');
     }
 });
 
-app.get('/competitions', async (req, res) => {
-    try{
-        const result = await fetchAllCompetitions();
-        console.log('Data fetched:', result)
-        res.send(result);
-    } catch(e){
-        console.error('error', e)
-        res.status(500).send('Error fetching data')
-    }
-})
+app.get('/competitions', (req, res) => {
+    try {
+        const query = `
+        SELECT 
+            name, 
+            emblem,
+            id_competition
+        FROM
+            competitions
+        `
+        const rows = db.prepare(query).all();
+        res.json(rows);
+    } catch (e){
+        
+        console.log('Erreur lors de l\'execution de la requête :', e.message);
+        res.status(500).send('Erreur serveur');
+    } 
+});
+
+app.get('/competitions/:id/teams', async (req, res) => {
+    const competitionId = req.params.id;
+    try {
+        const query = `
+        SELECT
+            name,
+            emblem,
+            id_competition
+        FROM
+            club
+        WHERE
+            id_competition = ?
+        `;
+        const rows = db.prepare(query).all(competitionId);
+        res.json(rows);
+
+    } catch (e){
+        console.error('Erreur lors de l\'execution de la requête :', e.message);
+        res.status(500).send('Erreur serveur')
+    } 
+});
 
 app.get('/competitions/:id/matches', async (req, res) => {
     const competitionCode = req.params.id;
@@ -92,27 +121,16 @@ app.get('/competitions/PL/teams', async (req, res) => {
     }
 })
 
-app.get('/v4/competitions/:id/teams', async (req, res) => {
-    const teamId = req.params.id;
-    try {
-        const result = await fetchTeams(teamId);
-        res.send(result);
-    } catch (e){
-        console.error('error', e);
-        res.status(500).send('Error fetching data')
-    }
-});
-
-app.get('/competitions/:competitionId/teams', async (req, res) => {
-    const {competitionId} = req.params
-    try{
-        const result = await fetchTeamDetails(competitionId);
-        res.send(result);
-    } catch(e){
-        console.error('error', e)
-        res.status(500).send('Error fetching data')
-    }
-});
+// app.get('/competitions/:competitionId/teams', async (req, res) => {
+//     const {competitionId} = req.params
+//     try{
+//         const result = await fetchTeamDetails(competitionId);
+//         res.send(result);
+//     } catch(e){
+//         console.error('error', e)
+//         res.status(500).send('Error fetching data')
+//     }
+// });
 
 
 app.listen(port, () => {
