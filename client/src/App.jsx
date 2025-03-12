@@ -1,11 +1,12 @@
 import { Route, Routes, Link } from "react-router-dom";
-//import { Home } from "./components/home";
-//import { Favoris } from "./components/favoris";
+import { Home } from "./components/Home";
+//import { Favoris } from "./components/Favoris";
 import { MatchsDetails } from "./components/matchs";
 import { Connexion } from "./components/connexion";
 import { NoMatch } from "./components/noMatch";
-import { Navbar } from "./components/forms/navbar";
-import { SearchBar } from "./components/forms/searchbar";
+import { Navbar } from "./components/forms/Navbar";
+import { SearchBar } from "./components/forms/Searchbar";
+
 
 function App() {
 
@@ -22,7 +23,7 @@ function App() {
               <Route path="/competitions/:teamId/matches" element={<MatchsDetails />} />
               <Route path="/connexion" element={<Connexion />} />
               <Route path="*" element={<NoMatch />}/>
-              {/* <Route path="/" element={<Home />}/> */}
+              <Route path="/" element={<Home />}/>
               {/* <Route path="/favoris" element={<Favoris />} /> */}
               {/* <Route path="/competitions" element={<TeamDetails/>} /> */}
               {/* <Route path="/v4/teams/:teamId" element={<TeamDetails />} /> */}
