@@ -32,18 +32,19 @@ const apiURL = import.meta.env.VITE_API_URL;
               throw new Error('Impossible d\'acceder à la reponse');
             }
             const result = await response.json();
+            console.log('result :', result)
             // Je filtre result pour récupérer les noms des ligues et 
             // je fais une copie avec map pour obtenir les noms dans un nouveau tableau
             const filteredLeague = result
                 .filter(league => league.name)
                 .map(league => ({
                     name: league.name,
-                    code: league.id_competition, 
+                    code: league.id, 
                     logo: league.emblem
                 }));
             setleagues(filteredLeague);
             } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error.message);
             }
         }
     fetchAllCompetitions()
@@ -55,13 +56,13 @@ const apiURL = import.meta.env.VITE_API_URL;
                 try {
                     const response = await fetch(`${apiURL}/competitions/${selectedLeague}/teams`);
                     const result = await response.json();
+                    console.log('result teams:', result)
                     const teams = result
-                        // .filter(team => team.name)
+                        .filter(team => team.name)
                         .map(ligue => ({
                             name: ligue.name, 
-                            id: ligue.id_competition
+                            id: ligue.id
                         }))
-                    console.log('teams: ', teams)
                     setTeams(teams)
                 } catch (error){
                     console.error('Error fetching data:', error);
@@ -73,7 +74,9 @@ const apiURL = import.meta.env.VITE_API_URL;
 
     const handleNavigate = () => {
         if(selectedLeague && teams){
-            navigate(`/v4/teams/${selectedTeamId}`);
+            console.log('Selected League:', selectedLeague);
+            console.log('Selected Team ID:', selectedTeamId);
+            navigate(`/teams/${selectedTeamId}`);
         } else {
             alert('Veuillez selectionner un championnat et une équipe')
         }
