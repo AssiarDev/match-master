@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -7,7 +7,7 @@ const apiURL = import.meta.env.VITE_API_URL;
 
  export const SelectorLeague = () => {
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [leagues, setleagues] = useState([]);
     const [teams, setTeams] = useState([]);
@@ -76,7 +76,7 @@ const apiURL = import.meta.env.VITE_API_URL;
         if(selectedLeague && teams){
             console.log('Selected League:', selectedLeague);
             console.log('Selected Team ID:', selectedTeamId);
-            navigate(`/teams/${selectedTeamId}`);
+            navigate(`/teams/${selectedTeamId}`, { state: { selectedLeague }});
         } else {
             alert('Veuillez selectionner un championnat et une équipe')
         }
