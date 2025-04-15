@@ -5,18 +5,18 @@ export const insertClub = (teams, competitionData) => {
     try{
         db.exec(`
             CREATE TABLE IF NOT EXISTS club (
-            id_club INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             name VARCHAR, 
             country VARCHAR,
             id_competition INTEGER,
             emblem VARCHAR,
             stadium TEXT,
-            FOREIGN KEY (id_competition) REFERENCES competitions(id_competition)
+            FOREIGN KEY (id_competition) REFERENCES competitions(id)
             )`);
 
         const insertStmt = db.prepare(`
             INSERT OR IGNORE INTO club (
-            id_club,
+            id,
             name,
             country,
             id_competition,
@@ -25,6 +25,7 @@ export const insertClub = (teams, competitionData) => {
         ) VALUES (?, ?, ?, ?, ?, ?)`);
 
         const competitionId = competitionData.competitions.id
+        console.log('competitionId :', competitionId)
 
         teams.forEach(team => {
             insertStmt.run(

@@ -5,18 +5,18 @@ export const insertTeam = (players) => {
     try {
         db.exec(`
             CREATE TABLE IF NOT EXISTS players (
-            id_player INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             name VARCHAR,
             position VARCHAR,
             date_of_birth DATE,
             nationality TEXT NOT NULL,
             id_club INTEGER,
-            FOREIGN KEY (id_club) REFERENCES club(id_club)
+            FOREIGN KEY (id_club) REFERENCES club(id)
         )`);
 
         const insertStmt = db.prepare(`
             INSERT OR IGNORE INTO players (
-            id_player,
+            id,
             name,
             position,
             date_of_birth,
@@ -47,18 +47,22 @@ export const insertTeam = (players) => {
 };
 
 // Récupération des équipes
-const competitionIds = await fetchChampionshipIds();
+const main = async () => {
+    const competitionIds = await fetchChampionshipIds();
 
-if (!competitionIds || competitionIds.length === 0) {
-        console.error("Aucune compétition trouvée.");
-        return;
+    if (!competitionIds || competitionIds.length === 0) {
+            console.error("Aucune compétition trouvée.");
+            return;
+    }
+
+    const players = await fetchPlayersForTeams(competitionIds);
+
+    if (players.length === 0) {
+            console.warn("Aucun joueur récupéré.");
+            return;
+    }
+
+    insertTeam(players);
 }
 
-const players = await fetchPlayersForTeams(competitionIds);
-
-if (players.length === 0) {
-        console.warn("Aucun joueur récupéré.");
-        return;
-}
-
-insertTeam(players);
+main();

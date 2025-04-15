@@ -1,13 +1,10 @@
 import express from 'express';
-import { 
-    endpointChampionships, 
-    fetchAllCompetitions,  
-    fetchCompetitions, 
-    fetchCompetitionsMatches, 
-    fetchTeams,
-} from './api/api.js';
+import { endpointChampionships,  fetchCompetitions, fetchTabStandings } from './api/api.js';
 import cors from 'cors';
 import { initializeDatabase } from './db/db.js';
+import { teams } from './routes/teams.js';
+import { competitions } from './routes/competitions.js';
+import { standings } from './routes/standings.js';
 
 const app = express();
 const port = process.env.PORT;
@@ -22,84 +19,14 @@ const corsOptions = {
 };
 app.use(cors(corsOptions))
 app.use(express.json());
+app.use(teams);
+app.use(competitions);
+app.use(standings)
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');
 });
-
-app.get('/teams', (req, res) => {
-    try{
-        const query = `
-    SELECT 
-        id_club,
-        name, 
-        emblem
-    FROM
-        club
-    `;
-    const rows = db.prepare(query).all();
-    res.json(rows);
-    }catch(e){
-        console.error('Erreur lors de l\'exécution de la requête :', e.message);
-        res.status(500).send('Erreur serveur');
-    }
-});
-
-app.get('/competitions', (req, res) => {
-    try {
-        const query = `
-        SELECT 
-            name, 
-            emblem,
-            id_competition
-        FROM
-            competitions
-        `
-        const rows = db.prepare(query).all();
-        res.json(rows);
-    } catch (e){
-        
-        console.log('Erreur lors de l\'execution de la requête :', e.message);
-        res.status(500).send('Erreur serveur');
-    } 
-});
-
-app.get('/competitions/:id/teams', async (req, res) => {
-    const competitionId = req.params.id;
-    try {
-        const query = `
-        SELECT
-            name,
-            emblem,
-            id_competition
-        FROM
-            club
-        WHERE
-            id_competition = ?
-        `;
-        const rows = db.prepare(query).all(competitionId);
-        res.json(rows);
-
-    } catch (e){
-        console.error('Erreur lors de l\'execution de la requête :', e.message);
-        res.status(500).send('Erreur serveur')
-    } 
-});
-
-app.get('/competitions/:id/matches', async (req, res) => {
-    const competitionCode = req.params.id;
-    const status = req.query.status
-    try{
-        const result = await fetchCompetitionsMatches(competitionCode, status);
-        console.log('Data fetched:', result)
-        res.send(result);
-    } catch(e){
-        console.error('error', e)
-        res.status(500).send('Error fetching data')
-    }
-})
   
-
 app.get('/competitions/FL1/teams', async (req, res) => {
     try{
         const result = await fetchCompetitions(endpointChampionships.ligue1);

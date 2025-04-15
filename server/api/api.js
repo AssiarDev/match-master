@@ -234,3 +234,21 @@ export const fetchCompetitionsMatches = async (id) => {
     }
 };
 
+export const fetchTabStandings = async (id) => {
+    try {
+        const url = `${urlAPI}/competitions/${id}/standings`;
+        const response = await fetch(url, requestOption);
+        if(!response.ok){
+            throw new Error('Error api failed')
+        }
+        const result = await response.json();
+        console.log('result :', result)
+
+        const standings = result.standings;
+        const table = standings[0].table
+        return table
+    } catch (e){
+        console.error('Erreur impossible de récupérer les données :', e.message)
+    }
+}
+
