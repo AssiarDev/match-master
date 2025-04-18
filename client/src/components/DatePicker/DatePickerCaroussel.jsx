@@ -9,8 +9,6 @@ export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
         day.setDate(day.getDate() + (i - 15)); // -15 pour les dates précédentes, +15 pour les prochaines
         return day;
     });
-
-    console.log('Days:', days); // Pour vérifier que les dates sont générées
     const today = new Date();
 
     // Bouton précédent
@@ -53,7 +51,7 @@ export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
                         key={day.toISOString()}
                         className={`py-1 text-center rounded-md shadow-lg mx-2 ${
                             selectedDate?.toDateString() === day.toDateString()
-                                ? 'bg-orange-600 text-white font-bold'
+                                ? 'bg-orange-800 text-white font-bold'
                                 : 'bg-stone-800 text-white'
                         }`}
                         onClick={() => setSelectedDate(day)}
