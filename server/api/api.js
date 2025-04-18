@@ -219,7 +219,7 @@ export const fetchTrainersForTeams = async (competitionIds) => {
 
 export const fetchCompetitionsMatches = async (id) => {
     try {
-        const url = `${urlAPI}/competitions/${id}/matches?status=SCHEDULED`;
+        const url = `${urlAPI}/competitions/${id}/matches`;
         console.log('url: ', url)
         const response = await fetch(url, requestOption);
         if(!response.ok){
