@@ -234,6 +234,40 @@ export const fetchCompetitionsMatches = async (id) => {
     }
 };
 
+export const fetchMatchesByCompetitions = async (competitionIds) => {
+    try {
+        if (!competitionIds || !Array.isArray(competitionIds)) {
+            throw new Error('Les IDs des compétitions doivent être fournis sous forme de tableau.');
+        }
+
+        // Construire les URLs pour chaque compétition
+        const urls = competitionIds.map(
+            id => `${urlAPI}/competitions/${id}/matches`
+        );
+
+        // Effectuer les requêtes en parallèle
+        const responses = await Promise.all(
+            urls.map(url =>
+                fetch(url, requestOption)
+            )
+        );
+
+        const jsonResults = await Promise.all(
+            responses.map(response => response.json())
+        );
+
+        // Combiner les résultats
+        const allMatches = jsonResults.flatMap(result => result.matches || []);
+        console.log('Tous les matchs récupérés :', allMatches);
+
+        return allMatches;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des matchs :', error);
+        return [];
+    }
+};
+
+
 export const fetchTabStandings = async (id) => {
     try {
         const url = `${urlAPI}/competitions/${id}/standings`;
