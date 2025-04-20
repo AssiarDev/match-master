@@ -1,93 +1,104 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-
-const apiURL = import.meta.env.VITE_API_URL;
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { useEffect, useState } from 'react';
+import { DatePickerCarousel } from './DatePicker/DatePickerCaroussel';
+import { MatchCard } from './Matchs/MatchCard';
 
 export const MatchsDetails = () => {
+    const [matchesData, setMatchesData] = useState([]);
+    const [filteredData, setFilteredData] = useState({});
+    const [selectedDate, setSelectedDate] = useState(new Date()); // Date sélectionnée par le carousel
+    const [error, setError] = useState(null);
 
-    const { teamId } = useParams();
-    const [ matchDetails, setMatchDetails ] = useState(null);
-    const [competitionName, setCompetitionName] = useState([]);
-
-    const fetchWithThrottle = useCallback(async (urls, limit) => {
-        const results = [];
-        const interval = 50000 / limit;
-
-        for(let i = 0; i < urls.length; i++){
-            const url = urls[i];
+    useEffect(() => {
+        const fetchMatchDetails = async () => {
             try {
+                const url = `${import.meta.env.VITE_API_URL}/competitions/matches`;
                 const response = await fetch(url);
-                if(!response.ok){
-                    throw new Error('Error fetching data')
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des données des matchs.');
                 }
-                const text = await response.text();
-                const result = JSON.parse(text);
-                results.push(result);
-            } catch (e){
-                console.error('Erreur pour l\'url: ', url, e)
+
+                const result = await response.json();
+
+                // Organiser les matchs par compétition
+                const groupedByCompetition = result.reduce((acc, match) => {
+                    const competitionName = match.competition.name;
+                    if (!acc[competitionName]) {
+                        acc[competitionName] = [];
+                    }
+                    acc[competitionName].push(match);
+                    return acc;
+                }, {});
+
+                setMatchesData(groupedByCompetition);
+                setFilteredData(groupedByCompetition); // Valeur initiale : aucun filtre
+            } catch (error) {
+                console.error('Erreur lors de la récupération des détails des matchs :', error.message);
+                setError(error.message);
             }
-            await delay(interval)
-        }
-        return results
+        };
+
+        fetchMatchDetails();
     }, []);
 
-    useEffect (() => {
-        const fetchChampionshipIds = async () => {
-            try {
-                const response = await fetch(`${apiURL}/competitions`);
-                if (!response.ok) {
-                    throw new Error('Impossible d\'accéder aux compétitions');
-                }
-                const text = await response.text();
-                if (text.startsWith('<')) {
-                    console.error('Received HTML response instead of JSON:', text);
-                    return [];
-                }
-                const result = JSON.parse(text);
-                const ids = result.competitions.map(comp => comp.id);
-                console.log('Championship IDs:', ids);
-                return ids;
-            } catch (error) {
-                console.error('Error fetching championship IDs: ', error);
-                return [];
-            }
-        };
-
-        const fetchMatchDetails = async (ids) => {
-            try {
-                
-                const urls = ids.map(id => `${apiURL}/competitions/${id}/matches?status=SCHEDULED`);
-                const results = await fetchWithThrottle(urls, 10);
-                const combinedResults = results.flatMap(result => result.matches);
-                const combinedNames = results.map(result => result.competition.name);
-
-                // const scheduledMatches = combinedResults.filter(match => match.status === 'SCHEDULED');
-                // console.log('scheduled matches:', scheduledMatches);
-
-                console.log('combined results: ', combinedResults);
-                setMatchDetails(combinedResults);
-                console.log('combinateName: ', combinedNames)
-                setCompetitionName(combinedNames)
-
-            } catch(error) {
-                console.error('Error fetching details: ', error)
-            }
+    useEffect(() => {
+        if (!selectedDate) {
+            setFilteredData(matchesData); // Si aucune date sélectionnée, afficher toutes les données
+            return;
         }
-        const fetchData = async () => {
-            const championshipIds = await fetchChampionshipIds();
-            if (championshipIds.length > 0) {
-                fetchMatchDetails(championshipIds);
+    
+        // Filtrer les données en fonction de la date sélectionnée
+        const filtered = Object.entries(matchesData).reduce((acc, [competitionName, matches]) => {
+            const filteredMatches = matches.filter(match => {
+                const matchDate = new Date(match.utcDate);
+                return matchDate.toDateString() === selectedDate.toDateString(); // Comparer les dates
+            });
+    
+            if (filteredMatches.length > 0) {
+                acc[competitionName] = filteredMatches;
             }
-        };
-        fetchData()
-    }, [teamId, fetchWithThrottle])
+            return acc;
+        }, {});
+    
+        setFilteredData(filtered);
+    }, [selectedDate, matchesData])
 
+    return (
+        <div className="flex flex-col gap-5 mx-2">
+            {error ? (
+                <p className="text-red-500">Une erreur s'est produite : {error}</p>
+            ) : (
+                <>
+                    {/* Date Picker Carousel */}
+                    <div className="flex justify-center mb-5">
+                        <DatePickerCarousel
+                            selectedDate={selectedDate}
+                            onDateChange={(date) => setSelectedDate(date)} // Synchroniser avec le carousel
+                        />
+                    </div>
 
-    return <div className='flex flex-col gap-5 mx-2'>
-            {competitionName.map((name, i) => (
-                <h1 key={i} className="text-white text-3xl">{name}</h1>
-            ))}
-            
+                    {/* Affichage des matchs par compétition */}
+                    {Object.entries(filteredData).length > 0 ? (
+                        Object.entries(filteredData).map(([competitionName, matches]) => (
+                            <div key={competitionName} className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4">{competitionName}</h2>
+                                <div className="flex flex-wrap gap-4">
+                                    {matches.map((match) => (
+                                        <MatchCard key={match.id} item={match} /> // Utilisation de MatchCard
+                                    ))}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-gray-400">Aucun match disponible pour cette date.</p>
+                    )}
+                </>
+            )}
         </div>
-}
+    );
+};
+
+
+
+
+

@@ -16,7 +16,7 @@ export const MatchCard = ({item}) => {
                     alt={item.awayTeam.shortName}
                     className="w-16 h-16 rounded-full"
                     />
-                <p className="text-sm font-medium mt-2">{item.awayTeam.shortName}</p>
+                <p className="text-sm font-medium mt-2 text-white">{item.awayTeam.shortName}</p>
             </div>
         </div>
         <div className="text-center mb-4">

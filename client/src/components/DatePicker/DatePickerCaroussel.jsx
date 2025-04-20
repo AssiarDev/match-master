@@ -2,11 +2,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
-    // Génère 15 jours avant et 15 jours après aujourd'hui
+export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
+    // Générer 15 jours avant et 15 jours après aujourd'hui
     const days = Array.from({ length: 30 }, (_, i) => {
         const day = new Date();
-        day.setDate(day.getDate() + (i - 15)); // -15 pour les dates précédentes, +15 pour les prochaines
+        day.setDate(day.getDate() + (i - 15)); // -15 pour les jours précédents, +15 pour les jours suivants
         return day;
     });
     const today = new Date();
@@ -14,8 +14,9 @@ export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
     // Bouton précédent
     const PrevButton = ({ onClick }) => (
         <button
+            type="button" // Ajout du type pour éviter des comportements inattendus
             className="absolute left-[-50px] top-[10%] text-white hover:bg-gray-800 rounded-sm px-2 py-2"
-            onClick={onClick}
+            onClick={onClick} // Transmet seulement les props nécessaires
         >
             ←
         </button>
@@ -24,17 +25,19 @@ export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
     // Bouton suivant
     const NextButton = ({ onClick }) => (
         <button
+            type="button" // Ajout du type pour éviter des comportements inattendus
             className="absolute right-[-50px] top-[10%] text-white hover:bg-gray-800 rounded-sm px-2 py-2"
-            onClick={onClick}
+            onClick={onClick} // Transmet seulement les props nécessaires
         >
             →
         </button>
     );
 
+    // Paramètres pour le slider
     const settings = {
         infinite: true,
-        slidesToShow: 3, // Affiche 3 dates visibles à la fois
-        slidesToScroll: 1,
+        slidesToShow: 3, // Affiche 3 éléments à la fois
+        slidesToScroll: 1, // Défile un élément à la fois
         centerMode: true, // Centre l'élément actif
         focusOnSelect: true, // Permet la sélection en cliquant
         prevArrow: <PrevButton />, // Bouton précédent personnalisé
@@ -48,19 +51,18 @@ export const DatePickerCarousel = ({ selectedDate, setSelectedDate }) => {
                     const isToday = day.toDateString() === today.toDateString();
                     return (
                         <div
-                        key={day.toISOString()}
-                        className={`py-1 text-center rounded-md shadow-lg mx-2 ${
-                            selectedDate?.toDateString() === day.toDateString()
-                                ? 'bg-orange-800 text-white font-bold'
-                                : 'bg-stone-800 text-white'
-                        }`}
-                        onClick={() => setSelectedDate(day)}
-                    >
-                        <p className="text-xs text-white">{isToday ? "Aujourd'hui" : day.getDate()}</p>
-                        <p className="text-xs text-white">{day.toLocaleDateString('fr-FR', { weekday: 'long' })}</p>
-                    </div>
-                    )
-               
+                            key={day.toISOString()} // Utilise une clé unique
+                            className={`py-1 text-center rounded-md shadow-lg mx-2 ${
+                                selectedDate?.toDateString() === day.toDateString()
+                                    ? 'bg-orange-800 text-white font-bold' // Style si la date est sélectionnée
+                                    : 'bg-stone-800 text-white' // Style par défaut
+                            }`}
+                            onClick={() => onDateChange(day)} // Met à jour la date sélectionnée
+                        >
+                            <p className="text-xs">{isToday ? "Aujourd'hui" : day.getDate()}</p>
+                            <p className="text-xs">{day.toLocaleDateString('fr-FR', { weekday: 'long' })}</p>
+                        </div>
+                    );
                 })}
             </Slider>
         </div>
