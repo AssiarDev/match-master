@@ -11,6 +11,9 @@ export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
     });
     const today = new Date();
 
+    // Trouver l'index de la date "aujourd'hui"
+    const todayIndex = days.findIndex(day => day.toDateString() === today.toDateString());
+
     // Bouton précédent
     const PrevButton = ({ onClick }) => (
         <button
@@ -35,6 +38,7 @@ export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
 
     // Paramètres pour le slider
     const settings = {
+        initialSlide: todayIndex,
         infinite: true,
         slidesToShow: 3, // Affiche 3 éléments à la fois
         slidesToScroll: 1, // Défile un élément à la fois

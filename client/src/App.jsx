@@ -21,12 +21,12 @@ function App() {
         <div className="mt-10">
           <Routes>
               {/* <Route path="/" element={<MatchsDetails />} /> */}
-              <Route path="/competitions/:teamId/matches" element={<MatchsDetails />} />
+              {/* <Route path="/competitions/:teamId/matches" element={<MatchsDetails />} /> */}
               <Route path="/connexion" element={<Connexion />} />
               <Route path="*" element={<NoMatch />}/>
-              <Route path="/" element={<Home />}/>
+              <Route path="/" element={<MatchsDetails />}/>
               <Route path="/teams/:teamId" element={<TeamsDetails />} />
-              {/* <Route path="/favoris" element={<Favoris />} /> */}
+              <Route path="/favoris" element={<Home />} />
               {/* <Route path="/competitions" element={<TeamDetails/>} /> */}
               {/* <Route path="/v4/teams/:teamId" element={<TeamDetails />} /> */}
           </Routes>
