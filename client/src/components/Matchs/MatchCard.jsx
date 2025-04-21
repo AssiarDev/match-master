@@ -25,6 +25,7 @@ export const MatchCard = ({item}) => {
         </div>
         <div className="text-center text-white">
             <p>{new Date(item.utcDate).toLocaleDateString()}</p>
+            <p>{new Date(item.utcDate).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</p>
         </div>
     </div>
 } 
