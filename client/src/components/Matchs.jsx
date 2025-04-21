@@ -23,11 +23,14 @@ export const MatchsDetails = () => {
                 // Organiser les matchs par compétition
                 const groupedByCompetition = result.reduce((acc, match) => {
                     const competitionName = match.competition.name;
-                    //const competitionFlag = match.area?.flag || ''
+                    const competitionFlag = match.area?.flag || ''
                     if (!acc[competitionName]) {
-                        acc[competitionName] = []
+                        acc[competitionName] = {
+                            flag: competitionFlag,
+                            matches: []
+                        }
                     }
-                    acc[competitionName].push(match);
+                    acc[competitionName].matches.push(match);
                     return acc;
                 }, {});
 
@@ -49,14 +52,14 @@ export const MatchsDetails = () => {
         }
     
         // Filtrer les données en fonction de la date sélectionnée
-        const filtered = Object.entries(matchesData).reduce((acc, [competitionName, matches]) => {
-            const filteredMatches = matches.filter(match => {
+        const filtered = Object.entries(matchesData).reduce((acc, [competitionName, competitionData]) => {
+            const filteredMatches = competitionData.matches.filter(match => {
                 const matchDate = new Date(match.utcDate);
                 return matchDate.toDateString() === selectedDate.toDateString(); // Comparer les dates
             });
     
             if (filteredMatches.length > 0) {
-                acc[competitionName] = filteredMatches;
+                acc[competitionName] = {...competitionData, matches: filteredMatches}
             }
             return acc;
         }, {});
@@ -91,16 +94,22 @@ export const MatchsDetails = () => {
 
                     {/* Affichage des matchs par compétition */}
                     {Object.entries(filteredData).length > 0 ? (
-                        Object.entries(filteredData).map(([competitionName, matches]) => (
+                        Object.entries(filteredData).map(([competitionName, competitionData]) => {
+                            const { flag, matches } = competitionData;
+                            return (
                             <div key={competitionName} className="mb-8">
-                                <h2 className="text-2xl font-bold text-white mb-4">{competitionName}</h2>
+                                <div className='flex gap-5 items-center'>
+                                    <h2 className="text-2xl font-bold text-white">{competitionName}</h2>
+                                    <img src={flag} alt="" className='h-5'/>
+                                </div>
                                 <div className="flex flex-wrap gap-4">
                                     {matches.map((match) => (
                                         <MatchCard key={match.id} item={match} /> // Utilisation de MatchCard
                                     ))}
                                 </div>
                             </div>
-                        ))
+                            )
+                        })
                     ) : (
                         <p className="text-gray-400">Aucun match disponible pour cette date.</p>
                     )}
