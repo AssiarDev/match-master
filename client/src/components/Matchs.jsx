@@ -23,8 +23,9 @@ export const MatchsDetails = () => {
                 // Organiser les matchs par compétition
                 const groupedByCompetition = result.reduce((acc, match) => {
                     const competitionName = match.competition.name;
+                    //const competitionFlag = match.area?.flag || ''
                     if (!acc[competitionName]) {
-                        acc[competitionName] = [];
+                        acc[competitionName] = []
                     }
                     acc[competitionName].push(match);
                     return acc;
@@ -63,12 +64,23 @@ export const MatchsDetails = () => {
         setFilteredData(filtered);
     }, [selectedDate, matchesData])
 
+    const getCurrentDate = () => {
+        const today = selectedDate;
+        const option = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+        return today.toLocaleDateString('fr-FR', option)
+    }
+
     return (
         <div className="flex flex-col gap-5 mx-2">
             {error ? (
                 <p className="text-red-500">Une erreur s'est produite : {error}</p>
             ) : (
-                <>
+                <>  
+                    <div>
+                        <p className="text-gray-600">
+                            <a href="/" className='text-white underline'>Match Master</a> / Score du {getCurrentDate()}
+                        </p>
+                    </div>
                     {/* Date Picker Carousel */}
                     <div className="flex justify-center mb-5">
                         <DatePickerCarousel
