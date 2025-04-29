@@ -5,6 +5,7 @@ import { initializeDatabase } from './db/db.js';
 import { teams } from './routes/teams.js';
 import { competitions } from './routes/competitions.js';
 import { standings } from './routes/standings.js';
+import { users } from './routes/users.js';
 
 const app = express();
 const port = process.env.PORT;
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(teams);
 app.use(competitions);
 app.use(standings)
+app.use(users)
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');
