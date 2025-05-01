@@ -1,4 +1,5 @@
 import { db } from "../server.js";
+import bcrypt from 'bcryptjs';
 
 export const insertUser = (username, email, password) => {
     try {
@@ -9,6 +10,9 @@ export const insertUser = (username, email, password) => {
             email VARCHAR(255),
             password VARCHAR(255)
             )`);
+        
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const insertStmt = db.prepare(`
             INSERT OR IGNORE INTO users (
@@ -17,7 +21,7 @@ export const insertUser = (username, email, password) => {
             password
         ) VALUES (?, ?, ?)`);
 
-        const result = insertStmt.run(username, email, password);
+        const result = insertStmt.run(username, email, hashedPassword);
 
         return result
 

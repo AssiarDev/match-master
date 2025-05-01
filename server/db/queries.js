@@ -1,4 +1,6 @@
 import { db } from "../server.js";
+import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken';
 
 export const getTeamByClubName = (clubName) => {
     const query = `
@@ -74,5 +76,38 @@ export const updateUsers = (id, data) => {
 
     } catch (e){
         console.error('Erreur lors de la mise à jour de l\'utilisateur', e.message)
+    }
+};
+
+export const login = async (email, password) => {
+    try {
+        const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
+        const user = await stmt.get(email);
+
+        if (!user) {
+            console.error('Utilisateur non trouvé.');
+            return false;
+        }
+
+        const isPasswordValid = await bcrypt.compareSync(password, user.password);
+        if (!isPasswordValid) {
+            console.error('Mot de passe incorrect.');
+            return { success: false, message: 'Mot de passe incorrect' }
+        };
+
+        // Générer un token 
+        const token = jwt.sign(
+            { id: user.id, email: user.email, username: user.username },
+            process.env.SECRET_KEY,
+            { expiresIn: "1h" } 
+        );
+
+        console.log('Connexion réussie.');
+        return { success: true, token };
+
+    } catch (e){
+        console.error('Erreur lors de la connexion:', e.message);
+        console.log(e.stack);
+        return false; 
     }
 }
