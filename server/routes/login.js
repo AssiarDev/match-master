@@ -7,7 +7,6 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await login(email, password);
-        console.log('user :', user)
 
         if (!email || !password) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
