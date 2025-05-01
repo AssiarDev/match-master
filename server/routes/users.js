@@ -1,6 +1,5 @@
 import { insertUser } from "../insert-db/insertUser.js";
-import { insertUsersFavorite } from "../insert-db/insertUsersFavorite.js";
-import { getUserFavorites } from "../db/queries.js";
+import { deleteUsers, getAllUsers, updateUsers } from "../db/queries.js";
 import express from 'express';
 
 const router = express.Router();
@@ -26,41 +25,57 @@ router.post('/users', (req, res) => {
     }
 });
 
-router.post('/users/favorites', (req, res) => {
+router.get('/users', (req, res) => {
     try {
-        const { userId, clubId } = req.body;
-
-        if (!userId || !clubId) {
-            return res.status(400).json({ error: "userId et clubId sont requis." });
+        const users = getAllUsers();
+        if(!users){
+            return res.status(500).json({error: "Impossible de récupérer tous les utilisateurs."})
         }
 
-        const result = insertUsersFavorite(userId, clubId);
-
-        if (result.success) {
-            res.status(201).json({ message: result.message });
-        } else {
-            res.status(500).json({ error: result.error });
-        }
-
-    } catch (e) {
-        res.status(500).json({ error: "Erreur serveur." });
+        res.json(users)
+    } catch(e){
+        res.status(500).json({ error: "Erreur serveur" })
     }
 })
 
-router.get('/users/:usersId/favorites', (req, res) => {
+router.delete('/users/:id', (req, res) => {
     try {
-        const userId = parseInt(req.params.usersId, 10);
+        const id = parseInt(req.params.id, 10)
 
-        if (isNaN(userId)) {
-            return res.status(400).json({ error: "ID utilisateur invalide" });
+        if (isNaN(id)) {
+            return res.status(400).json({ error: "ID invalide" });
+        }
+        const result = deleteUsers(id);
+        
+        if (result) {
+            return res.json({ message: "Utilisateur supprimé avec succès" });
+        } else {
+            return res.status(404).json({ error: "Utilisateur introuvable" });
         }
 
-        const favorites = getUserFavorites(userId);
+    } catch (e){
+        res.status(500).json({ error: "Erreur serveur" })
+    }
+});
 
-        res.status(200).json(favorites);
+router.put('/users/:id', (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const { username, email } = req.body;
 
-    } catch(e){
-        console.error('Une erreur est survenue', e.message)
+        if(!username || !email){
+            return res.status(400).json({ error: "Tous les champs sont obligatoires" })
+        };
+
+        const result = updateUsers(id, {username, email})
+
+        if (result.error) {
+            return res.status(404).json(result);
+        }
+
+        res.json(result);
+
+    } catch (e){
         res.status(500).json({ error: "Erreur serveur" })
     }
 })

@@ -43,3 +43,36 @@ export const getUserFavorites = (userId) => {
         throw e;
     }
 };
+
+export const getAllUsers = () => {
+    try {
+        const stmt = db.prepare(`SELECT * FROM users`);
+        const users = stmt.all();
+        return users;
+    } catch(e){
+        console.error('Erreur lors de la récupération des utilisateurs', e.message)
+    }
+}
+
+export const deleteUsers = (id) => {
+    try {
+
+        const stmt = db.prepare('DELETE FROM users WHERE id = ?')
+        const result = stmt.run(id);
+        return result;
+
+    } catch (e){
+        console.error('Erreur lors de la suppression des utilisateurs', e.message)
+    }
+}
+
+export const updateUsers = (id, data) => {
+    try {
+        const stmt = db.prepare('UPDATE users SET username = ?, email = ? WHERE id = ?');
+        const result = stmt.run(data.username, data.email, id)
+        return result.changes > 0 ? { message: "Utilisateur mis à jour avec succès" } : { error: "Utilisateur introuvable" };
+
+    } catch (e){
+        console.error('Erreur lors de la mise à jour de l\'utilisateur', e.message)
+    }
+}
