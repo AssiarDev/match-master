@@ -18,7 +18,7 @@ export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
     const PrevButton = ({ onClick }) => (
         <button
             type="button" // Ajout du type pour éviter des comportements inattendus
-            className="absolute left-[-50px] top-[1%] text-white hover:bg-gray-800 rounded-sm px-2 py-2"
+            className="absolute left-[-50px] top-[1%] text-white hover:bg-gray-800 rounded-sm px-2 py-2 cursor-pointer"
             onClick={onClick} // Transmet seulement les props nécessaires
         >
             ←
@@ -29,7 +29,7 @@ export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
     const NextButton = ({ onClick }) => (
         <button
             type="button" // Ajout du type pour éviter des comportements inattendus
-            className="absolute right-[-50px] top-[1%] text-white hover:bg-gray-800 rounded-sm px-2 py-2"
+            className="absolute right-[-50px] top-[1%] text-white hover:bg-gray-800 rounded-sm px-2 py-2 cursor-pointer"
             onClick={onClick} // Transmet seulement les props nécessaires
         >
             →
@@ -56,7 +56,7 @@ export const DatePickerCarousel = ({ selectedDate, onDateChange }) => {
                     return (
                         <div
                             key={day.toISOString()} // Utilise une clé unique
-                            className={`py-1 text-center rounded-md shadow-lg mx-2 ${
+                            className={`py-1 text-center rounded-md shadow-lg mx-2 cursor-pointer ${
                                 selectedDate?.toDateString() === day.toDateString()
                                     ? 'bg-orange-800 text-white font-bold' // Style si la date est sélectionnée
                                     : 'text-white' // Style par défaut

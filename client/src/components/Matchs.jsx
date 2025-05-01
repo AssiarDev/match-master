@@ -98,7 +98,7 @@ export const MatchsDetails = () => {
                             const { flag, matches } = competitionData;
                             return (
                             <div key={competitionName} className="mb-8">
-                                <div className='flex gap-5 items-center'>
+                                <div className='flex gap-5 items-center ml-4'>
                                     <h2 className="text-2xl font-bold text-white">{competitionName}</h2>
                                     <img src={flag} alt="" className='h-5'/>
                                 </div>
