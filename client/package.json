@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.2",
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.0.3",
     "dotenv": "^16.4.7",
     "react": "^18.3.1",
