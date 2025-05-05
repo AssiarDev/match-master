@@ -2,11 +2,13 @@ import { Route, Routes, Link } from "react-router-dom";
 import { Home } from "./components/Home";
 //import { Favoris } from "./components/Favoris";
 import { MatchsDetails } from "./components/matchs";
-import { Connexion } from "./components/connexion";
+import { Connexion } from "./components/Connexion";
 import { NoMatch } from "./components/noMatch";
 import { Navbar } from "./components/forms/Navbar";
 import { SearchBar } from "./components/forms/Searchbar";
 import { TeamsDetails } from "./components/Teams/TeamsDetails";
+import { RegisterModal } from "./components/RegisterModal/RegisterModal";
+import { LoginModal } from "./components/LoginModal/LoginModal";
 
 
 function App() {
@@ -22,7 +24,8 @@ function App() {
           <Routes>
               {/* <Route path="/" element={<MatchsDetails />} /> */}
               {/* <Route path="/competitions/:teamId/matches" element={<MatchsDetails />} /> */}
-              <Route path="/connexion" element={<Connexion />} />
+              <Route path="/login" element={<Connexion />} />
+              <Route path="/register" element={<RegisterModal />} />
               <Route path="*" element={<NoMatch />}/>
               <Route path="/" element={<MatchsDetails />}/>
               <Route path="/teams/:teamId" element={<TeamsDetails />} />

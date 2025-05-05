@@ -20,6 +20,7 @@ export const LoginModal = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include"
       });
   
       const data = await response.json();
@@ -62,7 +63,7 @@ export const LoginModal = () => {
 
           <p className="mt-3 text-sm text-white text-center">
             Pas encore inscrit ?{" "}
-            <Link to="/inscription" className="text-amber-600 hover:underline">
+            <Link to="/register" className="text-amber-600 hover:underline">
               Créez un compte ici
             </Link>
           </p>
