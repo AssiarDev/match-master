@@ -1,29 +1,7 @@
-import { insertUser } from "../insert-db/insertUser.js";
 import { deleteUsers, getAllUsers, updateUsers } from "../db/queries.js";
 import express from 'express';
 
 const router = express.Router();
-
-router.post('/users', (req, res) => {
-    try {
-
-        const { username, email, password } = req.body;
-        const user = insertUser(username, email, password);
-
-        if (!username || !email || !password) {
-            return res.status(400).json({ error: "Tous les champs sont obligatoires" });
-        }
-
-        if (user) {
-            res.status(201).json({ message: "Utilisateur ajouté avec succès" });
-        } else {
-            res.status(409).json({ error: "L'utilisateur existe déjà" });
-        }
-
-    } catch(e){
-        res.status(500).json({ error: "Erreur serveur" });
-    }
-});
 
 router.get('/users', (req, res) => {
     try {
