@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_LOCAL")
+}
+
+model Club {
+  id            Int              @id @default(autoincrement())
+  name          String
+  country       String
+  emblem        String
+  stadium       String
+  idCompetition Int              @unique
+  competition   Competition      @relation(fields: [idCompetition], references: [id])
+  players       Player[]
+  trainers      Trainer[]
+  favorites     UsersFavorites[]
+}
+
+model Player {
+  id          Int      @id @default(autoincrement())
+  name        String
+  position    String
+  dateOfBirth DateTime
+  nationality String
+  idClub      Int
+  club        Club     @relation(fields: [idClub], references: [id])
+}
+
+model Trainer {
+  id            Int      @id @default(autoincrement())
+  name          String
+  dateOfBirth   DateTime
+  nationality   String
+  contractStart DateTime
+  contractEnd   DateTime
+  idClub        Int
+  club          Club     @relation(fields: [idClub], references: [id])
+}
+
+model Competition {
+  id        Int      @id @default(autoincrement())
+  name      String
+  place     String
+  emblem    String
+  startDate DateTime
+  endDate   DateTime
+  clubs     Club[]
+}
+
+model User {
+  id        Int              @id @default(autoincrement())
+  username  String
+  mail      String           @unique
+  password  String
+  favorites UsersFavorites[]
+}
+
+model UsersFavorites {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  clubId Int
+  user   User @relation(fields: [userId], references: [id])
+  club   Club @relation(fields: [clubId], references: [id])
+}
