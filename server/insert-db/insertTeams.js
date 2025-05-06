@@ -1,68 +1,61 @@
-import { db } from "../server.js";
 import { fetchChampionshipIds, fetchPlayersForTeams } from "../api/api.js";
+import pool from "../db/db.js";
 
-export const insertTeam = (players) => {
+export const insertTeam = async (players) => {
     try {
-        db.exec(`
-            CREATE TABLE IF NOT EXISTS players (
-            id INTEGER PRIMARY KEY,
-            name VARCHAR,
-            position VARCHAR,
-            date_of_birth DATE,
-            nationality TEXT NOT NULL,
-            id_club INTEGER,
-            FOREIGN KEY (id_club) REFERENCES club(id)
-        )`);
+        // Vérifier que tous les `id_club` existent avant d'insérer
+        for (const player of players) {
+            const clubExists = await pool.query('SELECT id FROM "Club" WHERE id = $1', [player.id_club]);
 
-        const insertStmt = db.prepare(`
-            INSERT OR IGNORE INTO players (
-            id,
-            name,
-            position,
-            date_of_birth,
-            nationality,
-            id_club
-        ) VALUES (?, ?, ?, ?, ?, ?)`);
-
-
-        players.forEach(player => {
-            if (!player.id || !player.name || !player.position || !player.date_of_birth || !player.nationality) {
-                console.warn('Données de joueur incomplètes :', player);
-                return;
+            if (clubExists.rowCount === 0) {
+                console.warn(`Club ID ${player.id_club} n'existe pas, joueur ignoré`);
+                continue;
             }
-            insertStmt.run(
+
+            // Requête d'insertion avec gestion des doublons
+            await pool.query(`
+                INSERT INTO "Player" (id, name, position, date_of_birth, nationality, id_club) 
+                VALUES ($1, $2, $3, $4, $5, $6)
+                ON CONFLICT (id) DO NOTHING;
+            `, [
                 player.id,
                 player.name,
                 player.position,
-                player.date_of_birth,
+                player.date_of_birth || "2000-01-01",
                 player.nationality,
                 player.id_club
-            )
-        });
+            ]);
+        }
 
-        console.log('Equipe insérées avec succès dans la base de donnée.')
-    } catch (e){
-        console.error('Erreur lors de l\'insertion des équipes: ', e.message)
-    };
+        console.log("Joueurs insérés avec succès !");
+    } catch (e) {
+        console.error("Erreur lors de l'insertion des joueurs :", e.message);
+    }
 };
 
-// Récupération des équipes
+// Récupération des équipes et insertion
 const main = async () => {
-    const competitionIds = await fetchChampionshipIds();
+    try {
+        const competitionIds = await fetchChampionshipIds();
 
-    if (!competitionIds || competitionIds.length === 0) {
+        if (!competitionIds || competitionIds.length === 0) {
             console.error("Aucune compétition trouvée.");
             return;
-    }
+        }
 
-    const players = await fetchPlayersForTeams(competitionIds);
+        const players = await fetchPlayersForTeams(competitionIds);
 
-    if (players.length === 0) {
-            console.warn("Aucun joueur récupéré.");
+        if (!players || players.length === 0) {
+            console.warn("⚠️ Aucun joueur récupéré.");
             return;
-    }
+        }
 
-    insertTeam(players);
-}
+        await insertTeam(players);
+
+        console.log("Tous les joueurs ont été insérés !");
+    } catch (e) {
+        console.error("Erreur lors de la récupération des équipes :", e.message);
+    }
+};
 
 main();

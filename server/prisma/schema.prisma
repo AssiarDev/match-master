@@ -15,36 +15,36 @@ datasource db {
 }
 
 model Club {
-  id           Int    @id @default(autoincrement())
+  id           Int    @id
   name         String
   country      String
   emblem       String
   stadium      String
-  idCompetition Int    @unique
-  competition  Competition @relation(fields: [idCompetition], references: [id])
+  id_competition Int   
+  competition  Competition @relation(fields: [id_competition], references: [id])
   players      Player[]
   trainers     Trainer[]
   favorites    UsersFavorites[]
 }
 
 model Player {
-  id           Int    @id @default(autoincrement())
+  id           Int    @id 
   name         String
   position     String
-  dateOfBirth  DateTime
-  nationality  String
-  idClub       Int
+  dateOfBirth  String @map("date_of_birth")
+  nationality  String 
+  idClub       Int    @map("id_club")
   club         Club @relation(fields: [idClub], references: [id])
 }
 
 model Trainer {
-  id            Int    @id @default(autoincrement())
+  id            Int    @id 
   name          String
-  dateOfBirth   DateTime
+  dateOfBirth   String @map("date_of_birth")
   nationality   String
-  contractStart DateTime
-  contractEnd   DateTime
-  idClub        Int
+  contractStart DateTime @map("contract_start")
+  contractEnd   DateTime  @map("contract_end")
+  idClub        Int    @map("id_club")
   club          Club @relation(fields: [idClub], references: [id])
 }
 
@@ -53,9 +53,10 @@ model Competition {
   name      String
   place     String
   emblem    String
-  startDate DateTime
-  endDate   DateTime
+  start_date DateTime
+  end_date   DateTime
   clubs     Club[]
+  type      String
 }
 
 model User {

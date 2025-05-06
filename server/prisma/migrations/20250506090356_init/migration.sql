@@ -41,8 +41,8 @@ CREATE TABLE "Competition" (
     "name" TEXT NOT NULL,
     "place" TEXT NOT NULL,
     "emblem" TEXT NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3) NOT NULL,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Competition_pkey" PRIMARY KEY ("id")
 );

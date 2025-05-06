@@ -1,54 +1,47 @@
-import { db } from "../server.js";
+import pool from "../db/db.js";
 import { fetchChampionshipIds, fetchTeams } from "../api/api.js";
 
-export const insertClub = (teams, competitionData) => {
-    try{
-        db.exec(`
-            CREATE TABLE IF NOT EXISTS club (
-            id INTEGER PRIMARY KEY,
-            name VARCHAR, 
-            country VARCHAR,
-            id_competition INTEGER,
-            emblem VARCHAR,
-            stadium TEXT,
-            FOREIGN KEY (id_competition) REFERENCES competitions(id)
-            )`);
+export const insertClub = async (teams, competitionId) => {
+    try {
+        const query = `
+            INSERT INTO "Club" (id, name, country, id_competition, emblem, stadium) 
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (id) DO NOTHING;
+        `;
 
-        const insertStmt = db.prepare(`
-            INSERT OR IGNORE INTO club (
-            id,
-            name,
-            country,
-            id_competition,
-            emblem, 
-            stadium
-        ) VALUES (?, ?, ?, ?, ?, ?)`);
-
-        const competitionId = competitionData.competitions.id
-        console.log('competitionId :', competitionId)
-
-        teams.forEach(team => {
-            insertStmt.run(
+        await Promise.all(
+            teams.map(team => pool.query(query, [
                 team.id,
                 team.name,
-                team.area.name,
+                team.area?.name || "Inconnu", 
                 competitionId,
-                team.crest,
-                team.venue
-            )
-        });
+                team.crest || null,
+                team.venue || null
+            ]))
+        );
 
-        console.log('Club insérées avec succès dans la base de données.');
-    } catch(e){
-        console.error('Erreur lors de l\'insertion des clubs: ', e);
+        console.log("Clubs insérés avec succès dans la base de données !");
+    } catch (e) {
+        console.error("Erreur lors de l'insertion des clubs :", e.message);
     }
 };
 
-// Récupération des clubs
-const championshipIds = await fetchChampionshipIds();
-const clubData = await fetchTeams(championshipIds);
+const main = async () => {
+    try {
+        const championshipIds = await fetchChampionshipIds();
+        const clubData = await fetchTeams(championshipIds);
 
-clubData.forEach((teamsData, index) => {
-        const competitionsId = championshipIds[index];
-        insertClub(teamsData.teams, {competitions: {id: competitionsId}})
-})
+        await Promise.all(
+            clubData.map((teamsData, index) => {
+                const competitionId = championshipIds[index];
+                return insertClub(teamsData.teams, competitionId);
+            })
+        );
+
+        console.log("Tous les clubs ont été insérés avec succès !");
+    } catch (e) {
+        console.error("Erreur lors de la récupération des clubs :", e.message);
+    }
+};
+
+main();

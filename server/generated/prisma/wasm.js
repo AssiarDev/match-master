@@ -126,7 +126,7 @@ exports.Prisma.ClubScalarFieldEnum = {
   country: 'country',
   emblem: 'emblem',
   stadium: 'stadium',
-  idCompetition: 'idCompetition'
+  id_competition: 'id_competition'
 };
 
 exports.Prisma.PlayerScalarFieldEnum = {
@@ -153,8 +153,9 @@ exports.Prisma.CompetitionScalarFieldEnum = {
   name: 'name',
   place: 'place',
   emblem: 'emblem',
-  startDate: 'startDate',
-  endDate: 'endDate'
+  start_date: 'start_date',
+  end_date: 'end_date',
+  type: 'type'
 };
 
 exports.Prisma.UserScalarFieldEnum = {

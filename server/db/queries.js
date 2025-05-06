@@ -1,4 +1,4 @@
-import { db } from "../server.js";
+// import { db } from "../server.js";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 

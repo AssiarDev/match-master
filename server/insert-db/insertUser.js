@@ -1,4 +1,4 @@
-import { db } from "../server.js";
+// import { db } from "../server.js";
 import bcrypt from 'bcryptjs';
 
 export const insertUser = (username, email, password) => {

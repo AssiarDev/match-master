@@ -1448,12 +1448,12 @@ export namespace Prisma {
 
   export type ClubAvgAggregateOutputType = {
     id: number | null
-    idCompetition: number | null
+    id_competition: number | null
   }
 
   export type ClubSumAggregateOutputType = {
     id: number | null
-    idCompetition: number | null
+    id_competition: number | null
   }
 
   export type ClubMinAggregateOutputType = {
@@ -1462,7 +1462,7 @@ export namespace Prisma {
     country: string | null
     emblem: string | null
     stadium: string | null
-    idCompetition: number | null
+    id_competition: number | null
   }
 
   export type ClubMaxAggregateOutputType = {
@@ -1471,7 +1471,7 @@ export namespace Prisma {
     country: string | null
     emblem: string | null
     stadium: string | null
-    idCompetition: number | null
+    id_competition: number | null
   }
 
   export type ClubCountAggregateOutputType = {
@@ -1480,19 +1480,19 @@ export namespace Prisma {
     country: number
     emblem: number
     stadium: number
-    idCompetition: number
+    id_competition: number
     _all: number
   }
 
 
   export type ClubAvgAggregateInputType = {
     id?: true
-    idCompetition?: true
+    id_competition?: true
   }
 
   export type ClubSumAggregateInputType = {
     id?: true
-    idCompetition?: true
+    id_competition?: true
   }
 
   export type ClubMinAggregateInputType = {
@@ -1501,7 +1501,7 @@ export namespace Prisma {
     country?: true
     emblem?: true
     stadium?: true
-    idCompetition?: true
+    id_competition?: true
   }
 
   export type ClubMaxAggregateInputType = {
@@ -1510,7 +1510,7 @@ export namespace Prisma {
     country?: true
     emblem?: true
     stadium?: true
-    idCompetition?: true
+    id_competition?: true
   }
 
   export type ClubCountAggregateInputType = {
@@ -1519,7 +1519,7 @@ export namespace Prisma {
     country?: true
     emblem?: true
     stadium?: true
-    idCompetition?: true
+    id_competition?: true
     _all?: true
   }
 
@@ -1615,7 +1615,7 @@ export namespace Prisma {
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
     _count: ClubCountAggregateOutputType | null
     _avg: ClubAvgAggregateOutputType | null
     _sum: ClubSumAggregateOutputType | null
@@ -1643,7 +1643,7 @@ export namespace Prisma {
     country?: boolean
     emblem?: boolean
     stadium?: boolean
-    idCompetition?: boolean
+    id_competition?: boolean
     competition?: boolean | CompetitionDefaultArgs<ExtArgs>
     players?: boolean | Club$playersArgs<ExtArgs>
     trainers?: boolean | Club$trainersArgs<ExtArgs>
@@ -1657,7 +1657,7 @@ export namespace Prisma {
     country?: boolean
     emblem?: boolean
     stadium?: boolean
-    idCompetition?: boolean
+    id_competition?: boolean
     competition?: boolean | CompetitionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["club"]>
 
@@ -1667,7 +1667,7 @@ export namespace Prisma {
     country?: boolean
     emblem?: boolean
     stadium?: boolean
-    idCompetition?: boolean
+    id_competition?: boolean
     competition?: boolean | CompetitionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["club"]>
 
@@ -1677,10 +1677,10 @@ export namespace Prisma {
     country?: boolean
     emblem?: boolean
     stadium?: boolean
-    idCompetition?: boolean
+    id_competition?: boolean
   }
 
-  export type ClubOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "country" | "emblem" | "stadium" | "idCompetition", ExtArgs["result"]["club"]>
+  export type ClubOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "country" | "emblem" | "stadium" | "id_competition", ExtArgs["result"]["club"]>
   export type ClubInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     competition?: boolean | CompetitionDefaultArgs<ExtArgs>
     players?: boolean | Club$playersArgs<ExtArgs>
@@ -1709,7 +1709,7 @@ export namespace Prisma {
       country: string
       emblem: string
       stadium: string
-      idCompetition: number
+      id_competition: number
     }, ExtArgs["result"]["club"]>
     composites: {}
   }
@@ -2142,7 +2142,7 @@ export namespace Prisma {
     readonly country: FieldRef<"Club", 'String'>
     readonly emblem: FieldRef<"Club", 'String'>
     readonly stadium: FieldRef<"Club", 'String'>
-    readonly idCompetition: FieldRef<"Club", 'Int'>
+    readonly id_competition: FieldRef<"Club", 'Int'>
   }
     
 
@@ -2655,7 +2655,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     position: string | null
-    dateOfBirth: Date | null
+    dateOfBirth: string | null
     nationality: string | null
     idClub: number | null
   }
@@ -2664,7 +2664,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     position: string | null
-    dateOfBirth: Date | null
+    dateOfBirth: string | null
     nationality: string | null
     idClub: number | null
   }
@@ -2808,7 +2808,7 @@ export namespace Prisma {
     id: number
     name: string
     position: string
-    dateOfBirth: Date
+    dateOfBirth: string
     nationality: string
     idClub: number
     _count: PlayerCountAggregateOutputType | null
@@ -2891,7 +2891,7 @@ export namespace Prisma {
       id: number
       name: string
       position: string
-      dateOfBirth: Date
+      dateOfBirth: string
       nationality: string
       idClub: number
     }, ExtArgs["result"]["player"]>
@@ -3321,7 +3321,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Player", 'Int'>
     readonly name: FieldRef<"Player", 'String'>
     readonly position: FieldRef<"Player", 'String'>
-    readonly dateOfBirth: FieldRef<"Player", 'DateTime'>
+    readonly dateOfBirth: FieldRef<"Player", 'String'>
     readonly nationality: FieldRef<"Player", 'String'>
     readonly idClub: FieldRef<"Player", 'Int'>
   }
@@ -3763,7 +3763,7 @@ export namespace Prisma {
   export type TrainerMinAggregateOutputType = {
     id: number | null
     name: string | null
-    dateOfBirth: Date | null
+    dateOfBirth: string | null
     nationality: string | null
     contractStart: Date | null
     contractEnd: Date | null
@@ -3773,7 +3773,7 @@ export namespace Prisma {
   export type TrainerMaxAggregateOutputType = {
     id: number | null
     name: string | null
-    dateOfBirth: Date | null
+    dateOfBirth: string | null
     nationality: string | null
     contractStart: Date | null
     contractEnd: Date | null
@@ -3922,7 +3922,7 @@ export namespace Prisma {
   export type TrainerGroupByOutputType = {
     id: number
     name: string
-    dateOfBirth: Date
+    dateOfBirth: string
     nationality: string
     contractStart: Date
     contractEnd: Date
@@ -4010,7 +4010,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       name: string
-      dateOfBirth: Date
+      dateOfBirth: string
       nationality: string
       contractStart: Date
       contractEnd: Date
@@ -4441,7 +4441,7 @@ export namespace Prisma {
   interface TrainerFieldRefs {
     readonly id: FieldRef<"Trainer", 'Int'>
     readonly name: FieldRef<"Trainer", 'String'>
-    readonly dateOfBirth: FieldRef<"Trainer", 'DateTime'>
+    readonly dateOfBirth: FieldRef<"Trainer", 'String'>
     readonly nationality: FieldRef<"Trainer", 'String'>
     readonly contractStart: FieldRef<"Trainer", 'DateTime'>
     readonly contractEnd: FieldRef<"Trainer", 'DateTime'>
@@ -4885,8 +4885,9 @@ export namespace Prisma {
     name: string | null
     place: string | null
     emblem: string | null
-    startDate: Date | null
-    endDate: Date | null
+    start_date: Date | null
+    end_date: Date | null
+    type: string | null
   }
 
   export type CompetitionMaxAggregateOutputType = {
@@ -4894,8 +4895,9 @@ export namespace Prisma {
     name: string | null
     place: string | null
     emblem: string | null
-    startDate: Date | null
-    endDate: Date | null
+    start_date: Date | null
+    end_date: Date | null
+    type: string | null
   }
 
   export type CompetitionCountAggregateOutputType = {
@@ -4903,8 +4905,9 @@ export namespace Prisma {
     name: number
     place: number
     emblem: number
-    startDate: number
-    endDate: number
+    start_date: number
+    end_date: number
+    type: number
     _all: number
   }
 
@@ -4922,8 +4925,9 @@ export namespace Prisma {
     name?: true
     place?: true
     emblem?: true
-    startDate?: true
-    endDate?: true
+    start_date?: true
+    end_date?: true
+    type?: true
   }
 
   export type CompetitionMaxAggregateInputType = {
@@ -4931,8 +4935,9 @@ export namespace Prisma {
     name?: true
     place?: true
     emblem?: true
-    startDate?: true
-    endDate?: true
+    start_date?: true
+    end_date?: true
+    type?: true
   }
 
   export type CompetitionCountAggregateInputType = {
@@ -4940,8 +4945,9 @@ export namespace Prisma {
     name?: true
     place?: true
     emblem?: true
-    startDate?: true
-    endDate?: true
+    start_date?: true
+    end_date?: true
+    type?: true
     _all?: true
   }
 
@@ -5036,8 +5042,9 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date
-    endDate: Date
+    start_date: Date
+    end_date: Date
+    type: string
     _count: CompetitionCountAggregateOutputType | null
     _avg: CompetitionAvgAggregateOutputType | null
     _sum: CompetitionSumAggregateOutputType | null
@@ -5064,8 +5071,9 @@ export namespace Prisma {
     name?: boolean
     place?: boolean
     emblem?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    type?: boolean
     clubs?: boolean | Competition$clubsArgs<ExtArgs>
     _count?: boolean | CompetitionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["competition"]>
@@ -5075,8 +5083,9 @@ export namespace Prisma {
     name?: boolean
     place?: boolean
     emblem?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    type?: boolean
   }, ExtArgs["result"]["competition"]>
 
   export type CompetitionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5084,8 +5093,9 @@ export namespace Prisma {
     name?: boolean
     place?: boolean
     emblem?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    type?: boolean
   }, ExtArgs["result"]["competition"]>
 
   export type CompetitionSelectScalar = {
@@ -5093,11 +5103,12 @@ export namespace Prisma {
     name?: boolean
     place?: boolean
     emblem?: boolean
-    startDate?: boolean
-    endDate?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    type?: boolean
   }
 
-  export type CompetitionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "place" | "emblem" | "startDate" | "endDate", ExtArgs["result"]["competition"]>
+  export type CompetitionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "place" | "emblem" | "start_date" | "end_date" | "type", ExtArgs["result"]["competition"]>
   export type CompetitionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     clubs?: boolean | Competition$clubsArgs<ExtArgs>
     _count?: boolean | CompetitionCountOutputTypeDefaultArgs<ExtArgs>
@@ -5115,8 +5126,9 @@ export namespace Prisma {
       name: string
       place: string
       emblem: string
-      startDate: Date
-      endDate: Date
+      start_date: Date
+      end_date: Date
+      type: string
     }, ExtArgs["result"]["competition"]>
     composites: {}
   }
@@ -5545,8 +5557,9 @@ export namespace Prisma {
     readonly name: FieldRef<"Competition", 'String'>
     readonly place: FieldRef<"Competition", 'String'>
     readonly emblem: FieldRef<"Competition", 'String'>
-    readonly startDate: FieldRef<"Competition", 'DateTime'>
-    readonly endDate: FieldRef<"Competition", 'DateTime'>
+    readonly start_date: FieldRef<"Competition", 'DateTime'>
+    readonly end_date: FieldRef<"Competition", 'DateTime'>
+    readonly type: FieldRef<"Competition", 'String'>
   }
     
 
@@ -8170,7 +8183,7 @@ export namespace Prisma {
     country: 'country',
     emblem: 'emblem',
     stadium: 'stadium',
-    idCompetition: 'idCompetition'
+    id_competition: 'id_competition'
   };
 
   export type ClubScalarFieldEnum = (typeof ClubScalarFieldEnum)[keyof typeof ClubScalarFieldEnum]
@@ -8206,8 +8219,9 @@ export namespace Prisma {
     name: 'name',
     place: 'place',
     emblem: 'emblem',
-    startDate: 'startDate',
-    endDate: 'endDate'
+    start_date: 'start_date',
+    end_date: 'end_date',
+    type: 'type'
   };
 
   export type CompetitionScalarFieldEnum = (typeof CompetitionScalarFieldEnum)[keyof typeof CompetitionScalarFieldEnum]
@@ -8321,7 +8335,7 @@ export namespace Prisma {
     country?: StringFilter<"Club"> | string
     emblem?: StringFilter<"Club"> | string
     stadium?: StringFilter<"Club"> | string
-    idCompetition?: IntFilter<"Club"> | number
+    id_competition?: IntFilter<"Club"> | number
     competition?: XOR<CompetitionScalarRelationFilter, CompetitionWhereInput>
     players?: PlayerListRelationFilter
     trainers?: TrainerListRelationFilter
@@ -8334,7 +8348,7 @@ export namespace Prisma {
     country?: SortOrder
     emblem?: SortOrder
     stadium?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
     competition?: CompetitionOrderByWithRelationInput
     players?: PlayerOrderByRelationAggregateInput
     trainers?: TrainerOrderByRelationAggregateInput
@@ -8343,7 +8357,6 @@ export namespace Prisma {
 
   export type ClubWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    idCompetition?: number
     AND?: ClubWhereInput | ClubWhereInput[]
     OR?: ClubWhereInput[]
     NOT?: ClubWhereInput | ClubWhereInput[]
@@ -8351,11 +8364,12 @@ export namespace Prisma {
     country?: StringFilter<"Club"> | string
     emblem?: StringFilter<"Club"> | string
     stadium?: StringFilter<"Club"> | string
+    id_competition?: IntFilter<"Club"> | number
     competition?: XOR<CompetitionScalarRelationFilter, CompetitionWhereInput>
     players?: PlayerListRelationFilter
     trainers?: TrainerListRelationFilter
     favorites?: UsersFavoritesListRelationFilter
-  }, "id" | "idCompetition">
+  }, "id">
 
   export type ClubOrderByWithAggregationInput = {
     id?: SortOrder
@@ -8363,7 +8377,7 @@ export namespace Prisma {
     country?: SortOrder
     emblem?: SortOrder
     stadium?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
     _count?: ClubCountOrderByAggregateInput
     _avg?: ClubAvgOrderByAggregateInput
     _max?: ClubMaxOrderByAggregateInput
@@ -8380,7 +8394,7 @@ export namespace Prisma {
     country?: StringWithAggregatesFilter<"Club"> | string
     emblem?: StringWithAggregatesFilter<"Club"> | string
     stadium?: StringWithAggregatesFilter<"Club"> | string
-    idCompetition?: IntWithAggregatesFilter<"Club"> | number
+    id_competition?: IntWithAggregatesFilter<"Club"> | number
   }
 
   export type PlayerWhereInput = {
@@ -8390,7 +8404,7 @@ export namespace Prisma {
     id?: IntFilter<"Player"> | number
     name?: StringFilter<"Player"> | string
     position?: StringFilter<"Player"> | string
-    dateOfBirth?: DateTimeFilter<"Player"> | Date | string
+    dateOfBirth?: StringFilter<"Player"> | string
     nationality?: StringFilter<"Player"> | string
     idClub?: IntFilter<"Player"> | number
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
@@ -8413,7 +8427,7 @@ export namespace Prisma {
     NOT?: PlayerWhereInput | PlayerWhereInput[]
     name?: StringFilter<"Player"> | string
     position?: StringFilter<"Player"> | string
-    dateOfBirth?: DateTimeFilter<"Player"> | Date | string
+    dateOfBirth?: StringFilter<"Player"> | string
     nationality?: StringFilter<"Player"> | string
     idClub?: IntFilter<"Player"> | number
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
@@ -8440,7 +8454,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Player"> | number
     name?: StringWithAggregatesFilter<"Player"> | string
     position?: StringWithAggregatesFilter<"Player"> | string
-    dateOfBirth?: DateTimeWithAggregatesFilter<"Player"> | Date | string
+    dateOfBirth?: StringWithAggregatesFilter<"Player"> | string
     nationality?: StringWithAggregatesFilter<"Player"> | string
     idClub?: IntWithAggregatesFilter<"Player"> | number
   }
@@ -8451,7 +8465,7 @@ export namespace Prisma {
     NOT?: TrainerWhereInput | TrainerWhereInput[]
     id?: IntFilter<"Trainer"> | number
     name?: StringFilter<"Trainer"> | string
-    dateOfBirth?: DateTimeFilter<"Trainer"> | Date | string
+    dateOfBirth?: StringFilter<"Trainer"> | string
     nationality?: StringFilter<"Trainer"> | string
     contractStart?: DateTimeFilter<"Trainer"> | Date | string
     contractEnd?: DateTimeFilter<"Trainer"> | Date | string
@@ -8476,7 +8490,7 @@ export namespace Prisma {
     OR?: TrainerWhereInput[]
     NOT?: TrainerWhereInput | TrainerWhereInput[]
     name?: StringFilter<"Trainer"> | string
-    dateOfBirth?: DateTimeFilter<"Trainer"> | Date | string
+    dateOfBirth?: StringFilter<"Trainer"> | string
     nationality?: StringFilter<"Trainer"> | string
     contractStart?: DateTimeFilter<"Trainer"> | Date | string
     contractEnd?: DateTimeFilter<"Trainer"> | Date | string
@@ -8505,7 +8519,7 @@ export namespace Prisma {
     NOT?: TrainerScalarWhereWithAggregatesInput | TrainerScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Trainer"> | number
     name?: StringWithAggregatesFilter<"Trainer"> | string
-    dateOfBirth?: DateTimeWithAggregatesFilter<"Trainer"> | Date | string
+    dateOfBirth?: StringWithAggregatesFilter<"Trainer"> | string
     nationality?: StringWithAggregatesFilter<"Trainer"> | string
     contractStart?: DateTimeWithAggregatesFilter<"Trainer"> | Date | string
     contractEnd?: DateTimeWithAggregatesFilter<"Trainer"> | Date | string
@@ -8520,8 +8534,9 @@ export namespace Prisma {
     name?: StringFilter<"Competition"> | string
     place?: StringFilter<"Competition"> | string
     emblem?: StringFilter<"Competition"> | string
-    startDate?: DateTimeFilter<"Competition"> | Date | string
-    endDate?: DateTimeFilter<"Competition"> | Date | string
+    start_date?: DateTimeFilter<"Competition"> | Date | string
+    end_date?: DateTimeFilter<"Competition"> | Date | string
+    type?: StringFilter<"Competition"> | string
     clubs?: ClubListRelationFilter
   }
 
@@ -8530,8 +8545,9 @@ export namespace Prisma {
     name?: SortOrder
     place?: SortOrder
     emblem?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    type?: SortOrder
     clubs?: ClubOrderByRelationAggregateInput
   }
 
@@ -8543,8 +8559,9 @@ export namespace Prisma {
     name?: StringFilter<"Competition"> | string
     place?: StringFilter<"Competition"> | string
     emblem?: StringFilter<"Competition"> | string
-    startDate?: DateTimeFilter<"Competition"> | Date | string
-    endDate?: DateTimeFilter<"Competition"> | Date | string
+    start_date?: DateTimeFilter<"Competition"> | Date | string
+    end_date?: DateTimeFilter<"Competition"> | Date | string
+    type?: StringFilter<"Competition"> | string
     clubs?: ClubListRelationFilter
   }, "id">
 
@@ -8553,8 +8570,9 @@ export namespace Prisma {
     name?: SortOrder
     place?: SortOrder
     emblem?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    type?: SortOrder
     _count?: CompetitionCountOrderByAggregateInput
     _avg?: CompetitionAvgOrderByAggregateInput
     _max?: CompetitionMaxOrderByAggregateInput
@@ -8570,8 +8588,9 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Competition"> | string
     place?: StringWithAggregatesFilter<"Competition"> | string
     emblem?: StringWithAggregatesFilter<"Competition"> | string
-    startDate?: DateTimeWithAggregatesFilter<"Competition"> | Date | string
-    endDate?: DateTimeWithAggregatesFilter<"Competition"> | Date | string
+    start_date?: DateTimeWithAggregatesFilter<"Competition"> | Date | string
+    end_date?: DateTimeWithAggregatesFilter<"Competition"> | Date | string
+    type?: StringWithAggregatesFilter<"Competition"> | string
   }
 
   export type UserWhereInput = {
@@ -8677,6 +8696,7 @@ export namespace Prisma {
   }
 
   export type ClubCreateInput = {
+    id: number
     name: string
     country: string
     emblem: string
@@ -8688,18 +8708,19 @@ export namespace Prisma {
   }
 
   export type ClubUncheckedCreateInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
     players?: PlayerUncheckedCreateNestedManyWithoutClubInput
     trainers?: TrainerUncheckedCreateNestedManyWithoutClubInput
     favorites?: UsersFavoritesUncheckedCreateNestedManyWithoutClubInput
   }
 
   export type ClubUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
@@ -8716,22 +8737,23 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
     stadium?: StringFieldUpdateOperationsInput | string
-    idCompetition?: IntFieldUpdateOperationsInput | number
+    id_competition?: IntFieldUpdateOperationsInput | number
     players?: PlayerUncheckedUpdateManyWithoutClubNestedInput
     trainers?: TrainerUncheckedUpdateManyWithoutClubNestedInput
     favorites?: UsersFavoritesUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type ClubCreateManyInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
   }
 
   export type ClubUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
@@ -8744,30 +8766,32 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
     stadium?: StringFieldUpdateOperationsInput | string
-    idCompetition?: IntFieldUpdateOperationsInput | number
+    id_competition?: IntFieldUpdateOperationsInput | number
   }
 
   export type PlayerCreateInput = {
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     club: ClubCreateNestedOneWithoutPlayersInput
   }
 
   export type PlayerUncheckedCreateInput = {
-    id?: number
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     idClub: number
   }
 
   export type PlayerUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     club?: ClubUpdateOneRequiredWithoutPlayersNestedInput
   }
@@ -8776,24 +8800,25 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     idClub?: IntFieldUpdateOperationsInput | number
   }
 
   export type PlayerCreateManyInput = {
-    id?: number
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     idClub: number
   }
 
   export type PlayerUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
   }
 
@@ -8801,14 +8826,15 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     idClub?: IntFieldUpdateOperationsInput | number
   }
 
   export type TrainerCreateInput = {
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
@@ -8816,9 +8842,9 @@ export namespace Prisma {
   }
 
   export type TrainerUncheckedCreateInput = {
-    id?: number
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
@@ -8826,8 +8852,9 @@ export namespace Prisma {
   }
 
   export type TrainerUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8837,7 +8864,7 @@ export namespace Prisma {
   export type TrainerUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8845,9 +8872,9 @@ export namespace Prisma {
   }
 
   export type TrainerCreateManyInput = {
-    id?: number
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
@@ -8855,8 +8882,9 @@ export namespace Prisma {
   }
 
   export type TrainerUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8865,7 +8893,7 @@ export namespace Prisma {
   export type TrainerUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8876,8 +8904,9 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date | string
-    endDate: Date | string
+    start_date: Date | string
+    end_date: Date | string
+    type: string
     clubs?: ClubCreateNestedManyWithoutCompetitionInput
   }
 
@@ -8886,8 +8915,9 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date | string
-    endDate: Date | string
+    start_date: Date | string
+    end_date: Date | string
+    type: string
     clubs?: ClubUncheckedCreateNestedManyWithoutCompetitionInput
   }
 
@@ -8895,8 +8925,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
     clubs?: ClubUpdateManyWithoutCompetitionNestedInput
   }
 
@@ -8905,8 +8936,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
     clubs?: ClubUncheckedUpdateManyWithoutCompetitionNestedInput
   }
 
@@ -8915,16 +8947,18 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date | string
-    endDate: Date | string
+    start_date: Date | string
+    end_date: Date | string
+    type: string
   }
 
   export type CompetitionUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type CompetitionUncheckedUpdateManyInput = {
@@ -8932,8 +8966,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateInput = {
@@ -9091,12 +9126,12 @@ export namespace Prisma {
     country?: SortOrder
     emblem?: SortOrder
     stadium?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
   }
 
   export type ClubAvgOrderByAggregateInput = {
     id?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
   }
 
   export type ClubMaxOrderByAggregateInput = {
@@ -9105,7 +9140,7 @@ export namespace Prisma {
     country?: SortOrder
     emblem?: SortOrder
     stadium?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
   }
 
   export type ClubMinOrderByAggregateInput = {
@@ -9114,12 +9149,12 @@ export namespace Prisma {
     country?: SortOrder
     emblem?: SortOrder
     stadium?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
   }
 
   export type ClubSumOrderByAggregateInput = {
     id?: SortOrder
-    idCompetition?: SortOrder
+    id_competition?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -9154,17 +9189,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type ClubScalarRelationFilter = {
@@ -9209,7 +9233,7 @@ export namespace Prisma {
     idClub?: SortOrder
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+  export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -9217,10 +9241,7 @@ export namespace Prisma {
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type TrainerCountOrderByAggregateInput = {
@@ -9263,6 +9284,20 @@ export namespace Prisma {
     idClub?: SortOrder
   }
 
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type ClubListRelationFilter = {
     every?: ClubWhereInput
     some?: ClubWhereInput
@@ -9278,8 +9313,9 @@ export namespace Prisma {
     name?: SortOrder
     place?: SortOrder
     emblem?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    type?: SortOrder
   }
 
   export type CompetitionAvgOrderByAggregateInput = {
@@ -9291,8 +9327,9 @@ export namespace Prisma {
     name?: SortOrder
     place?: SortOrder
     emblem?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    type?: SortOrder
   }
 
   export type CompetitionMinOrderByAggregateInput = {
@@ -9300,8 +9337,9 @@ export namespace Prisma {
     name?: SortOrder
     place?: SortOrder
     emblem?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    type?: SortOrder
   }
 
   export type CompetitionSumOrderByAggregateInput = {
@@ -9420,6 +9458,14 @@ export namespace Prisma {
     connect?: UsersFavoritesWhereUniqueInput | UsersFavoritesWhereUniqueInput[]
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -9474,14 +9520,6 @@ export namespace Prisma {
     deleteMany?: UsersFavoritesScalarWhereInput | UsersFavoritesScalarWhereInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type PlayerUncheckedUpdateManyWithoutClubNestedInput = {
     create?: XOR<PlayerCreateWithoutClubInput, PlayerUncheckedCreateWithoutClubInput> | PlayerCreateWithoutClubInput[] | PlayerUncheckedCreateWithoutClubInput[]
     connectOrCreate?: PlayerCreateOrConnectWithoutClubInput | PlayerCreateOrConnectWithoutClubInput[]
@@ -9530,10 +9568,6 @@ export namespace Prisma {
     connect?: ClubWhereUniqueInput
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
   export type ClubUpdateOneRequiredWithoutPlayersNestedInput = {
     create?: XOR<ClubCreateWithoutPlayersInput, ClubUncheckedCreateWithoutPlayersInput>
     connectOrCreate?: ClubCreateOrConnectWithoutPlayersInput
@@ -9546,6 +9580,10 @@ export namespace Prisma {
     create?: XOR<ClubCreateWithoutTrainersInput, ClubUncheckedCreateWithoutTrainersInput>
     connectOrCreate?: ClubCreateOrConnectWithoutTrainersInput
     connect?: ClubWhereUniqueInput
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type ClubUpdateOneRequiredWithoutTrainersNestedInput = {
@@ -9766,8 +9804,9 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date | string
-    endDate: Date | string
+    start_date: Date | string
+    end_date: Date | string
+    type: string
   }
 
   export type CompetitionUncheckedCreateWithoutClubsInput = {
@@ -9775,8 +9814,9 @@ export namespace Prisma {
     name: string
     place: string
     emblem: string
-    startDate: Date | string
-    endDate: Date | string
+    start_date: Date | string
+    end_date: Date | string
+    type: string
   }
 
   export type CompetitionCreateOrConnectWithoutClubsInput = {
@@ -9785,17 +9825,18 @@ export namespace Prisma {
   }
 
   export type PlayerCreateWithoutClubInput = {
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
   }
 
   export type PlayerUncheckedCreateWithoutClubInput = {
-    id?: number
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
   }
 
@@ -9810,17 +9851,18 @@ export namespace Prisma {
   }
 
   export type TrainerCreateWithoutClubInput = {
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
   }
 
   export type TrainerUncheckedCreateWithoutClubInput = {
-    id?: number
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
@@ -9870,8 +9912,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type CompetitionUncheckedUpdateWithoutClubsInput = {
@@ -9879,8 +9922,9 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     place?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type PlayerUpsertWithWhereUniqueWithoutClubInput = {
@@ -9906,7 +9950,7 @@ export namespace Prisma {
     id?: IntFilter<"Player"> | number
     name?: StringFilter<"Player"> | string
     position?: StringFilter<"Player"> | string
-    dateOfBirth?: DateTimeFilter<"Player"> | Date | string
+    dateOfBirth?: StringFilter<"Player"> | string
     nationality?: StringFilter<"Player"> | string
     idClub?: IntFilter<"Player"> | number
   }
@@ -9933,7 +9977,7 @@ export namespace Prisma {
     NOT?: TrainerScalarWhereInput | TrainerScalarWhereInput[]
     id?: IntFilter<"Trainer"> | number
     name?: StringFilter<"Trainer"> | string
-    dateOfBirth?: DateTimeFilter<"Trainer"> | Date | string
+    dateOfBirth?: StringFilter<"Trainer"> | string
     nationality?: StringFilter<"Trainer"> | string
     contractStart?: DateTimeFilter<"Trainer"> | Date | string
     contractEnd?: DateTimeFilter<"Trainer"> | Date | string
@@ -9966,6 +10010,7 @@ export namespace Prisma {
   }
 
   export type ClubCreateWithoutPlayersInput = {
+    id: number
     name: string
     country: string
     emblem: string
@@ -9976,12 +10021,12 @@ export namespace Prisma {
   }
 
   export type ClubUncheckedCreateWithoutPlayersInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
     trainers?: TrainerUncheckedCreateNestedManyWithoutClubInput
     favorites?: UsersFavoritesUncheckedCreateNestedManyWithoutClubInput
   }
@@ -10003,6 +10048,7 @@ export namespace Prisma {
   }
 
   export type ClubUpdateWithoutPlayersInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
@@ -10018,12 +10064,13 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
     stadium?: StringFieldUpdateOperationsInput | string
-    idCompetition?: IntFieldUpdateOperationsInput | number
+    id_competition?: IntFieldUpdateOperationsInput | number
     trainers?: TrainerUncheckedUpdateManyWithoutClubNestedInput
     favorites?: UsersFavoritesUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type ClubCreateWithoutTrainersInput = {
+    id: number
     name: string
     country: string
     emblem: string
@@ -10034,12 +10081,12 @@ export namespace Prisma {
   }
 
   export type ClubUncheckedCreateWithoutTrainersInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
     players?: PlayerUncheckedCreateNestedManyWithoutClubInput
     favorites?: UsersFavoritesUncheckedCreateNestedManyWithoutClubInput
   }
@@ -10061,6 +10108,7 @@ export namespace Prisma {
   }
 
   export type ClubUpdateWithoutTrainersInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
@@ -10076,12 +10124,13 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
     stadium?: StringFieldUpdateOperationsInput | string
-    idCompetition?: IntFieldUpdateOperationsInput | number
+    id_competition?: IntFieldUpdateOperationsInput | number
     players?: PlayerUncheckedUpdateManyWithoutClubNestedInput
     favorites?: UsersFavoritesUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type ClubCreateWithoutCompetitionInput = {
+    id: number
     name: string
     country: string
     emblem: string
@@ -10092,7 +10141,7 @@ export namespace Prisma {
   }
 
   export type ClubUncheckedCreateWithoutCompetitionInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
@@ -10137,7 +10186,7 @@ export namespace Prisma {
     country?: StringFilter<"Club"> | string
     emblem?: StringFilter<"Club"> | string
     stadium?: StringFilter<"Club"> | string
-    idCompetition?: IntFilter<"Club"> | number
+    id_competition?: IntFilter<"Club"> | number
   }
 
   export type UsersFavoritesCreateWithoutUserInput = {
@@ -10194,6 +10243,7 @@ export namespace Prisma {
   }
 
   export type ClubCreateWithoutFavoritesInput = {
+    id: number
     name: string
     country: string
     emblem: string
@@ -10204,12 +10254,12 @@ export namespace Prisma {
   }
 
   export type ClubUncheckedCreateWithoutFavoritesInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
     stadium: string
-    idCompetition: number
+    id_competition: number
     players?: PlayerUncheckedCreateNestedManyWithoutClubInput
     trainers?: TrainerUncheckedCreateNestedManyWithoutClubInput
   }
@@ -10255,6 +10305,7 @@ export namespace Prisma {
   }
 
   export type ClubUpdateWithoutFavoritesInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
@@ -10270,23 +10321,23 @@ export namespace Prisma {
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string
     stadium?: StringFieldUpdateOperationsInput | string
-    idCompetition?: IntFieldUpdateOperationsInput | number
+    id_competition?: IntFieldUpdateOperationsInput | number
     players?: PlayerUncheckedUpdateManyWithoutClubNestedInput
     trainers?: TrainerUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type PlayerCreateManyClubInput = {
-    id?: number
+    id: number
     name: string
     position: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
   }
 
   export type TrainerCreateManyClubInput = {
-    id?: number
+    id: number
     name: string
-    dateOfBirth: Date | string
+    dateOfBirth: string
     nationality: string
     contractStart: Date | string
     contractEnd: Date | string
@@ -10298,9 +10349,10 @@ export namespace Prisma {
   }
 
   export type PlayerUpdateWithoutClubInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
   }
 
@@ -10308,7 +10360,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
   }
 
@@ -10316,13 +10368,14 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     position?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
   }
 
   export type TrainerUpdateWithoutClubInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10331,7 +10384,7 @@ export namespace Prisma {
   export type TrainerUncheckedUpdateWithoutClubInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10340,7 +10393,7 @@ export namespace Prisma {
   export type TrainerUncheckedUpdateManyWithoutClubInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
-    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: StringFieldUpdateOperationsInput | string
     nationality?: StringFieldUpdateOperationsInput | string
     contractStart?: DateTimeFieldUpdateOperationsInput | Date | string
     contractEnd?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10361,7 +10414,7 @@ export namespace Prisma {
   }
 
   export type ClubCreateManyCompetitionInput = {
-    id?: number
+    id: number
     name: string
     country: string
     emblem: string
@@ -10369,6 +10422,7 @@ export namespace Prisma {
   }
 
   export type ClubUpdateWithoutCompetitionInput = {
+    id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
     emblem?: StringFieldUpdateOperationsInput | string

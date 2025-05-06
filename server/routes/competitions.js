@@ -1,4 +1,4 @@
-import { db } from "../server.js";
+// import { db } from "../server.js";
 import express from "express";
 import { fetchChampionshipIds, fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../api/api.js";
 
