@@ -9,7 +9,7 @@ export const LoginModal = () => {
     e.preventDefault();
   
     const formData = {
-      email: e.target[0].value,
+      mail: e.target[0].value,
       password: e.target[1].value,
     };
   
@@ -28,6 +28,8 @@ export const LoginModal = () => {
       if (response.ok) {
         console.log("Connexion réussie :", data);
         // Ici, tu peux rediriger ou stocker le token si nécessaire
+        // STOCK MOI CE TOKEN WSHHHH
+        window.localStorage.setItem('token', data.token)
         window.location.href ='/favoris'
       } else {
         console.error("Erreur :", data.message);
