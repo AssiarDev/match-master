@@ -1,47 +1,37 @@
-// import { db } from "../server.js";
 import express from "express";
 import { fetchChampionshipIds, fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../api/api.js";
+import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
+const prisma = new PrismaClient()
 
-router.get('/competitions', (req, res) => {
+router.get('/competitions', async (req, res) => {
     try {
-        const query = `
-        SELECT 
-            name, 
-            emblem,
-            id
-        FROM
-            competitions
-        WHERE 
-            type = 'LEAGUE'
-        `
-        const rows = db.prepare(query).all();
-        res.json(rows);
+        const competitions = await prisma.competition.findMany({
+            where: { type: 'LEAGUE' },
+            select: { id: true, name: true, emblem: true }
+        });
+
+        res.json(competitions)
     } catch (e){
-        
         console.log('Erreur lors de l\'execution de la requête :', e.message);
         res.status(500).send('Erreur serveur');
     } 
 });
 
 router.get('/competitions/:id/teams', async (req, res) => {
-    const competitionId = req.params.id;
+    const competitionId = parseInt(req.params.id);
     try {
-        const query = `
-        SELECT
-            id, 
-            name,
-            emblem,
-            id_competition
-        FROM
-            club
-        WHERE
-            id_competition = ?
-        `;
-        const rows = db.prepare(query).all(competitionId);
-        res.json(rows);
+        const teams = await prisma.club.findMany({
+            where: { id_competition: competitionId },
+            select: { id: true, name: true, emblem: true, id_competition: true }
+        });
 
+        if (!teams.length) {
+            return res.status(404).json({ error: `Aucune équipe trouvée pour la compétition ${competitionId}.` });
+        }
+
+        res.json(teams);
     } catch (e){
         console.error('Erreur lors de l\'execution de la requête :', e.message);
         res.status(500).send('Erreur serveur')

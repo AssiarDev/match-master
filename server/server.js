@@ -1,22 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
-// import { initializeDatabase } from './db/db.js';
 import { teams } from './routes/teams.js';
 import { competitions } from './routes/competitions.js';
 import { standings } from './routes/standings.js';
 import { users } from './routes/users.js';
 import { login } from './routes/login.js';
-import { logout } from './routes/logout.js';
 import { register } from './routes/register.js';
 
 const app = express();
 const port = process.env.PORT;
 const urlServerClient = process.env.URL_SERVER_CLIENT;
-const urlDb = process.env.URL_DB;
-
-// Intégration de ma db
-// export const db = initializeDatabase(urlDb);
 
 const corsOptions = {
     origin: urlServerClient,
@@ -41,7 +35,6 @@ app.use(competitions);
 app.use(standings);
 app.use(users);
 app.use(login);
-app.use(logout);
 app.use(register);
 
 app.get('/', (req, res) => {
