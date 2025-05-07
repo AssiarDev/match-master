@@ -1,29 +1,48 @@
-import { db } from "../server.js";
+import { PrismaClient } from "@prisma/client";
+import pool from '../db/db.js'
 
-export const insertUsersFavorite = (userId, clubId) => {
+const prisma = new PrismaClient()
+
+const insertUsersFavorite = async (userId, clubId) => {
     try {
-        db.exec(`
-            CREATE TABLE IF NOT EXISTS users_favorites (
-            user_id INT UNSIGNED NOT NULL,
-            club_id INT UNSIGNED NOT NULL,
-            PRIMARY KEY (user_id, club_id),
-            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-            FOREIGN KEY (club_id) REFERENCES club (id) ON DELETE CASCADE
-            )`);
+        const userExists = await prisma.user.findUnique({ where: { id: userId } });
+        const clubExists = await prisma.club.findUnique({ where: { id: clubId } });
 
-        const insertStmt = db.prepare(`
-            INSERT OR IGNORE INTO users_favorites (
-            user_id, 
-            club_id
-        ) VALUES (?, ?)`);
+        if (!userExists) {
+            console.warn(`L'utilisateur ID ${userId} n'existe pas.`);
+            return { success: false, message: `L'utilisateur ID ${userId} n'existe pas.` };
+        }
 
-        insertStmt.run(userId, clubId);
+        if (!clubExists) {
+            console.warn(`Le club ID ${clubId} n'existe pas.`);
+            return { success: false, message: `Le club ID ${clubId} n'existe pas.` };
+        }
 
+        // Trouver l'entrée existante dans UsersFavorites
+        const existingFavorite = await prisma.usersFavorites.findFirst({
+            where: { userId, clubId }
+        });
+
+
+        // Insérer ou ignorer la relation utilisateur-club
+        await prisma.usersFavorites.upsert({
+            where: {
+                id: existingFavorite?.id || 0
+            },
+            update: {}, // Ne rien modifier si déjà existant
+            create: {
+                userId,
+                clubId
+            }
+        });
+
+        console.log(`Club ${clubId} ajouté aux favoris de l'utilisateur ${userId}`);
         return { success: true, message: `Club ${clubId} ajouté aux favoris de l'utilisateur ${userId}` };
-        
-    } catch(e){
-        console.error('Erreur lors de la création de la table', e.message)
+
+    } catch (e) {
+        console.error("Erreur lors de l'ajout aux favoris :", e.message);
+        return { success: false, message: "Erreur lors de l'ajout aux favoris." };
     }
-}
+};
 
 //insertUsersFavorite(1, 524);

@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generate/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_LOCAL")
+}
+
+model Club {
+  id             Int              @id
+  name           String
+  country        String
+  emblem         String
+  stadium        String
+  id_competition Int
+  competition    Competition      @relation(fields: [id_competition], references: [id])
+  players        Player[]
+  trainers       Trainer[]
+  favorites      UsersFavorites[]
+}
+
+model Player {
+  id          Int    @id
+  name        String
+  position    String
+  dateOfBirth String @map("date_of_birth")
+  nationality String
+  idClub      Int    @map("id_club")
+  club        Club   @relation(fields: [idClub], references: [id])
+}
+
+model Trainer {
+  id            Int      @id
+  name          String
+  dateOfBirth   String   @map("date_of_birth")
+  nationality   String
+  contractStart DateTime @map("contract_start")
+  contractEnd   DateTime @map("contract_end")
+  idClub        Int      @map("id_club")
+  club          Club     @relation(fields: [idClub], references: [id])
+}
+
+model Competition {
+  id         Int      @id @default(autoincrement())
+  name       String
+  place      String
+  emblem     String
+  start_date DateTime
+  end_date   DateTime
+  clubs      Club[]
+  type       String
+}
+
+model User {
+  id        Int              @id @default(autoincrement())
+  username  String
+  mail      String           @unique
+  password  String
+  favorites UsersFavorites[]
+}
+
+model UsersFavorites {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  clubId Int
+  user   User @relation(fields: [userId], references: [id])
+  club   Club @relation(fields: [clubId], references: [id])
+}
