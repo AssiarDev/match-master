@@ -1,10 +1,13 @@
 import express from 'express';
 import { insertUsersFavorite } from '../insert-db/insertUsersFavorite';
 import { getUserFavorites } from '../db/queries';
+import { loginCheck } from '../middleware/loginMiddleware';
 
 const router = express.Router();
 
-router.get('/users/:usersId/favorites', (req, res) => {
+router.use('protected', loginCheck)
+
+router.get('protected/users/:usersId/favorites', (req, res) => {
     try {
         const userId = parseInt(req.params.usersId, 10);
 
@@ -22,7 +25,7 @@ router.get('/users/:usersId/favorites', (req, res) => {
     }
 });
 
-router.post('/users/favorites', (req, res) => {
+router.post('protected/users/favorites', (req, res) => {
     try {
         const { userId, clubId } = req.body;
 

@@ -1,12 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import { teams } from './routes/teams.js';
 import { competitions } from './routes/competitions.js';
 import { standings } from './routes/standings.js';
 import { users } from './routes/users.js';
 import { login } from './routes/login.js';
 import { register } from './routes/register.js';
+import { logout } from './routes/logout.js';
+import { protectedRoutes } from './routes/protected.js'
 
 const app = express();
 const port = process.env.PORT;
@@ -19,6 +22,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(session({
     secret: process.env.SESSION_KEY, 
@@ -36,6 +40,8 @@ app.use(standings);
 app.use(users);
 app.use(login);
 app.use(register);
+app.use(logout);
+app.use(protectedRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');

@@ -14,6 +14,14 @@ router.post('/login', async (req, res) => {
 
         if (user.success) {
             req.session.user = { id: user.id, mail: user.mail, token: user.token };
+
+            // **Envoyer le token dans un cookie sécurisé**
+            res.cookie("token", user.token, {
+                httpOnly: true, 
+                secure: true,
+                sameSite: "Strict" 
+            });
+            
             res.status(200).json({ message: "Connexion réussie.", token: user.token });
         } else {
             res.status(401).json({ error: "Identifiants incorrects." });
