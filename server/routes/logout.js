@@ -2,7 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
-const logout = async (res, req) => {
+router.get('/logout', (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: true,
@@ -10,6 +10,6 @@ const logout = async (res, req) => {
     });
 
     res.status(200).json({ message: "Déconnexion réussie" });
-};
+}) 
 
-export { router as logout}
+export { router as logout }
