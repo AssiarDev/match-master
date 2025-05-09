@@ -29,7 +29,7 @@ export const LoginModal = () => {
         console.log("Connexion réussie :", data);
         // Ici, tu peux rediriger ou stocker le token si nécessaire
         // STOCK MOI CE TOKEN WSHHHH
-        window.localStorage.setItem('token', data.token)
+        // window.localStorage.setItem('token', data.token)
         window.location.href ='/favoris'
       } else {
         console.error("Erreur :", data.message);
