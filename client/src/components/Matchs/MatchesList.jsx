@@ -62,8 +62,8 @@ export const MatchesList = () => {
     const groupedMatches = groupMatchesByMonth(filteredMatches);
 
     return (
-        <div className="w-full flex flex-col justify-center items-center mt-10">
-            <div className="flex items-center">
+        <div className="w-full flex flex-col mt-5">
+            <div className="flex justify-center items-center">
                 <Filtre activeFilter={filter} onFilterChange={setFilter} />
             </div>
             <div className="flex flex-wrap justify-center items-center">
@@ -84,7 +84,7 @@ export const MatchesList = () => {
                 </div>
 
                 {/* Section des matchs du mois */}
-                <div className="w-full mt-3 flex flex-wrap gap-4 px-5">
+                <div className="w-full mt-3 flex flex-wrap gap-4">
                     {groupedMatches[month].map(match => (
                         <MatchCard key={match.id} item={match} />
                     ))}
