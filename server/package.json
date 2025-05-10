@@ -5,11 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development nodemon index.js",
-    "prod": "NODE_ENV=production nodemon index.js",
-    "migrate:dev": "NODE_ENV=development npx prisma migrate dev",
-    "migrate:prod": "NODE_ENV=production npx prisma migrate deploy"
-
+    "dev": "set NODE_ENV=development && nodemon server.js",
+    "prod": "set NODE_ENV=production && nodemon server.js",
+    "migrate:dev": "set NODE_ENV=development && npx prisma migrate dev",
+    "migrate:prod": "set NODE_ENV=production && npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
