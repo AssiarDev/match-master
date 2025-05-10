@@ -1,5 +1,8 @@
 import fetch from 'node-fetch';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
+dotenv.config({ path: envFile });
 
 // Appel de l'api
 const token = process.env.API_TOKEN;
