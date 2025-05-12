@@ -1,5 +1,6 @@
 import { deleteUsers, getAllUsers, updateUsers } from "../db/queries.js";
 import express from 'express';
+import { loginCheck } from '../middleware/loginMiddleware.js'
 
 const router = express.Router();
 
@@ -56,6 +57,10 @@ router.put('/users/:id', (req, res) => {
     } catch (e){
         res.status(500).json({ error: "Erreur serveur" })
     }
+})
+
+router.get('/user/profile', loginCheck, (req, res) => {
+    res.json({ isAuthenticated: true, user: req.user });
 })
 
 export { router as users };
