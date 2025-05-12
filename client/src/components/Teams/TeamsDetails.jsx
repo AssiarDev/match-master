@@ -11,7 +11,6 @@ export const TeamsDetails = () => {
     const [standings, setStandings] = useState([]);
     const location = useLocation();
     const selectedLeague = location.state?.selectedLeague
-    // const [selectedDate, setSelectedDate] = useState(new Date());
 
     useEffect(() => {
         const fetchTeam = async () => {

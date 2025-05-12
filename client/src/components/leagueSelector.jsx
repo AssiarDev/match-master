@@ -21,6 +21,7 @@ const apiURL = import.meta.env.VITE_API_URL;
 
     const handleSelectedTeamChange = (e) => {
         const selectedTeamId = e.target.value;
+        console.log('Equipe selectionnée :', selectedTeamId)
         setSelectedTeamId(selectedTeamId)
     }
     
@@ -32,7 +33,6 @@ const apiURL = import.meta.env.VITE_API_URL;
               throw new Error('Impossible d\'acceder à la reponse');
             }
             const result = await response.json();
-            console.log('result :', result)
             // Je filtre result pour récupérer les noms des ligues et 
             // je fais une copie avec map pour obtenir les noms dans un nouveau tableau
             const filteredLeague = result
@@ -56,12 +56,11 @@ const apiURL = import.meta.env.VITE_API_URL;
                 try {
                     const response = await fetch(`${apiURL}/competitions/${selectedLeague}/teams`);
                     const result = await response.json();
-                    console.log('result teams:', result)
                     const teams = result
                         .filter(team => team.name)
-                        .map(ligue => ({
-                            name: ligue.name, 
-                            id: ligue.id
+                        .map(team => ({
+                            name: team.name, 
+                            id: team.id
                         }))
                     setTeams(teams)
                 } catch (error){

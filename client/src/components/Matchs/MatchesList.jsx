@@ -19,12 +19,10 @@ export const MatchesList = () => {
                 }
                 const result = await response.json();
                 const matches = result.matches
-                console.log('matches :', matches)
 
                 const filteredMatches = matches.filter(match =>
                     match.homeTeam.id === Number(teamId) || match.awayTeam.id === Number(teamId)
                 );
-                console.log('filteredMatches :', filteredMatches)
                 setMatches(filteredMatches)
             } catch(e){
                 console.error('Impossible de récupérer les infos sur les matches', e.message)
@@ -47,7 +45,8 @@ export const MatchesList = () => {
     };
 
     // Logique de filtrage des matchs
-    const filteredMatches = matches.filter(match => {
+    const filteredMatches = matches
+    .filter(match => {
         const matchDate = new Date(match.utcDate);
         const now = new Date();
 
@@ -57,7 +56,10 @@ export const MatchesList = () => {
             return matchDate <= now; // "Terminé"
         }
         return true; // Si aucun filtre, afficher tout
-    });
+    })
+    .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate)); // Tri du plus récent au plus ancien
+
+
 
     const groupedMatches = groupMatchesByMonth(filteredMatches);
 

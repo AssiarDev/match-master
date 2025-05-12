@@ -9,6 +9,7 @@ import { SearchBar } from "./components/forms/Searchbar";
 import { TeamsDetails } from "./components/Teams/TeamsDetails";
 import { RegisterModal } from "./components/RegisterModal/RegisterModal";
 import { LoginModal } from "./components/LoginModal/LoginModal";
+import { Footer } from "./components/Footer/Footer";
 
 
 function App() {
@@ -33,7 +34,8 @@ function App() {
               {/* <Route path="/competitions" element={<TeamDetails/>} /> */}
               {/* <Route path="/v4/teams/:teamId" element={<TeamDetails />} /> */}
           </Routes>
-        </div>   
+        </div>
+        <Footer /> 
       </>
   )
 }
