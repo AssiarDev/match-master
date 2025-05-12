@@ -53,7 +53,7 @@ export const Navbar = () => {
     <nav >
         <ul className="flex justify-center items-center gap-10 text-white text-2xl">
             <li>
-                <Link to={`/competitions/2015/matches`}>Matchs</Link>
+                <Link to="/live">Live</Link>
             </li>
             <li>
                 <Link to="/competitions">Compétitions</Link>
