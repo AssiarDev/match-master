@@ -1,8 +1,8 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import { teams } from './routes/teams.js';
 import { competitions } from './routes/competitions.js';
 import { standings } from './routes/standings.js';
@@ -14,11 +14,23 @@ import { protectedRoutes } from './routes/protected.js'
 
 const app = express();
 
-const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
-dotenv.config({ path: envFile });
+//const envFile = process.env.NODE_ENV === "development" ? ".env.development" : ".env.production";
+const env = (process.env.NODE_ENV || 'development').trim();
+switch (env){
+    case 'development':
+        dotenv.config({ path: '.env.development' });
+    break;
+    case 'production':
+        dotenv.config({ path: '.env.production' });
+    break;
+    default:
+        console.log("Valeur inconnue pour NODE_ENV :", env);
+        throw new Error(`Unknown environment: ${env}`);
+}
 
+// console.log('EnvFile :', envFile)
+console.log('ENV:', process.env.NODE_ENV)
 console.log("Base chargée :", process.env.DATABASE_URL);
-
 
 const port = process.env.PORT;
 const urlServerClient = process.env.URL_SERVER_CLIENT;
