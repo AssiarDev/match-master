@@ -60,7 +60,17 @@ router.put('/users/:id', (req, res) => {
 })
 
 router.get('/user/profile', loginCheck, (req, res) => {
-    res.json({ isAuthenticated: true, user: req.user });
+    if (!req.user) {
+        return res.status(401).json({ isAuthenticated: false, message: "Non authentifié" });
+    }
+
+    res.json({ 
+        isAuthenticated: true, 
+        user: {
+            id: req.user.id,
+            mail: req.user.mail,
+            username: req.user.username
+    } });
 })
 
 export { router as users };
