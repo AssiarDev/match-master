@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 
-// Exécution de prisma generate pendant le build de Vercel
 try {
   console.log('Generating Prisma client...');
   execSync('npx prisma generate');
