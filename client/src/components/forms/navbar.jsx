@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { SlArrowDown } from "react-icons/sl"
 
 export const Navbar = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [username, setUsername] = useState('');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -15,8 +18,8 @@ export const Navbar = () => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("Vérification après rechargement, isAuthenticated :", data.isAuthenticated);
                     setIsAuthenticated(data.isAuthenticated);
+                    setUsername(data.user.username)
                 } else {
                     setIsAuthenticated(false);
                 }
@@ -40,13 +43,12 @@ export const Navbar = () => {
 
         setIsAuthenticated(false);
         setTimeout(() => {
-            console.log("Déconnexion réussie, isAuthenticated :", isAuthenticated);
             window.location.href = "/login";
         }, 300);
 
-    } catch (error) {
-        console.error("Échec de la déconnexion :", error);
-    }
+        } catch (error) {
+            console.error("Échec de la déconnexion :", error);
+        }
     }
     
     return (
@@ -60,12 +62,25 @@ export const Navbar = () => {
             </li>
             <li>
                 {isAuthenticated ? (
+                    <div className="relative">
                         <button
-                            className="border border-red-500 bg-orange-700 hover:bg-orange-600 text-white px-2 py-1 rounded-md cursor-pointer"
-                            onClick={handleLogout}
+                            className="flex justify-center items-center gap-4 border border-red-500 bg-orange-700 hover:bg-orange-600 text-white px-2 py-1 rounded-md cursor-pointer"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
-                            Déconnexion
+                            {username} <SlArrowDown />
                         </button>
+                          {isMenuOpen && (
+                                <div className="absolute right-0 bg-gray-800 text-white rounded-md mt-2 p-2 flex flex-col">
+                                    <Link to="/favoris" className="py-1 px-2 hover:bg-gray-700">Favoris</Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="py-1 px-2 hover:bg-gray-700 text-left"
+                                    >
+                                        Déconnexion
+                                    </button>
+                                </div>
+                            )}
+                            </div>
                     ) : (
                         <Link to="/login">Se connecter</Link>
                     )}
