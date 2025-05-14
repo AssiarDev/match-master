@@ -9,7 +9,7 @@
     "prod": "npx cross-env NODE_ENV=production node server.js",
     "migrate:dev": "set NODE_ENV=development && npx prisma migrate dev",
     "migrate:prod": "set NODE_ENV=production && npx prisma migrate deploy",
-    "vercel-build": "node vercel-build-step.js && prisma generate",
+    "vercel-build": "node vercel-build-step.js",
     "postinstall": "prisma generate"
   },
   "keywords": [],
