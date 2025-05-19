@@ -11,6 +11,7 @@ import { login } from './routes/login.js';
 import { register } from './routes/register.js';
 import { logout } from './routes/logout.js';
 import { protectedRoutes } from './routes/protected.js'
+import { scorers } from './routes/scorers.js';
 
 const app = express();
 
@@ -61,7 +62,8 @@ app.use(users);
 app.use(login);
 app.use(register);
 app.use(logout);
-app.use(protectedRoutes)
+app.use(protectedRoutes);
+app.use(scorers);
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');

@@ -18,40 +18,9 @@ export const requestOption = {
     headers: headers
 };
 
-export const endpointChampionships = {
-    brasil: "BSA/teams",
-    engC: "ELC/teams",
-    eng: "PL/teams",
-    ucl: "CL/teams",
-    europeanChampionship: "EC/teams",
-    ligue1: "FL1/teams",
-    bund: "BL1/teams",
-    serieA: "SA/teams",
-    erediv: "DED/teams",
-    primeraLiga: "PPL/teams",
-    copaLibertadores: "CLI/teams",
-    liga: "PD/teams",
-    worldCup: "WC/teams"
-};
-
 export const fetchAllCompetitions = async () => {
     try {
         const url = `${urlAPI}/competitions`;
-        const response = await fetch(url, requestOption);
-        if(!response.ok){
-            console.log('Error, api failed');
-            throw new Error('Error, api failed');
-        }
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Erreur lors de l\'appel de l\'API', error)
-    }
-}
-
-export const fetchCompetitions = async (endpoint) => {
-    try {
-        const url = `${urlAPI}/competitions/${endpoint}`;
         const response = await fetch(url, requestOption);
         if(!response.ok){
             console.log('Error, api failed');
@@ -285,6 +254,23 @@ export const fetchTabStandings = async (id) => {
         const table = standings[0].table
         return table
     } catch (e){
+        console.error('Erreur impossible de récupérer les données :', e.message)
+    }
+}
+
+export const topScorers = async (id) => {
+    try {
+        const url= `${urlAPI}/competitions/${id}/scorers`;
+        const response = await fetch(url, requestOption);
+        if(!response.ok){
+            throw new Error('Error api failed')
+        }
+
+        const result = await response.json();
+        const scorers = result.scorers;
+
+        return scorers
+    } catch(e){
         console.error('Erreur impossible de récupérer les données :', e.message)
     }
 }
