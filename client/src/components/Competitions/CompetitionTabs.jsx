@@ -27,7 +27,7 @@ export const CompetitionTabs = () => {
                 ))}
             </div>
             <div className="p-4 text-white">
-                {activeTab === "resume" && <Resume />}
+                {activeTab === "resume" && <Resume setActiveTab={setActiveTab}/>}
                 {activeTab === "classement" && <Classement />}
                 {activeTab === "matchs" && <Matchs />}
             </div>

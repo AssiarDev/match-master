@@ -1,6 +1,6 @@
 export const MatchCard = ({item}) => {
     return <div className="border-gray-700 border rounded-lg shadow-md p-4 m-4 w-80 min-w-[350px]">
-        <div className="flex justify-between items-center gap-10">
+        <div className="flex items-center gap-10">
             <div className="flex flex-col items-center">
                 <img 
                     src={item.homeTeam.crest} 
@@ -9,8 +9,8 @@ export const MatchCard = ({item}) => {
                     />
                 <p className="text-sm font-medium mt-2 text-white">{item.homeTeam.shortName}</p>
             </div>
-            <p className="text-lg font-bold text-white">VS</p>
-            <div className="flex flex-col items-center">
+            <p className="text-lg font-bold text-white text-center">VS</p>
+            <div className="flex flex-col items-center flex-grow">
                 <img 
                     src={item.awayTeam.crest} 
                     alt={item.awayTeam.shortName}
