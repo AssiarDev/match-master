@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { MatchCard } from "../Matchs/MatchCard";
 
 export const Matchs = () => {
     const [matches, setMatches] = useState([]);
+    const [visibleMatches, setVisibleMatches] = useState(10); // 🔹 Nombre de matchs visibles au départ
     const location = useLocation();
     const competition = location.state?.competition.id;
 
@@ -40,31 +41,45 @@ export const Matchs = () => {
     const sortedMatches = matches.sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
     const groupedMatches = groupMatchesByMonth(sortedMatches);
 
+    // 🔥 Fonction pour afficher plus de matchs
+    const showMoreMatches = () => {
+        setVisibleMatches((prev) => prev + 10); // 🔹 Charge 10 matchs supplémentaires
+    };
+
     return (
-        <div className="w-full flex flex-col items-center justify-center mt-5">
+        <div className="w-full flex flex-col items-center justify-center mt-5 mx-auto">
             <div className="flex flex-wrap justify-center items-center">
                 {Object.keys(groupedMatches).length > 0 ? (
                     Object.keys(groupedMatches).map(month => {
-                        // Extraction de l'année à partir du premier match du mois
                         const year = groupedMatches[month][0]
                             ? new Date(groupedMatches[month][0].utcDate).getFullYear()
                             : "";
 
                         return (
-                            <div key={month} className="w-full mt-5">
+                            <div key={month} className="w-full mt-5 text-center">
                                 {/* 📆 Titre du mois avec l'année */}
                                 <div className="w-full">
-                                    <h2 className="text-lg font-bold text-white ml-5">
+                                    <h2 className="text-lg font-bold text-white ml-5 uppercase">
                                         {month} {year}
                                     </h2>
                                 </div>
 
                                 {/* 🏆 Affichage des matchs du mois */}
-                                <div className="w-full mt-3 flex flex-wrap gap-4">
-                                    {groupedMatches[month].map(match => (
+                                <div className="w-full mt-3 flex flex-wrap gap-4 justify-center items-center">
+                                    {groupedMatches[month].slice(0, visibleMatches).map(match => (
                                         <MatchCard key={match.id} item={match} />
                                     ))}
                                 </div>
+
+                                {/* 🔹 Afficher plus si besoin */}
+                                {groupedMatches[month].length > visibleMatches && (
+                                    <button 
+                                        onClick={showMoreMatches}
+                                        className="mt-4 text-blue-500 hover:underline"
+                                    >
+                                        Afficher plus
+                                    </button>
+                                )}
                             </div>
                         );
                     })
