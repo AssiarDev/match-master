@@ -9,7 +9,8 @@ import { TeamsDetails } from "./components/Teams/TeamsDetails";
 import { RegisterModal } from "./components/RegisterModal/RegisterModal";
 import { Footer } from "./components/Footer/Footer";
 import { Live } from "./components/LiveMatch/Live";
-import { Competitions } from "./components/Competitions/competitions";
+import { Competitions } from "./components/Competitions/Competitions";
+import { CompetitionsDetails } from "./components/Competitions/CompetitionsDetails";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/favoris" element={<Home />} />
               <Route path="/live" element={<Live />} />
               <Route path="/competitions" element={<Competitions />} />
+              <Route path="/competition/:competitionId" element={<CompetitionsDetails />}/>
           </Routes>
         </div>
         <Footer /> 

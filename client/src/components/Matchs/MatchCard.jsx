@@ -1,6 +1,6 @@
 export const MatchCard = ({item}) => {
-    return <div className="border-gray-700 border rounded-lg shadow-md p-4 m-4 w-80">
-        <div className="flex justify-between justify-center items-center gap-10">
+    return <div className="border-gray-700 border rounded-lg shadow-md p-4 m-4 w-80 min-w-[350px]">
+        <div className="flex justify-between items-center gap-10">
             <div className="flex flex-col items-center">
                 <img 
                     src={item.homeTeam.crest} 

@@ -1,9 +1,10 @@
-export const ClassementTbody = ({ item, teamId }) => {
+export const ClassementTbody = ({ item, teamId = null }) => {
     if (!item) {
         return <p>Aucune donnée disponible pour le classement.</p>;
     }
 
-    const isSelected = item.team.id === Number(teamId);
+    const isSelected = teamId ? item.team.id === Number(teamId) : false;
+
 
     // Définir les couleurs sous forme de bordure
     let borderColor = '';
