@@ -108,7 +108,6 @@ export const Resume = ({ setActiveTab }) => {
                     <p className="text-gray-500">Aucun buteur disponible.</p>
                 )}
             </div>
-
             </div>
         </div>
     );

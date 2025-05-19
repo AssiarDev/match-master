@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Resume } from "./Resume";
 import { Classement } from "./Classement";
+import { Matchs } from "./Matchs";
 
 const tabs = [
     { id: "resume", label: "Résumé" },
