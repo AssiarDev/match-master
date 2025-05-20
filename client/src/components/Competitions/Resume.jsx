@@ -72,8 +72,17 @@ export const Resume = ({ setActiveTab }) => {
 
     return (
         <div className="min-h-screen w-250 flex flex-col mx-auto gap-5">
-            <div className="flex flex-col justify-center">
+            <div className="flex justify-between items-center">
                 <h1 className="font-bold text-left self-start ">Derniers matchs</h1>
+                <a href="#" 
+                        className="text-blue-500 hover:underline"
+                        onClick={(e) => {
+                        e.preventDefault(); 
+                        setActiveTab("matchs");
+                        }} 
+                    >Afficher tous les matchs</a>
+            </div>
+            <div className="flex flex-col justify-center">
                 <div className="flex items-center overflow-x-auto flex-nowrap ">
                     {matchs.map(match => (
                         <MatchCard key={match.id} item={match}/>

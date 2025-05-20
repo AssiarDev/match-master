@@ -4,7 +4,7 @@ import { MatchCard } from "../Matchs/MatchCard";
 
 export const Matchs = () => {
     const [matches, setMatches] = useState([]);
-    const [visibleMatches, setVisibleMatches] = useState(10); // 🔹 Nombre de matchs visibles au départ
+    const [visibleMatches, setVisibleMatches] = useState(6); // 🔹 Nombre de matchs visibles au départ
     const location = useLocation();
     const competition = location.state?.competition.id;
 
@@ -43,7 +43,7 @@ export const Matchs = () => {
 
     // 🔥 Fonction pour afficher plus de matchs
     const showMoreMatches = () => {
-        setVisibleMatches((prev) => prev + 10); // 🔹 Charge 10 matchs supplémentaires
+        setVisibleMatches((prev) => prev + 6); // 🔹 Charge 10 matchs supplémentaires
     };
 
     return (
