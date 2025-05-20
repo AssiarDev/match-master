@@ -6,6 +6,7 @@ const router = express.Router();
 router.get('/scorers/:id', async (req, res) => {
 
     const id = req.params.id;
+    
     try {
         const result = await topScorers(id)
         res.json(result)
