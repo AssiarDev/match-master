@@ -1,10 +1,10 @@
 import { Route, Routes, Link } from "react-router-dom";
-import { Navbar } from "./components/forms/navbar";
+import { Navbar } from "./components/Forms/Navbar";
 import { Home } from "./components/Home/Home";
-import { MatchsDetails } from "./components/matchs";
-import { Connexion } from "./components/Connexion";
+import { MatchsDetails } from "./components/Matchs/Matchs";
+import { Connexion } from "./components/Connexion/Connexion";
 import { NoMatch } from "./components/noMatch";
-import { SearchBar } from "./components/forms/Searchbar";
+import { SearchBar } from "./components/Forms/Searchbar";
 import { TeamsDetails } from "./components/Teams/TeamsDetails";
 import { RegisterModal } from "./components/RegisterModal/RegisterModal";
 import { Footer } from "./components/Footer/Footer";

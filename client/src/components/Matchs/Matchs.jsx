@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DatePickerCarousel } from './DatePicker/DatePickerCaroussel';
-import { MatchCard } from './Matchs/MatchCard';
+import { DatePickerCarousel } from '../DatePicker/DatePickerCaroussel';
+import { MatchCard } from './MatchCard';
 
 export const MatchsDetails = () => {
     const [matchesData, setMatchesData] = useState([]);
