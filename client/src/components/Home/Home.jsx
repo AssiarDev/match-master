@@ -1,4 +1,4 @@
-import { SelectorLeague } from "./LeagueSelector";
+import { SelectorLeague } from "../LeagueSelector";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 
