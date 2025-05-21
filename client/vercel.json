@@ -1,4 +1,10 @@
-{
+{ 
+  "projects" : [
+    {
+      "src": "client/",
+      "use": "@vercel/static-build"
+    }
+  ],
     "rewrites": [
       { "source": "/(.*)", "destination": "/index.html" }
     ],
