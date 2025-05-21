@@ -22,6 +22,7 @@ export const Resume = ({ setActiveTab }) => {
                 }
 
                 const result = await response.json();
+                console.log('result :', result)
                 const finishedMatchs = result.matches.filter(match => match.status === "FINISHED");
                 const sortedMatchs = finishedMatchs.sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
                 const last5Matchs = sortedMatchs.slice(0, 5);
