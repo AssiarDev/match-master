@@ -1,6 +1,6 @@
 import { Route, Routes, Link } from "react-router-dom";
-import { NoMatch } from "./components/NoMatch";
 import { Navbar } from "./components/Forms/Navbar";
+import { NoMatch } from "./components/NoMatch";
 import { Home } from "./components/Home/Home";
 import { MatchsDetails } from "./components/Matchs/Matchs";
 import { Connexion } from "./components/Connexion/Connexion";
