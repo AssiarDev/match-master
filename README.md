@@ -27,7 +27,7 @@ L'objectif futur de Match Master est d'élargir ces fonctionnalités à **tous l
 ## 🔧 Installation et lancement
 
 ### Backend
-```sh
+```sh``
 cd server
 npm install
 npm run dev
