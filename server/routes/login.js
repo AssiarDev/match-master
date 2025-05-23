@@ -19,7 +19,7 @@ router.post('/login', async (req, res) => {
             res.cookie("token", user.token, {
                 httpOnly: true, 
                 secure: true,
-                sameSite: "Strict" 
+                sameSite: "None" 
             });
             
             res.status(200).json({ message: "Connexion réussie.", token: user.token });
