@@ -32,6 +32,8 @@ cd server
 npm install
 npm run dev
 
+````
+
 ### Frontend
 ```sh
 cd client
