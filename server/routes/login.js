@@ -17,7 +17,7 @@ router.post('/login', async (req, res) => {
 
             // **Envoyer le token dans un cookie sécurisé**
             res.cookie("token", user.token, {
-                httpOnly: true, 
+                // httpOnly: true, 
                 secure: true,
                 sameSite: "None" 
             });
