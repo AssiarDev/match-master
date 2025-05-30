@@ -6,12 +6,17 @@ const router = express.Router();
 router.post('/register', (req, res) => {
     try {
 
-        const { username, mail, password } = req.body;
-        const user = insertUser(username, mail, password);
+        const { username, email, password, confirmPassword } = req.body;
+        const user = insertUser(username, email, password);
 
-        if (!username || !mail || !password) {
+        if (!username || !email || !password || !confirmPassword) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
         }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ error: "Les mots de passe ne correspondent pas" });
+        }
+
 
         if (user) {
             res.status(201).json({ message: "Utilisateur ajouté avec succès" });
