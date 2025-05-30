@@ -3,15 +3,15 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const insertUser = async (username, mail, password) => {
+export const insertUser = async (username, email, password) => {
     try {
         // Vérifier si l'utilisateur existe déjà
         const existingUser = await prisma.user.findUnique({
-            where: { mail }
+            where: { email }
         });
 
         if (existingUser) {
-            console.warn(`Un utilisateur avec l'email ${mail} existe déjà.`);
+            console.warn(`Un utilisateur avec l'ee ${email} existe déjà.`);
             return null;
         }
 
@@ -21,7 +21,7 @@ export const insertUser = async (username, mail, password) => {
         const newUser = await prisma.user.create({
             data: {
                 username,
-                mail,
+                email,
                 password: hashedPassword
             }
         });
