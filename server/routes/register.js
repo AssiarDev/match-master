@@ -6,10 +6,10 @@ const router = express.Router();
 router.post('/register', (req, res) => {
     try {
 
-        const { username, email, password, confirmPassword } = req.body;
-        const user = insertUser(username, email, password);
+        const { username, mail, password, confirmPassword } = req.body;
+        const user = insertUser(username, mail, password);
 
-        if (!username || !email || !password || !confirmPassword) {
+        if (!username || !mail || !password || !confirmPassword) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
         }
 
