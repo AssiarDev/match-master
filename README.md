@@ -31,11 +31,3 @@ L'objectif futur de Match Master est d'élargir ces fonctionnalités à **tous l
 cd server
 npm install
 npm run dev
-
-````
-
-### Frontend
-```sh
-cd client
-npm install  # Installer les dépendances
-npm run dev  # Lancer le serveur de développement 
