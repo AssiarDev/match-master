@@ -17,12 +17,13 @@ router.post('/login', async (req, res) => {
 
             // **Envoyer le token dans un cookie sécurisé**
             res.cookie("token", user.token, {
-                // httpOnly: true, 
+                httpOnly: true, 
                 secure: true,
-                sameSite: "None" 
+                sameSite: "Strict",
+                maxAge: 3600000
             });
             
-            res.status(200).json({ message: "Connexion réussie.", token: user.token });
+            res.status(200).json({ message: "Connexion réussie."});
         } else {
             res.status(401).json({ error: "Identifiants incorrects." });
         }

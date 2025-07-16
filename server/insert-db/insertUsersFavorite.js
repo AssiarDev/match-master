@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import pool from '../db/db.js'
+// import pool from '../db/db.js'
 
 const prisma = new PrismaClient()
 
@@ -45,4 +45,5 @@ const insertUsersFavorite = async (userId, clubId) => {
     }
 };
 
-//insertUsersFavorite(1, 524);
+insertUsersFavorite(1, 524);
+insertUsersFavorite(3, 524)

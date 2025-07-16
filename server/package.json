@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "set NODE_ENV=development && nodemon server.js",
-    "prod": "npx cross-env NODE_ENV=production node server.js",
-    "migrate:dev": "set NODE_ENV=development && npx prisma migrate dev",
-    "migrate:prod": "set NODE_ENV=production && npx prisma migrate deploy",
+    "dev": "dotenv -e .env.development -- node server.js",
+    "prod": "dotenv -e .env.production -- node server.js",
+    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
     "vercel-build": "node vercel-build-step.js",
     "postinstall": "prisma generate"
   },
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "dotenv-cli": "^8.0.0",
     "nodemon": "^3.1.10",
     "prisma": "^6.7.0"
   }
