@@ -1,13 +1,14 @@
 import express from 'express';
-import { insertUsersFavorite } from '../insert-db/insertUsersFavorite';
-import { getUserFavorites } from '../db/queries';
-import { loginCheck } from '../middleware/loginMiddleware';
+import { insertUsersFavorite } from '../insert-db/insertUsersFavorite.js';
+import { getUserFavorites } from '../db/queries.js';
+import { loginCheck } from '../middleware/loginMiddleware.js';
+
 
 const router = express.Router();
 
-router.use('protected', loginCheck)
+router.use('/protected', loginCheck)
 
-router.get('protected/users/:usersId/favorites', (req, res) => {
+router.get('/protected/users/:usersId/favorites', async (req, res) => {
     try {
         const userId = parseInt(req.params.usersId, 10);
 
@@ -15,7 +16,7 @@ router.get('protected/users/:usersId/favorites', (req, res) => {
             return res.status(400).json({ error: "ID utilisateur invalide" });
         }
 
-        const favorites = getUserFavorites(userId);
+        const favorites = await getUserFavorites(userId);
 
         res.status(200).json(favorites);
 
@@ -25,7 +26,7 @@ router.get('protected/users/:usersId/favorites', (req, res) => {
     }
 });
 
-router.post('protected/users/favorites', (req, res) => {
+router.post('/protected/users/favorites', (req, res) => {
     try {
         const { userId, clubId } = req.body;
 

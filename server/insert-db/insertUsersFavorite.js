@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-const insertUsersFavorite = async (userId, clubId) => {
+export const insertUsersFavorite = async (userId, clubId) => {
     try {
         const userExists = await prisma.user.findUnique({ where: { id: userId } });
         const clubExists = await prisma.club.findUnique({ where: { id: clubId } });

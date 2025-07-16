@@ -12,6 +12,7 @@ import { register } from './routes/register.js';
 import { logout } from './routes/logout.js';
 import { protectedRoutes } from './routes/protected.js'
 import { scorers } from './routes/scorers.js';
+import { favorites } from './routes/favorites.js';
 
 const app = express();
 
@@ -36,7 +37,7 @@ app.use(session({
     resave: false, 
     saveUninitialized: true,
     cookie: { 
-        secure: false, 
+        secure: false,
         maxAge: 3600000 
     } 
 }));
@@ -50,6 +51,7 @@ app.use(register);
 app.use(logout);
 app.use(protectedRoutes);
 app.use(scorers);
+app.use(favorites)
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');
