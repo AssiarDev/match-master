@@ -19,9 +19,11 @@ router.post('/login', async (req, res) => {
             res.cookie("token", user.token, {
                 httpOnly: true, 
                 secure: true,
-                sameSite: "strict",
+                sameSite: "none",
                 maxAge: 3600000
             });
+
+            console.log('user token :', user.token)
             
             res.status(200).json({ message: "Connexion réussie."});
         } else {
