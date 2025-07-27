@@ -26,7 +26,7 @@ router.get('/protected/users/:usersId/favorites', async (req, res) => {
     }
 });
 
-router.post('/protected/users/favorites', (req, res) => {
+router.post('/protected/users/favorites', async (req, res) => {
     try {
         const { userId, clubId } = req.body;
 
@@ -34,7 +34,7 @@ router.post('/protected/users/favorites', (req, res) => {
             return res.status(400).json({ error: "userId et clubId sont requis." });
         }
 
-        const result = insertUsersFavorite(userId, clubId);
+        const result = await insertUsersFavorite(userId, clubId);
 
         if (result.success) {
             res.status(201).json({ message: result.message });

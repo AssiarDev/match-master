@@ -3,11 +3,11 @@ import { insertUser } from "../insert-db/insertUser.js";
 
 const router = express.Router();
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
     try {
 
         const { username, mail, password, confirmPassword } = req.body;
-        const user = insertUser(username, mail, password);
+        const user = await insertUser(username, mail, password);
 
         if (!username || !mail || !password || !confirmPassword) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires" });
