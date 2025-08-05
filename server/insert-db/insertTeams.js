@@ -1,4 +1,5 @@
-import { fetchChampionshipIds, fetchPlayersForTeams } from "../api/api.js";
+import { fetchChampionshipIds } from "../service/api/competitionsApi.js";
+import { fetchPlayersForTeams } from "../service/api/teamsApi.js";
 import pool from "../db/db.js";
 
 export const insertTeam = async (players) => {

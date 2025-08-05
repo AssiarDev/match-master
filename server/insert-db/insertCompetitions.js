@@ -1,7 +1,5 @@
 import pool from "../db/db.js";
-import { fetchAllCompetitions } from "../api/api.js";
-
-console.log('pool :', pool)
+import { fetchAllCompetitions } from "../service/api/competitionsApi.js";
 
 export const insertCompetitions = async () => {
 
