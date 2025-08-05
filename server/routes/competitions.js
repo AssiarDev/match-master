@@ -1,5 +1,6 @@
 import express from "express";
-import { fetchChampionshipIds, fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../api/api.js";
+import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/api.js";
+import { fetchChampionshipIds } from "../service/api/competitionsApi.js";
 import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
