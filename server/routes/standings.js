@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchTabStandings } from "../api/api.js";
+import { fetchTabStandings } from "../service/api/matchesApi.js";
 
 const router = express.Router();
 

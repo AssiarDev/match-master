@@ -1,5 +1,5 @@
 import express from 'express';
-import { topScorers } from '../api/api.js';
+import { topScorers } from '../service/api/matchesApi.js';
 
 const router = express.Router(); 
 

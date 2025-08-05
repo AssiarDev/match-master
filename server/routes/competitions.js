@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/api.js";
+import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
 import { fetchChampionshipIds } from "../service/api/competitionsApi.js";
 import { PrismaClient } from '@prisma/client';
 
