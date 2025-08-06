@@ -1,4 +1,3 @@
-// import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
@@ -16,7 +15,6 @@ import { favorites } from './routes/favorites.js';
 
 const app = express();
 
-// console.log('EnvFile :', envFile)
 console.log('ENV:', process.env.NODE_ENV)
 console.log("Base chargée :", process.env.DATABASE_URL);
 
@@ -51,7 +49,7 @@ app.use(register);
 app.use(logout);
 app.use(protectedRoutes);
 app.use(scorers);
-app.use(favorites)
+app.use(favorites);
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');
