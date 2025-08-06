@@ -14,15 +14,5 @@
       "src": "/(.*)",
       "dest": "/server.js"
     }
-  ],
-  "cron": [
-    {
-      "path": "/cron/update-db/players",
-      "schedule": "0 3 * * *"
-    }, 
-    {
-      "path": "/cron/update-db/trainers",
-      "schedule": "0 3 * * *"
-    }
   ]
 }
