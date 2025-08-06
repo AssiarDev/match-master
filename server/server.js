@@ -12,6 +12,7 @@ import { logout } from './routes/logout.js';
 import { protectedRoutes } from './routes/protected.js'
 import { scorers } from './routes/scorers.js';
 import { favorites } from './routes/favorites.js';
+import { update } from './routes/cron.js';
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use(logout);
 app.use(protectedRoutes);
 app.use(scorers);
 app.use(favorites);
+app.use(update)
 
 app.get('/', (req, res) => {
     res.send('Hello from Express');
