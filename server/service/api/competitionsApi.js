@@ -28,7 +28,6 @@ export const fetchChampionshipIds = async () => {
         }
         const result = JSON.parse(text);
         const ids = result.competitions.map(comp => comp.id);
-        // console.log('Championship IDs:', ids);
         return ids;
     } catch (error) {
         console.error('Error fetching championship IDs: ', error);
