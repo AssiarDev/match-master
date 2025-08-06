@@ -6,7 +6,7 @@ const { Pool } = pkg;
 
 // Connexion à la db 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL_LOCAL,
+    connectionString: process.env.DATABASE_URL,
     ssl: false
 })
 
