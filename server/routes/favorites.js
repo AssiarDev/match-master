@@ -2,6 +2,7 @@ import express from 'express';
 import { insertUsersFavorite } from '../insert-db/insertUsersFavorite.js';
 import { getUserFavorites } from '../db/queries.js';
 import { loginCheck } from '../middleware/loginMiddleware.js';
+import { deleteFavoriteUser } from '../delete-db/deleteFavoriteUser.js';
 
 
 const router = express.Router();
@@ -47,4 +48,21 @@ router.post('/protected/users/favorites', async (req, res) => {
     }
 });
 
-export { router as favorites}
+router.delete('/protected/users/:userId/favorites/:clubId', async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId, 10);
+        const clubId = parseInt(req.params.clubId, 10);
+
+        const result = await deleteFavoriteUser(userId, clubId);
+
+        if(result.success){
+            res.status(200).json({ message: result.message});
+        } else {
+            res.status(500).json({ error: result.error})
+        }
+    } catch (e){
+        res.status(500).json({ error: "Une erreur est survenue."})
+    }
+})
+
+export { router as favorites }
