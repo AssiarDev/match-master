@@ -19,18 +19,19 @@ export const fetchChampionshipIds = async () => {
     try {
         const response = await fetch(`${urlAPI}/competitions`, requestOption);
         if (!response.ok) {
-            throw new Error('Impossible d\'accéder aux compétitions');
+            throw new Error(`Erreur HTTP ${response.status}`);
         }
-        const text = await response.text();
-        if (text.startsWith('<')) {
-            console.error('Received HTML response instead of JSON:', text);
+
+        const data = await response.json();
+
+        if (!Array.isArray(data.competitions)) {
+            console.error('Format inattendu : "competitions" n’est pas un tableau');
             return [];
         }
-        const result = JSON.parse(text);
-        const ids = result.competitions.map(comp => comp.id);
-        return ids;
+
+        return data.competitions.map(comp => comp.id).filter(Boolean);
     } catch (error) {
-        console.error('Error fetching championship IDs: ', error);
+        console.error('Erreur lors de la récupération des IDs de compétitions :', error.message);
         return [];
     }
 };
