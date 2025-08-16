@@ -5,7 +5,10 @@ const prisma = new PrismaClient()
 export const insertUsersFavorite = async (userId, clubId) => {
     try {
         const userExists = await prisma.user.findUnique({ where: { id: userId } });
-        const clubExists = await prisma.club.findUnique({ where: { id: clubId } });
+        const clubExists = await prisma.club.findUnique({ 
+            where: { id: clubId },
+            select: { id_competition: true }
+        });
 
         if (!userExists) {
             console.warn(`L'utilisateur ID ${userId} n'existe pas.`);
@@ -16,6 +19,8 @@ export const insertUsersFavorite = async (userId, clubId) => {
             console.warn(`Le club ID ${clubId} n'existe pas.`);
             return { success: false, message: `Le club ID ${clubId} n'existe pas.` };
         }
+
+        const competitionId = clubExists?.id_competition;
 
         // Trouver l'entrée existante dans UsersFavorites
         const existingFavorite = await prisma.usersFavorites.findFirst({
@@ -31,7 +36,8 @@ export const insertUsersFavorite = async (userId, clubId) => {
             update: {}, // Ne rien modifier si déjà existant
             create: {
                 userId,
-                clubId
+                clubId,
+                competitionId
             }
         });
 
