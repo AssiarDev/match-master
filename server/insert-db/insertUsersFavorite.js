@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-// import pool from '../db/db.js'
 
 const prisma = new PrismaClient()
 
@@ -44,6 +43,3 @@ export const insertUsersFavorite = async (userId, clubId) => {
         return { success: false, message: "Erreur lors de l'ajout aux favoris." };
     }
 };
-
-insertUsersFavorite(1, 524);
-insertUsersFavorite(3, 524)
