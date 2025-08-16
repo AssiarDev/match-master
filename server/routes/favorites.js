@@ -48,9 +48,9 @@ router.post('/protected/users/favorites', async (req, res) => {
     }
 });
 
-router.delete('/protected/users/:userId/favorites/:clubId', async (req, res) => {
+router.delete('/protected/users/favorites/:clubId', async (req, res) => {
     try {
-        const userId = parseInt(req.params.userId, 10);
+        const userId = req.user.id;
         const clubId = parseInt(req.params.clubId, 10);
 
         const result = await deleteFavoriteUser(userId, clubId);
