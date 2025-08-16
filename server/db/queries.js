@@ -51,12 +51,29 @@ export const getUserFavorites = async (userId) => {
             where: { userId },
             include: {
                 club: {
-                    select: { id: true, name: true, emblem: true }
+                    select: { 
+                        id: true, 
+                        name: true, 
+                        emblem: true,
+                        competition: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
                 }
             }
         });
 
-        return favorites.map(fav => fav.club);
+        return favorites.map(fav => ({
+            id: fav.club.id,
+            name: fav.club.name,
+            emblem: fav.club.emblem,
+            leagueId: fav.club.competition?.id || null,
+            leagueName: fav.club.competition?.name || "Compétition inconnue"
+        }));
+
     } catch (e) {
         console.error("Erreur lors de la récupération des équipes favorites :", e.message);
         throw e;
