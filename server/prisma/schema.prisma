@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -15,63 +15,65 @@ datasource db {
 }
 
 model Club {
-  id           Int    @id
-  name         String
-  country      String
-  emblem       String
-  stadium      String
-  id_competition Int   
-  competition  Competition @relation(fields: [id_competition], references: [id])
-  players      Player[]
-  trainers     Trainer[]
-  favorites    UsersFavorites[]
+  id             Int              @id
+  name           String
+  country        String
+  emblem         String
+  stadium        String
+  id_competition Int
+  competition    Competition      @relation(fields: [id_competition], references: [id])
+  players        Player[]
+  trainers       Trainer[]
+  favorites      UsersFavorites[]
 }
 
 model Player {
-  id           Int    @id 
-  name         String
-  position     String
-  dateOfBirth  String @map("date_of_birth")
-  nationality  String 
-  idClub       Int    @map("id_club")
-  club         Club @relation(fields: [idClub], references: [id])
+  id          Int    @id
+  name        String
+  position    String
+  dateOfBirth String @map("date_of_birth")
+  nationality String
+  idClub      Int    @map("id_club")
+  club        Club   @relation(fields: [idClub], references: [id])
 }
 
 model Trainer {
-  id            Int    @id 
+  id            Int      @id
   name          String
-  dateOfBirth   String @map("date_of_birth")
+  dateOfBirth   String   @map("date_of_birth")
   nationality   String
   contractStart DateTime @map("contract_start")
-  contractEnd   DateTime  @map("contract_end")
-  idClub        Int    @map("id_club")
-  club          Club @relation(fields: [idClub], references: [id])
+  contractEnd   DateTime @map("contract_end")
+  idClub        Int      @map("id_club")
+  club          Club     @relation(fields: [idClub], references: [id])
 }
 
 model Competition {
-  id        Int    @id @default(autoincrement())
-  name      String
-  place     String
-  emblem    String
+  id         Int              @id @default(autoincrement())
+  name       String
+  place      String
+  emblem     String
   start_date DateTime
   end_date   DateTime
-  clubs     Club[]
-  type      String
+  clubs      Club[]
+  type       String
+  favorites  UsersFavorites[]
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String
-  mail     String @unique
-  password String
+  id        Int              @id @default(autoincrement())
+  username  String
+  mail      String           @unique
+  password  String
   favorites UsersFavorites[]
 }
 
 model UsersFavorites {
-  id     Int    @id @default(autoincrement())
-  userId Int
-  clubId Int
-  user   User @relation(fields: [userId], references: [id])
-  club   Club @relation(fields: [clubId], references: [id])
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  clubId        Int
+  competitionId Int
+  user          User        @relation(fields: [userId], references: [id])
+  club          Club        @relation(fields: [clubId], references: [id])
+  competition   Competition @relation(fields: [competitionId], references: [id])
 }
-
