@@ -58,6 +58,7 @@ model Competition {
   clubs      Club[]
   type       String
   favorites  UsersFavorites[]
+  nbSeasons  Int @default(1)
 }
 
 model User {
