@@ -10,7 +10,10 @@ router.get('/competitions', async (req, res) => {
     try {
         const competitions = await prisma.competition.findMany({
             where: { type: 'LEAGUE' },
-            select: { id: true, name: true, emblem: true }
+            select: { id: true, name: true, emblem: true, nbSeasons: true },
+            orderBy: {
+                nbSeasons: 'desc'
+            }
         });
 
         res.json(competitions)
