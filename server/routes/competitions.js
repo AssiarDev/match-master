@@ -2,6 +2,7 @@ import express from "express";
 import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
 import { fetchChampionshipIds } from "../service/api/competitionsApi.js";
 import { PrismaClient } from '@prisma/client';
+import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
 
 const router = express.Router();
 const prisma = new PrismaClient()
@@ -94,6 +95,16 @@ router.get('/competitions/matches', async (req, res) => {
     } catch (error) {
         console.error('Erreur globale lors de la récupération des matchs:', error.message);
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des matchs' });
+    }
+});
+
+router.post('/competitions/update-season-count', async (req, res) => {
+    try {
+        await updateSeasonCount();
+        res.status(200).send('Mise à jour terminé');
+    } catch(e){
+        console.error('Erreur lors de la mise à jour', e.message)
+        res.status(500).send('Erreur serveur')
     }
 });
 

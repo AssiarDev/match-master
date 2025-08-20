@@ -3,7 +3,7 @@ import { fetchAllCompetitions } from "../service/api/competitionsApi.js";
 
 const prisma = new PrismaClient();
 
-const updateSeasonCount = async () => {
+export const updateSeasonCount = async () => {
     try {
         const data = await fetchAllCompetitions();
         if(!data || !Array.isArray(data.competitions)){
