@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "dotenv -e .env.development -- nodemon server.js",
-    "prod": "dotenv -e .env.production -- nodemon server.js",
+    "prod": "dotenv -e .env.production -- node server.js",
     "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
     "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
     "vercel-build": "node vercel-build-step.js",
