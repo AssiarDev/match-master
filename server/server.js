@@ -23,7 +23,7 @@ const port = process.env.PORT;
 const urlServerClient = process.env.URL_SERVER_CLIENT;
 
 const corsOptions = {
-    origin: [urlServerClient, "https://match-master.vercel.app"],
+    origin: [urlServerClient, "https://match-master-backend.onrender.com"],
     credentials: true
 };
 
