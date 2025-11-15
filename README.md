@@ -29,5 +29,4 @@ L'objectif futur de Match Master est d'élargir ces fonctionnalités à **tous l
 ### Backend
 ```sh
 cd server
-npm install
-npm run dev
+docker-compose up --build
