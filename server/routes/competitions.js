@@ -58,14 +58,16 @@ router.get('/competitions/:id/matches', async (req, res) => {
 
 router.get('/competitionsId', async (req, res) => {
     try {
-        const result = await fetchChampionshipIds();
-        console.log('result ID :', result);
-        res.json(result);
-    } catch (e){
-        console.error('Erreur, impossible de récupérer les ids', e.message);
-        res.status(500).send('Error fetching data')
+        const competitionIds = await prisma.competition.findMany({
+            select: { id: true }
+        });
+
+        res.json(competitionIds);
+    } catch (e) {
+        console.error('Erreur lors de la récupération des IDs', e.message);
+        res.status(500).send('Error fetching data');
     }
-});
+})
 
 router.get('/competitions/matches', async (req, res) => {
     try {
