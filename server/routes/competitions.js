@@ -1,8 +1,8 @@
 import express from "express";
 import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
-import { fetchChampionshipIds } from "../service/api/competitionsApi.js";
 import { PrismaClient } from '@prisma/client';
 import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
+import { getCompetitionById } from "../service/database/competitions.js";
 
 const router = express.Router();
 const prisma = new PrismaClient()
@@ -71,29 +71,21 @@ router.get('/competitionsId', async (req, res) => {
 
 router.get('/competitions/matches', async (req, res) => {
     try {
-        // Étape 1 : Récupérer les IDs des compétitions depuis la première route
-        const idsResponse = await fetch(`${req.protocol}://${req.get('host')}/competitionsId`);
-        if (!idsResponse.ok) {
-            throw new Error(`Erreur lors de la récupération des IDs : ${idsResponse.statusText}`);
+        const ids = await getCompetitionById()
+        if (!ids.ok) {
+            throw new Error(`Erreur lors de la récupération des IDs : ${ids.statusText}`);
         }
 
-        const competitionIds = await idsResponse.json();
-        console.log('IDs des compétitions récupérés:', competitionIds);
+        const competitionIds = await ids.json();
 
-        // Étape 2 : Appeler fetchMatchesByCompetitions pour chaque ID de compétition
-        const allMatches = [];
-        for (const id of competitionIds) {
-            try {
-                const matches = await fetchMatchesByCompetitions([id]);
-                allMatches.push(...matches);
-            } catch (error) {
-                console.error(`Erreur lors de la récupération des matchs pour la compétition ${id}:`, error.message);
-            }
-        }
+        const matchesArrays = await Promise.all(
+            competitionIds.map(id =>
+                fetchMatchesByCompetitions([id]).catch(() => [])
+            )
+        );
 
-        // Étape 3 : Retourner tous les matchs combinés
-        console.log('Tous les matchs combinés :', allMatches);
-        res.json(allMatches);
+        res.json(matchesArrays.flat());
+
     } catch (error) {
         console.error('Erreur globale lors de la récupération des matchs:', error.message);
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des matchs' });
