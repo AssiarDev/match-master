@@ -71,12 +71,9 @@ router.get('/competitionsId', async (req, res) => {
 
 router.get('/competitions/matches', async (req, res) => {
     try {
-        const ids = await getCompetitionById()
-        if (!ids.ok) {
-            throw new Error(`Erreur lors de la récupération des IDs : ${ids.statusText}`);
-        }
 
-        const competitionIds = await ids.json();
+        const competitionIds = await getCompetitionById()
+        console.log('Competition IDs retrieved:', competitionIds);
 
         const matchesArrays = await Promise.all(
             competitionIds.map(id =>

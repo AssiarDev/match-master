@@ -1,10 +1,15 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new Prisma.Client();
+const prisma = new PrismaClient();
 
 export const getCompetitionById = async () => {
-    const competitions = await prisma.competition.findMany({
-        select: { id: true }
-    });
-    return competitions.map(comp => comp.id);
-}
+    try {
+        const competitions = await prisma.competition.findMany({
+            select: { id: true }
+        });
+        return competitions.map(c => c.id);
+    } catch (error) {
+        console.error("Erreur Prisma dans getCompetitionById :", error);
+        throw error
+    }
+};
