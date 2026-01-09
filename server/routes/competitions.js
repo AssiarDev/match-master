@@ -2,7 +2,7 @@ import express from "express";
 import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
 import { PrismaClient } from '@prisma/client';
 import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
-import { getCompetitionById } from "../service/database/competitions.js";
+import { getCompetitionsIds } from "../service/database/competitions.js";
 
 const router = express.Router();
 const prisma = new PrismaClient()
@@ -72,8 +72,7 @@ router.get('/competitionsId', async (req, res) => {
 router.get('/competitions/matches', async (req, res) => {
     try {
 
-        const competitionIds = await getCompetitionById()
-        console.log('Competition IDs retrieved:', competitionIds);
+        const competitionIds = await getCompetitionsIds();
 
         const matchesArrays = await Promise.all(
             competitionIds.map(id =>
