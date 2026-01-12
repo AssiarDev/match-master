@@ -40,7 +40,6 @@ export const fetchMatchesByCompetitions = async (competitionIds) => {
 
         // Combiner les résultats
         const allMatches = jsonResults.flatMap(result => result.matches || []);
-        console.log('Tous les matchs récupérés :', allMatches);
 
         return allMatches;
     } catch (error) {

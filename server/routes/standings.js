@@ -12,7 +12,6 @@ router.get('/standings/:id', async (req, res) => {
 
     try {
         const result = await fetchTabStandings(id);
-        console.log('result standings :', result);
 
         res.json(result)
     } catch (e){
