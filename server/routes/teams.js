@@ -1,19 +1,11 @@
 import express from "express";
-import { PrismaClient } from '@prisma/client';
+import { getAllTeams, getTeamsById } from "../service/database/teamsServices.js";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 router.get('/teams', async (req, res) => {
     try{
-        const teams = await prisma.club.findMany({
-            select: { id: true, name: true, emblem: true }
-        });
-
-        if (!teams.length) {
-            return res.status(404).json({ error: "Aucune équipe trouvée." });
-        }
-
+        const teams = await getAllTeams()
         res.json(teams);
 
     }catch(e){
@@ -30,15 +22,7 @@ router.get('/teams/:id', async (req, res) => {
     }
 
     try {
-        const team = await prisma.club.findUnique({
-            where: { id: teamId },
-            select: { id: true, name: true, emblem: true }
-        });
-
-        if (!team) {
-            return res.status(404).json({ error: `Aucune équipe trouvée avec l'ID ${teamId}.` });
-        }
-
+        const team = await getTeamsById(teamId)
         res.json(team);
 
     } catch (err) {
