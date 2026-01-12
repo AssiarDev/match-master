@@ -1,7 +1,7 @@
 import express from "express";
 import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
 import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
-import { getAllCompetitions, getCompetitionsIds, getTeamsByCompetitions } from "../service/database/competitions.js";
+import { getAllCompetitions, getCompetitionsIds, getTeamsByCompetitions } from "../service/database/competitionsServices.js";
 
 const router = express.Router();
 
