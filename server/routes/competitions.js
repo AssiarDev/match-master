@@ -59,14 +59,17 @@ router.get('/competitions/matches', async (req, res) => {
     try {
 
         const competitionIds = await getCompetitionsIds();
+        const results = []
 
-        const matchesArrays = await Promise.all(
-            competitionIds.map(id =>
-                fetchMatchesByCompetitions([id]).catch(() => [])
-            )
-        );
 
-        res.json(matchesArrays.flat());
+        for (const id of competitionIds){
+            const data = await fetchMatchesByCompetitions([id]).catch(() => [])
+            results.push(...data)
+
+            await new Promise(resolve => setTimeout(resolve, 6000))
+        }
+
+        res.json(results)
 
     } catch (error) {
         console.error('Erreur globale lors de la récupération des matchs:', error.message);
