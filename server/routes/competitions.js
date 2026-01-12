@@ -1,21 +1,13 @@
 import express from "express";
 import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
-import { PrismaClient } from '@prisma/client';
 import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
-import { getCompetitionsIds } from "../service/database/competitions.js";
+import { getAllCompetitions, getCompetitionsIds, getTeamsByCompetitions } from "../service/database/competitions.js";
 
 const router = express.Router();
-const prisma = new PrismaClient()
 
 router.get('/competitions', async (req, res) => {
     try {
-        const competitions = await prisma.competition.findMany({
-            where: { type: 'LEAGUE' },
-            select: { id: true, name: true, emblem: true, nbSeasons: true },
-            orderBy: {
-                nbSeasons: 'desc'
-            }
-        });
+        const competitions = await getAllCompetitions()
 
         res.json(competitions)
     } catch (e){
@@ -27,10 +19,7 @@ router.get('/competitions', async (req, res) => {
 router.get('/competitions/:id/teams', async (req, res) => {
     const competitionId = parseInt(req.params.id);
     try {
-        const teams = await prisma.club.findMany({
-            where: { id_competition: competitionId },
-            select: { id: true, name: true, emblem: true, id_competition: true }
-        });
+        const teams = await getTeamsByCompetitions(competitionId)
 
         if (!teams.length) {
             return res.status(404).json({ error: `Aucune équipe trouvée pour la compétition ${competitionId}.` });
@@ -48,7 +37,6 @@ router.get('/competitions/:id/matches', async (req, res) => {
     const status = req.query.status
     try{
         const result = await fetchCompetitionsMatches(competitionCode, status);
-        console.log('Data fetched:', result)
         res.send(result);
     } catch(e){
         console.error('error', e)
@@ -58,9 +46,7 @@ router.get('/competitions/:id/matches', async (req, res) => {
 
 router.get('/competitionsId', async (req, res) => {
     try {
-        const competitionIds = await prisma.competition.findMany({
-            select: { id: true }
-        });
+        const competitionIds = await getCompetitionsIds()
 
         res.json(competitionIds);
     } catch (e) {
