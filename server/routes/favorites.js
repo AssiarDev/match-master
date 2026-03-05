@@ -65,4 +65,4 @@ router.delete('/protected/users/favorites/:clubId', async (req, res) => {
     }
 })
 
-export { router as favorites }
+export { router as favorites };

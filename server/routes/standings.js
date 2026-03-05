@@ -1,22 +1,8 @@
-import express from "express";
-import { fetchTabStandings } from "../service/api/matchesApi.js";
+import express from 'express';
+import { getStandings } from '../controllers/standingsBySeason.controllers.js';
 
 const router = express.Router();
 
-router.get('/standings/:id', async (req, res) => {
-    const id = req.params.id
+router.get('/standings/:id', getStandings);
 
-    if (!id) {
-        return res.status(400).json({ error: 'ID de la compétition manquant ou invalide.' });
-    }
-
-    try {
-        const result = await fetchTabStandings(id);
-
-        res.json(result)
-    } catch (e){
-        console.error('Impossible d\'accéder aux classement de la compétition', e.message)
-    }
-})
-
-export { router as standings }
+export { router as standings };

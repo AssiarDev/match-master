@@ -1,15 +1,13 @@
 import pkg from 'pg';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 dotenv.config();
 
 const { Pool } = pkg;
 
-// Connexion à la db 
+// Connexion à la db
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: false
-})
+  connectionString: process.env.DATABASE_URL,
+  ssl: false,
+});
 
 export default pool;
-
-

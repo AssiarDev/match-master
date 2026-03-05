@@ -7,10 +7,28 @@ services:
       dockerfile: Dockerfile
     container_name: match_master_backend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env.development
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17-alpine
+    container_name: match_master_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: match_master
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
