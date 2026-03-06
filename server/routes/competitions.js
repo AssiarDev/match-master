@@ -1,5 +1,4 @@
 import express from 'express';
-import { updateSeasonCount } from '../update-db/updateSeasonCount.js';
 import { getCompetitionsIds } from '../service/database/competitionsServices.js';
 import { getAllLeagues } from '../service/database/competitionsServices.js';
 import { getMatchesByDate } from '../controllers/matchesByDate.controllers.js';
@@ -37,15 +36,5 @@ router.get('/competitionsId', async (req, res) => {
 
 router.get("/competitions/matches", getMatchesByDate)
 router.get('/teams/:teamId/matches', getMatchesByTeam)
-
-router.post('/competitions/update-season-count', async (req, res) => {
-  try {
-    await updateSeasonCount();
-    res.status(200).send('Mise à jour terminé');
-  } catch (e) {
-    console.error('Erreur lors de la mise à jour', e.message);
-    res.status(500).send('Erreur serveur');
-  }
-});
 
 export { router as competitions };
