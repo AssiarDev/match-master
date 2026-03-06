@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 
 export class TeamRepository {
-    getAllTeams(){
+    findAllTeams(){
         return prisma.team.findMany({
             select: {
                 id: true,
@@ -13,7 +13,7 @@ export class TeamRepository {
         })
     }
 
-    getTeamsById(teamIds){
+    findByIds(teamIds){
         return prisma.team.findMany({
             where: {
                 id: { in: teamIds }
@@ -21,13 +21,13 @@ export class TeamRepository {
         })
     }
 
-    getOneTeamById(teamId){
+    findById(teamId){
         return prisma.team.findUnique({
             where: { id: teamId }
         })
     }
 
-    getTeamsByLeague(leagueId){
+    findByLeague(leagueId){
         return prisma.competitions.findUnique({
             where: { id: leagueId },
             include: {

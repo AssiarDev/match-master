@@ -4,7 +4,7 @@ import { getAllLeagues } from '../service/database/competitionsServices.js';
 import { getMatchesByDate } from '../controllers/matchesByDate.controllers.js';
 import { getMatchesByTeam } from '../controllers/matchesByTeam.controllers.js';
 import { getCompetitionMatches } from '../controllers/matchesByLeagues.controllers.js';
-import { getTeamsOfLeague } from '../controllers/teamsOfLeague.controllers.js';
+import { getTeamsOfLeague } from '../controllers/team.controllers.js';
 
 const router = express.Router();
 
@@ -18,11 +18,8 @@ router.get('/competitions', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
-
 router.get('/competitions/:id/teams', getTeamsOfLeague);
-
 router.get('/competitions/:id/matches', getCompetitionMatches)
-
 router.get('/competitionsId', async (req, res) => {
   try {
     const competitionIds = await getCompetitionsIds();
@@ -33,7 +30,6 @@ router.get('/competitionsId', async (req, res) => {
     res.status(500).send('Error fetching data');
   }
 });
-
 router.get("/competitions/matches", getMatchesByDate)
 router.get('/teams/:teamId/matches', getMatchesByTeam)
 
