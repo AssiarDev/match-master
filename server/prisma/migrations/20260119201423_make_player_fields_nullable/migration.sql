@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Player" ALTER COLUMN "firstname" DROP NOT NULL,
+ALTER COLUMN "lastname" DROP NOT NULL,
+ALTER COLUMN "name" DROP NOT NULL;

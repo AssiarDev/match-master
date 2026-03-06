@@ -13,67 +13,131 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Club {
-  id             Int              @id
-  name           String
-  country        String
-  emblem         String
-  stadium        String
-  id_competition Int
-  competition    Competition      @relation(fields: [id_competition], references: [id])
-  players        Player[]
-  trainers       Trainer[]
-  favorites      UsersFavorites[]
+model Competitions {
+  id          Int               @id
+  country_id  Int?
+  name        String
+  active      Boolean @default(true)
+  short_code  String?
+  image_path  String?
+  type        String
+  sub_type    String?
+  last_played_at DateTime?
+  category    Int
+  has_jerseys Boolean @default(true)
+
+  teams TeamCompetition[]
+  favorites UserFavorite[]
+}
+
+model Team {
+  id         Int                 @id
+  country_id Int?
+  venue_id   Int?
+  gender     String?
+  name       String
+  short_code String?
+  image_path String?
+  founded    Int?
+  type       String?
+  placeholder Boolean @default(false)
+  last_played_at DateTime?
+
+  competitions TeamCompetition[]
+  squads Squad[]
+  favorites UserFavorite[]
+}
+
+model TeamCompetition {
+  team_id        Int
+  competition_id Int
+
+  team        Team        @relation(fields: [team_id], references: [id])
+  competition Competitions @relation(fields: [competition_id], references: [id])
+
+  @@id([team_id, competition_id])
 }
 
 model Player {
-  id          Int    @id
-  name        String
-  position    String
-  dateOfBirth String @map("date_of_birth")
-  nationality String
-  idClub      Int    @map("id_club")
-  club        Club   @relation(fields: [idClub], references: [id])
+  id Int @id
+  sport_id Int?
+  country_id Int ?
+  nationality_id Int?
+  city_id Int?
+  position_id Int?
+  detailed_position_id Int?
+  type_id Int?
+  common_name String?
+  firstname String?
+  lastname String?
+  name String?
+  display_name String?
+  image_path String?
+  height Int?
+  weight Int?
+  date_of_birth DateTime?
+  gender String?
+
+  squads Squad[]
+  favorites UserFavorite[]
 }
 
-model Trainer {
-  id            Int      @id
-  name          String
-  dateOfBirth   String   @map("date_of_birth")
-  nationality   String
-  contractStart DateTime @map("contract_start")
-  contractEnd   DateTime @map("contract_end")
-  idClub        Int      @map("id_club")
-  club          Club     @relation(fields: [idClub], references: [id])
+model Squad {
+  id Int  @id
+  player_id Int
+  team_id Int
+  season_id Int
+  has_values Boolean?
+  position_id Int?
+  jersey_number Int?
+
+  player Player @relation(fields: [player_id], references: [id])
+  team Team @relation(fields: [team_id], references: [id])
+  season Season @relation(fields: [season_id], references: [id])
 }
 
-model Competition {
-  id         Int              @id @default(autoincrement())
-  name       String
-  place      String
-  emblem     String
-  start_date DateTime
-  end_date   DateTime
-  clubs      Club[]
-  type       String
-  favorites  UsersFavorites[]
-  nbSeasons  Int @default(1)
+model Season {
+  id Int @id
+  sport_id Int?
+  league_id Int?
+  tie_breaker_rule_id Int?
+  name String?
+  finished Boolean?
+  pending Boolean?
+  is_current Boolean?
+  starting_at DateTime?
+  ending_at DateTime?
+  games_in_current_week Boolean?
+
+  squads Squad[]
 }
 
 model User {
-  id        Int              @id @default(autoincrement())
-  username  String
-  mail      String           @unique
+  id  Int @id @default(autoincrement())
+  email String  @unique
   password  String
-  favorites UsersFavorites[]
+  username String @unique
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  favorites UserFavorite[]
 }
 
-model UsersFavorites {
-  id            Int         @id @default(autoincrement())
-  userId        Int
-  clubId        Int
-  competitionId Int
-  user          User        @relation(fields: [userId], references: [id])
-  club          Club        @relation(fields: [clubId], references: [id])
-  competition   Competition @relation(fields: [competitionId], references: [id])
+model UserFavorite {
+  id Int @id @default(autoincrement())
+  user_id Int
+  team_id Int?
+  player_id Int?
+  competition_id Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  team Team? @relation(fields: [team_id], references: [id])
+  player Player? @relation(fields: [player_id], references: [id])
+  competition Competitions? @relation(fields: [competition_id], references: [id])
+
+  @@unique([user_id, team_id])
+  @@unique([user_id, player_id])
+  @@unique([user_id, competition_id])
+
 }

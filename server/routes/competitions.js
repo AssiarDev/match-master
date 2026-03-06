@@ -1,91 +1,40 @@
-import express from "express";
-import { fetchCompetitionsMatches, fetchMatchesByCompetitions } from "../service/api/matchesApi.js";
-import { updateSeasonCount } from "../update-db/updateSeasonCount.js";
-import { getAllCompetitions, getCompetitionsIds, getTeamsByCompetitions } from "../service/database/competitionsServices.js";
+import express from 'express';
+import { getCompetitionsIds } from '../service/database/competitionsServices.js';
+import { getAllLeagues } from '../service/database/competitionsServices.js';
+import { getMatchesByDate } from '../controllers/matchesByDate.controllers.js';
+import { getMatchesByTeam } from '../controllers/matchesByTeam.controllers.js';
+import { getCompetitionMatches } from '../controllers/matchesByLeagues.controllers.js';
+import { getTeamsOfLeague } from '../controllers/teamsOfLeague.controllers.js';
 
 const router = express.Router();
 
 router.get('/competitions', async (req, res) => {
-    try {
-        const competitions = await getAllCompetitions()
+  try {
+    const competitions = await getAllLeagues();
 
-        res.json(competitions)
-    } catch (e){
-        console.log('Erreur lors de l\'execution de la requête :', e.message);
-        res.status(500).send('Erreur serveur');
-    } 
+    res.json(competitions);
+  } catch (e) {
+    console.log("Erreur lors de l'execution de la requête :", e.message);
+    res.status(500).send('Erreur serveur');
+  }
 });
 
-router.get('/competitions/:id/teams', async (req, res) => {
-    const competitionId = parseInt(req.params.id);
-    try {
-        const teams = await getTeamsByCompetitions(competitionId)
+router.get('/competitions/:id/teams', getTeamsOfLeague);
 
-        if (!teams.length) {
-            return res.status(404).json({ error: `Aucune équipe trouvée pour la compétition ${competitionId}.` });
-        }
-
-        res.json(teams);
-    } catch (e){
-        console.error('Erreur lors de l\'execution de la requête :', e.message);
-        res.status(500).send('Erreur serveur')
-    } 
-});
-
-router.get('/competitions/:id/matches', async (req, res) => {
-    const competitionCode = req.params.id;
-    const status = req.query.status
-    try{
-        const result = await fetchCompetitionsMatches(competitionCode, status);
-        res.send(result);
-    } catch(e){
-        console.error('error', e)
-        res.status(500).send('Error fetching data')
-    }
-});
+router.get('/competitions/:id/matches', getCompetitionMatches)
 
 router.get('/competitionsId', async (req, res) => {
-    try {
-        const competitionIds = await getCompetitionsIds()
+  try {
+    const competitionIds = await getCompetitionsIds();
 
-        res.json(competitionIds);
-    } catch (e) {
-        console.error('Erreur lors de la récupération des IDs', e.message);
-        res.status(500).send('Error fetching data');
-    }
-})
-
-router.get('/competitions/matches', async (req, res) => {
-    try {
-
-        const competitionIds = await getCompetitionsIds();
-        const results = []
-
-
-        for (const id of competitionIds){
-            const data = await fetchMatchesByCompetitions([id]).catch(() => [])
-            results.push(...data)
-
-            await new Promise(resolve => setTimeout(resolve, 6000))
-        }
-
-        res.json(results)
-
-    } catch (error) {
-        console.error('Erreur globale lors de la récupération des matchs:', error.message);
-        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des matchs' });
-    }
+    res.json(competitionIds);
+  } catch (e) {
+    console.error('Erreur lors de la récupération des IDs', e.message);
+    res.status(500).send('Error fetching data');
+  }
 });
 
-router.post('/competitions/update-season-count', async (req, res) => {
-    try {
-        await updateSeasonCount();
-        res.status(200).send('Mise à jour terminé');
-    } catch(e){
-        console.error('Erreur lors de la mise à jour', e.message)
-        res.status(500).send('Erreur serveur')
-    }
-});
+router.get("/competitions/matches", getMatchesByDate)
+router.get('/teams/:teamId/matches', getMatchesByTeam)
 
-
-export {router as competitions}
+export { router as competitions };
