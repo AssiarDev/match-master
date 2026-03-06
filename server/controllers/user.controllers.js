@@ -28,14 +28,15 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { mail, password } = req.body
-        const user = await userService.login(mail, password)
 
         if(!mail || !password){
             return res.status(400).json({ error: "Tous les champs sont obligatoire" })
         }
+        
+        const user = await userService.login(mail, password)
 
         if(user.success){
-            req.session.user = { id: user.id, email: user.mail, token: user.token }
+            req.session.user = { id: user.id, email: user.mail }
 
             res.cookie('token', user.token, {
                 httpOnly: true,

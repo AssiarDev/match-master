@@ -13,7 +13,7 @@ export const getMatchesByDate = async (req, res) => {
         res.json({ data: groupedMatches });
     } catch (err) {
         console.error("Erreur backend :", err);
-        res.status(500).json({ error: "Erreur serveur" });
+        return res.status(500).json({ error: "Erreur serveur" });
     }
 
 }

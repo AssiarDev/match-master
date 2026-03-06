@@ -11,7 +11,7 @@ export const insertLeagues = async () => {
       return;
     }
 
-    const leagues = competitionData.data.map((c) => ({
+    const leagues = leaguesData.data.map((c) => ({
       id: c.id,
       country_id: c.country_id,
       name: c.name,

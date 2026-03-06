@@ -9,18 +9,15 @@ import { users } from './routes/users.js';
 import { protectedRoutes } from './routes/protected.js';
 import { scorers } from './routes/scorers.js';
 import { favorites } from './routes/favorites.js';
-import { update } from './routes/cron.js';
 
 const app = express();
 
-console.log('ENV:', process.env.NODE_ENV);
-console.log('Base chargée :', process.env.DATABASE_URL);
-
 const port = process.env.PORT;
 const urlServerClient = process.env.URL_SERVER_CLIENT;
+const urlProdClient = process.env.URL_PROD_CLIENT
 
 const corsOptions = {
-  origin: [urlServerClient, 'https://mastermaster.netlify.app'],
+  origin: [urlServerClient, urlProdClient],
   credentials: true,
 };
 
@@ -32,7 +29,7 @@ app.use(
   session({
     secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       secure: true,
       maxAge: 3600000,
@@ -47,7 +44,6 @@ app.use(users);
 app.use(protectedRoutes);
 app.use(scorers);
 app.use(favorites);
-app.use(update);
 
 app.get('/', (req, res) => {
   res.send('Hello from Express');

@@ -8,7 +8,7 @@ export const getMatchesByTeam = async (req, res) => {
 
     res.json({ data: matches });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erreur serveur" });
+    console.error('erreur backend', err);
+    return res.status(500).json({ error: "Erreur serveur" });
   }
 };

@@ -52,7 +52,7 @@ export const getFavorites = async (req, res) => {
 
         res.status(200).json(favorites)
     } catch(err){
-        console.error('Une erreur est survenue', e.message);
+        console.error('Une erreur est survenue', err.message);
         res.status(500).json({ error: 'Erreur serveur' });
     }
 }
