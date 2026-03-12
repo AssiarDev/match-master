@@ -1,9 +1,9 @@
 import { UserRepository } from "../repositories/user.repository.js";
-import { TeamRepository } from "../repositories/team.repository.js";
+import { TeamDBRepository } from "../repositories/teamDB.repository.js";
 import { UserFavoritesRepository } from "../repositories/userFavorites.repository.js";
 
 const userRepo = new UserRepository()
-const teamRepo = new TeamRepository()
+const teamRepo = new TeamDBRepository()
 const favRepo = new UserFavoritesRepository()
 
 export class FavoriteService {

@@ -1,13 +1,14 @@
 import { PrismaClient } from '@prisma/client';
-import { getTeamsForLeague } from '../service/api/leagues.js';
+import { TeamService } from '../service/teamService.js';
 
 const prisma = new PrismaClient();
+const teamService = new TeamService()
 
 const insertTeamLeague = async () => {
   const leagues = await prisma.competitions.findMany();
 
   for (const league of leagues) {
-    const teams = await getTeamsForLeague(league.id);
+    const teams = await teamService.teamsForLeague(league.id);
 
     for (const team of teams) {
       console.log('Trying to link team:', team.id, 'to league:', league.id);

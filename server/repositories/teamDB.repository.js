@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-export class TeamRepository {
+export class TeamDBRepository {
     findAllTeams(){
         return prisma.team.findMany({
             select: {

@@ -1,21 +1,23 @@
 import { PrismaClient } from '@prisma/client';
-import { getLeaguesWithSeasons } from '../service/api/leagues.js';
-import { getSeasonsTeams } from '../service/api/leagues.js';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository.js';
+import { SeasonRepository } from '../repositories/season.repository.js';
 
 const prisma = new PrismaClient();
+const leagueApiRepo = new LeagueApiRepository()
+const seasonRepo = new SeasonRepository()
 
 export const insertTeamsFromSeasons = async () => {
   try {
     const leagues = await prisma.competitions.findMany();
 
     for (const league of leagues) {
-      const leagueData = await getLeaguesWithSeasons(league.id);
+      const leagueData = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
       const seasons = leagueData.data?.seasons ?? [];
 
       const validSeasons = seasons.filter((s) => s.id > 20000);
 
       for (const season of validSeasons) {
-        const teamsData = await getSeasonsTeams(season.id);
+        const teamsData = await seasonRepo.fetchSeasonsTeams(season.id);
         const teams = teamsData.data?.teams ?? [];
 
         if (!teams.length) {

@@ -1,11 +1,12 @@
-import { fetchAllLeagues } from '../service/api/leagues.js';
 import { PrismaClient } from '@prisma/client';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository.js';
 
 const prisma = new PrismaClient();
+const leagueApiRepo = new LeagueApiRepository()
 
 export const insertLeagues = async () => {
   try {
-    const leaguesData = await fetchAllLeagues();
+    const leaguesData = await leagueApiRepo.fetchAllLeague();
     if (!leaguesData || !Array.isArray(leaguesData.data)) {
       console.error('No leagues found');
       return;

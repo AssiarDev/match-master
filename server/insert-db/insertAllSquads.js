@@ -1,9 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import { getLeaguesWithSeasons } from '../service/api/leagues.js';
 import { getSeasonsTeams } from '../service/api/leagues.js';
-import { getTeamSquad } from '../service/api/teamsApi.js';
+import { TeamApiRepository } from '../repositories/teamApi.repository.js';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository.js';
+import { SeasonRepository } from '../repositories/season.repository.js';
 
 const prisma = new PrismaClient();
+const teamApiRepo = new TeamApiRepository()
+const leagueApiRepo = new LeagueApiRepository()
+const seasonRepo = new SeasonRepository()
 
 export const insertAllSquads = async () => {
   const leagues = await prisma.competitions.findMany();
@@ -14,7 +18,7 @@ export const insertAllSquads = async () => {
   }
 
   for (const league of leagues) {
-    const leagueData = await getLeaguesWithSeasons(league.id);
+    const leagueData = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     const seasons = leagueData.data?.seasons ?? [];
 
     if (seasons.length === 0) {
@@ -30,7 +34,7 @@ export const insertAllSquads = async () => {
     }
 
     for (const season of validSeasons) {
-      const teamsData = await getSeasonsTeams(season.id);
+      const teamsData = await seasonRepo.fetchSeasonsTeams(season.id);
       const teams = teamsData.data?.teams ?? [];
 
       if (teams.length === 0) {
@@ -39,7 +43,7 @@ export const insertAllSquads = async () => {
       }
 
       for (const team of teams) {
-        const squads = await getTeamSquad(season.id, team.id);
+        const squads = await teamApiRepo.fetchTeamSquad(season.id, team.id);
         const squadList = squads.data ? squads.data : [];
 
         if (squadList.length === 0) {
