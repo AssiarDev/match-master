@@ -1,9 +1,9 @@
-import { urlAPI, requestOption, token } from './config.js';
+import { urlAPI,  token } from '../../config.js';
 
 export const fetchCompetitionsMatches = async (leagueId) => {
   const url = `${urlAPI}/fixtures?api_token=${token}&filters=league_id:${leagueId};&include=participants;league;scores`;
 
-  const response = await fetch(url, requestOption);
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(`SportMonks error: ${response.status}`);
@@ -47,7 +47,7 @@ export const fetchMatchesByCompetitions = async (teamsIds) => {
 export const fetchMatchesByDate = async (date) => {
   const url = `${urlAPI}/fixtures/date/${date}?api_token=${token}&include=league;participants;venue;scores`;
 
-  const response = await fetch(url, requestOption)
+  const response = await fetch(url)
   const data = await response.json()
 
   const fixtures = data.data || []
@@ -70,7 +70,7 @@ export const fetchMatchesByDate = async (date) => {
 export const fetchMatchesByTeam = async (teamId) => {
   const url = `${urlAPI}/schedules/teams/${teamId}?api_token=${token}&include=league;participants;venue`;
 
-  const response = await fetch(url, requestOption);
+  const response = await fetch(url);
 
   const json = await response.json();
 

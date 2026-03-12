@@ -10,7 +10,7 @@ export class LeagueService{
     async getAllLeague(){
         try {
             const result = await leagueDBRepo.findAllLeague()
-            return { success: true, leagues: result.data}
+            return { success: true, leagues: result}
         } catch(error){
             return { success: false, message: `Impossible de récupérer les ligues : ${error}`}
         }
@@ -29,7 +29,7 @@ export class LeagueService{
     async getLeague(leagueId){
         try {
             const result = await leagueDBRepo.findLeague(leagueId)
-            return { success: true, league: result.data}
+            return { success: true, league: result }
         } catch(error){
             return { success: false, message: `Erreur lors de la récupération de la ligue : ${error}`}
         }
@@ -47,7 +47,7 @@ export class LeagueService{
     async getLeagueWithSeasons(leagueId){
         try {
             const result = await leagueApiRepo.fetchLeagueWithSeasons(leagueId)
-            return { success: true, league: result.data}
+            return { success: true, league: result.data }
         } catch(error){
             return { success: false, message: `Erreur lors de la récupération de la ligue avec ses saisons : ${error}`}
         }

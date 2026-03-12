@@ -1,4 +1,4 @@
-import { urlAPI, requestOption, token } from './config.js';
+import { urlAPI, token } from '../../config.js';
 
 export const fetchAllLeagues = async () => {
   try {

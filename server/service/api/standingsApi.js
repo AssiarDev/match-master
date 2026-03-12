@@ -1,5 +1,5 @@
 import { getTeamsById } from "../database/teamsServices.js"
-import { token, urlAPI } from "./config.js"
+import { token, urlAPI } from "../../config.js"
 import { getLeagueCurrentSeason } from "./leagues.js"
 import { mapDetails } from "../../utils/mapDetails.js"
 

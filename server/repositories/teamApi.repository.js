@@ -1,4 +1,4 @@
-import { urlAPI, token } from "../service/api/config.js";
+import { urlAPI, token } from "../config.js";
 
 export class TeamApiRepository {
     constructor(){

@@ -1,6 +1,6 @@
 import { getLeagueCurrentSeason } from './leagues.js';
 import { getPlayersByIds } from '../database/playersService.js';
-import { urlAPI, token } from './config.js';
+import { urlAPI, token } from '../../config.js';
 
 export const topScorers = async (id) => {
   try {
