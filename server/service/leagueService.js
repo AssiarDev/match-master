@@ -1,10 +1,8 @@
 import { LeagueApiRepository } from "../repositories/leagueApi.repository.js";
 import { LeagueDBRepository } from "../repositories/leagueDB.repository.js";
-import { SeasonRepository } from "../repositories/season.repository.js";
 
 const leagueApiRepo = new LeagueApiRepository()
 const leagueDBRepo = new LeagueDBRepository
-const seasonRepo = new SeasonRepository()
 
 export class LeagueService{
     async getAllLeague(){
@@ -50,16 +48,6 @@ export class LeagueService{
             return { success: true, league: result.data }
         } catch(error){
             return { success: false, message: `Erreur lors de la récupération de la ligue avec ses saisons : ${error}`}
-        }
-    }
-
-    async getLeaguesMatches(leagueId){
-        try{
-            const seaosnId = await leagueApiRepo.fetchLeagueCurrentSeason(leagueId)
-            const fixtures = await seasonRepo.fetchSeasonFixtures(seaosnId)
-            return { success: true, fixtures}
-        } catch (error){
-            return { success: false, message: `Erreur lors de la récupération des matchs de la ligue : ${error}`}
         }
     }
 

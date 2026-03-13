@@ -1,12 +1,19 @@
 import { MatchesRepository } from "../repositories/matches.repository.js";
+import { SeasonService } from "./seasonService.js";
+import { LeagueService } from "./leagueService.js";
 
 const matchesRepo = new MatchesRepository()
+const leagueService = new LeagueService()
+const seasonService = new SeasonService()
 
 export class MatchesService {
     async getLeagueMatches(leagueId){
         try {
-            const result = await matchesRepo.fetchLeagueMatches(leagueId)
-            return { success: true, matches: result.data || [] }
+            const seasonResult = await leagueService.getLeagueCurrentSeason(leagueId)
+            const seasonId = seasonResult.league
+
+            const fixtures = await seasonService.getSeasonFixtures(seasonId)
+            return { success: true, matches: fixtures.seasonFixtures }
 
         } catch(error){
             return { success: false, message: `Impossible de récupérer les matchs de la ligues : ${error}`}
