@@ -7,7 +7,7 @@ export const matchByDate = async (req, res) => {
         const { date } = req.query
 
         if (!date){
-            res.status(400).json({error: 'La date est obligatoire' })
+            return res.status(400).json({error: 'La date est obligatoire' })
         }
 
         const result = await matchesService.getMatchesByDate(date)
