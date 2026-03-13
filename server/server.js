@@ -19,6 +19,8 @@ const allowedOrigins = [
   process.env.URL_PROD_CLIENT
 ];
 
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: function(origin, callback) {
     if (!origin) return callback(null, true);
@@ -40,7 +42,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       maxAge: 3600000,
       sameSite: 'none',
     },
