@@ -38,7 +38,7 @@ export class TeamService {
     async teamsForLeague(leagueId){
         try {
             const seasonData = await leagueApiRepo.fetchLeagueSeasons(leagueId)
-            const seasons = seasonData.data?.season ?? []
+            const seasons = seasonData.data?.seasons ?? []
 
             const activeSeason = seasons.find((s) => s.is_current === true)
             if (!activeSeason) return []

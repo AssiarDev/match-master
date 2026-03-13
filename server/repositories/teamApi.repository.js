@@ -8,10 +8,9 @@ export class TeamApiRepository {
 
     async fetchTeamSquad(seasonId, teamId){
         try {
-            const url = `${this.baseUrl}/seasons/${seasonId}/teams/${teamId}?api_token=${this.token}&includes=player`
+            const url = `${this.baseUrl}/squads/seasons/${seasonId}/teams/${teamId}?api_token=${this.token}&include=player`
             const response = await fetch(url)
-
-            if(response.ok){
+            if(!response.ok){
                 throw new Error(`API Error fetchTeamSquad : ${response.status}`)
             }
 

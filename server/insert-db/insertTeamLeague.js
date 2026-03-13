@@ -8,7 +8,8 @@ const insertTeamLeague = async () => {
   const leagues = await prisma.competitions.findMany();
 
   for (const league of leagues) {
-    const teams = await teamService.teamsForLeague(league.id);
+    const teamsResult = await teamService.teamsForLeague(league.id);
+    const teams = teamsResult.result.teams
 
     for (const team of teams) {
       console.log('Trying to link team:', team.id, 'to league:', league.id);

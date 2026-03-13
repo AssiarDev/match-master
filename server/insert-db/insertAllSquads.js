@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { getSeasonsTeams } from '../service/api/leagues.js';
 import { TeamApiRepository } from '../repositories/teamApi.repository.js';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository.js';
 import { SeasonRepository } from '../repositories/season.repository.js';
