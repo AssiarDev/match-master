@@ -13,15 +13,24 @@ import { favorites } from './routes/favorites.js';
 const app = express();
 
 const port = process.env.PORT;
-const urlServerClient = process.env.URL_SERVER_CLIENT;
-const urlProdClient = process.env.URL_PROD_CLIENT
 
-const corsOptions = {
-  origin: [urlServerClient, urlProdClient],
+const allowedOrigins = [
+  process.env.URL_SERVER_CLIENT,
+  process.env.URL_PROD_CLIENT
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS error: origin ${origin} not allowed`));
+    }
+  },
   credentials: true,
-};
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -33,9 +42,12 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 3600000,
+      sameSite: 'none',
     },
   })
 );
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(teams);
 app.use(competitions);
