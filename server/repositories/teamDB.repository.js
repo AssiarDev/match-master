@@ -32,7 +32,9 @@ export class TeamDBRepository {
             where: { id: leagueId },
             include: {
                 teams: {
-                    team: true
+                    include: {
+                        team: true
+                    }
                 }
             }
         })

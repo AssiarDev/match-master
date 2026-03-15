@@ -29,10 +29,10 @@ export class TeamService {
     }
 
     async teamByLeague(leagueId){
-        const team = await teamDBRepo.findByLeague(leagueId)
-        if(!team) return { success: false, message: 'Equipe introuvable via la ligue.'}
+        const result = await teamDBRepo.findByLeague(leagueId)
+        if(!result) return { success: false, message: 'Equipe introuvable via la ligue.'}
 
-        return team
+        return result.teams
     }
 
     async teamsForLeague(leagueId){
