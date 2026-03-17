@@ -1,6 +1,13 @@
+import { TeamDBRepository } from "../repositories/teamDB.repository.js";
+import { UserRepository } from "../repositories/user.repository.js";
+import { UserFavoritesRepository } from "../repositories/userFavorites.repository.js";
 import { FavoriteService } from "../service/favoriteService.js";
 
-const favoriteService = new FavoriteService()
+const favoriteService = new FavoriteService(
+    new UserRepository(),
+    new TeamDBRepository(),
+    new UserFavoritesRepository()
+)
 
 export const addFavorite = async (req, res) => {
     try {
@@ -15,7 +22,7 @@ export const addFavorite = async (req, res) => {
         if (result.success) {
             res.status(201).json({ message: result.message });
         } else {
-            res.status(500).json({ error: result.error });
+            res.status(500).json({ error: result.message });
         }
     } catch (err){
         res.status(500).json({ error: 'Erreur serveur.' });
@@ -32,7 +39,7 @@ export const removeFavorite = async (req, res) => {
         if (result.success) {
             res.status(200).json({ message: result.message });
         } else {
-            res.status(500).json({ error: result.error });
+            res.status(500).json({ error: result.message });
         }
 
     } catch (err){
