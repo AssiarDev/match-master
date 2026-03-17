@@ -1,4 +1,4 @@
-name: CI
+name: MatchMaster CI
 
 on:
     push:
