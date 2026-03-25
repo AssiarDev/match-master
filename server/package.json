@@ -1,15 +1,16 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "server.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "dotenv -e .env.development -- nodemon --legacy-watch server.js",
-    "prod": "dotenv -e .env.production -- node server.js",
+    "dev": "dotenv -e .env.development -- tsx watch server.ts",
+    "prod": "dotenv -e .env.production -- tsx server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
     "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
-    "vercel-build": "node vercel-build-step.js",
     "postinstall": "prisma generate"
   },
   "keywords": [],
@@ -30,12 +31,19 @@
     "pg": "^8.15.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.5.0",
     "dotenv-cli": "^8.0.0",
     "nodemon": "^3.1.10",
     "prettier": "3.8.0",
     "prettier-plugin-prisma": "^5.0.0",
-    "prisma": "^6.7.0"
+    "prisma": "^6.7.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
   }
 }
