@@ -6,7 +6,7 @@ export class SeasonService {
   async getSeasonsTeams(seasonId: number) {
     try {
       const result = await seasonRepo.fetchSeasonsTeams(seasonId);
-      return { success: true, seasonsTeams: result.data?.season };
+      return { success: true, seasonsTeams: result.data };
     } catch (error) {
       return {
         success: false,

@@ -1,4 +1,5 @@
 import { urlAPI, token } from "../config";
+import { ApiResponse, ApiSquad } from "../types/api";
 
 export class TeamApiRepository {
   private readonly baseUrl: string | undefined;
@@ -9,7 +10,7 @@ export class TeamApiRepository {
     this.token = token;
   }
 
-  async fetchTeamSquad(seasonId: number, teamId: number): Promise<any> {
+  async fetchTeamSquad(seasonId: number, teamId: number): Promise<ApiResponse<ApiSquad[]>> {
     try {
       const url = `${this.baseUrl}/squads/seasons/${seasonId}/teams/${teamId}?api_token=${this.token}&include=player`;
       const response = await fetch(url);
@@ -18,8 +19,8 @@ export class TeamApiRepository {
           `API Error fetchTeamSquad : ${response.status}`
         );
       return await response.json();
-    } catch (error: any) {
-      console.error("Erreur fetchTeamSquad :", error.message);
+    } catch (error: unknown) {
+      console.error("Erreur fetchTeamSquad :", (error as Error).message);
       throw error;
     }
   }

@@ -1,6 +1,7 @@
 import { LeagueApiRepository } from "../repositories/leagueApi.repository";
 import { SeasonRepository } from "../repositories/season.repository";
 import { TeamDBRepository } from "../repositories/teamDB.repository";
+import { ApiSeason } from "../types/api";
 
 const teamDBRepo = new TeamDBRepository();
 const leagueApiRepo = new LeagueApiRepository();
@@ -42,12 +43,12 @@ export class TeamService {
     try {
       const seasonData = await leagueApiRepo.fetchLeagueSeasons(leagueId);
       const seasons = seasonData.data?.seasons ?? [];
-      const activeSeason = seasons.find((s: any) => s.is_current === true);
+      const activeSeason = seasons.find((s: ApiSeason) => s.is_current === true);
       if (!activeSeason) return [];
       const teamsData = await seasonRepo.fetchSeasonsTeams(activeSeason.id);
       const result = {
         season: activeSeason,
-        teams: teamsData.data?.teams ?? {},
+        teams: teamsData.data?.teams ?? [],
       };
       return { success: true, result };
     } catch (error) {

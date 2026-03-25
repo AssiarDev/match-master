@@ -2,6 +2,7 @@ import { StandingRepository } from "../repositories/standings.repository";
 import { TeamService } from "./teamService";
 import { LeagueService } from "./leagueService";
 import { mapDetails } from "../utils/mapDetails";
+import { ApiStanding } from "../types/api";
 
 const standingRepo = new StandingRepository();
 const teamService = new TeamService();
@@ -12,16 +13,18 @@ export class StandingService {
     try {
       const seasonResult =
         await leagueService.getLeagueCurrentSeason(leagueId);
-      const seasonId = seasonResult.league;
+      const seasonId = seasonResult.league!;
       const seasonStandingResult =
         await standingRepo.fetchStandingBySeason(seasonId);
       const seasonStanding = seasonStandingResult.data || [];
-      const teamIds = seasonStanding.map((s: any) => s.participant_id);
+      const teamIds = seasonStanding.map((s: ApiStanding) => s.participant_id);
       const teams = await teamService.teamsByIds(teamIds);
+      if ('success' in teams && !teams.success) throw new Error(teams.message);
+      const teamsArray = teams as { id: number; name: string; image_path: string | null }[];
       const teamsById = Object.fromEntries(
-        (teams as any[]).map((s: any) => [s.id, s])
+        teamsArray.map((s) => [s.id, s])
       );
-      const enriched = seasonStanding.map((s: any) => {
+      const enriched = seasonStanding.map((s: ApiStanding) => {
         const standings = teamsById[s.participant_id];
         const stats = mapDetails(s.details || []);
         return {

@@ -1,17 +1,17 @@
-interface Detail {
+export interface Detail {
   type: {
     code: string;
   };
-  value: string;
+  value: number | string;
 }
 
-interface Stats {
-  played?: string;
-  won?: string;
-  draw?: string;
-  lost?: string;
-  goals_for?: string;
-  goals_against?: string;
+export interface Stats {
+  played?: number | string;
+  won?: number | string;
+  draw?: number | string;
+  lost?: number | string;
+  goals_for?: number | string;
+  goals_against?: number | string;
   goal_diff?: number;
 }
 

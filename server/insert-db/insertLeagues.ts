@@ -1,17 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import type { ApiResponse, ApiLeague } from '../types/api';
 
 const prisma: PrismaClient = new PrismaClient();
 const leagueApiRepo = new LeagueApiRepository();
 
 export const insertLeagues = async (): Promise<void> => {
   try {
-    const leaguesData: any = await leagueApiRepo.fetchAllLeague();
+    const leaguesData: ApiResponse<ApiLeague[]> = await leagueApiRepo.fetchAllLeague();
     if (!leaguesData || !Array.isArray(leaguesData.data)) {
       console.error('No leagues found');
       return;
     }
-    const leagues = leaguesData.data.map((c: any) => ({
+    const leagues = leaguesData.data.map((c: ApiLeague) => ({
       id: c.id,
       country_id: c.country_id,
       name: c.name,

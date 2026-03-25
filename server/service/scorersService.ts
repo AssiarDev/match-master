@@ -1,6 +1,7 @@
 import { ScorersRepository } from "../repositories/scorers.repository";
 import { LeagueService } from "./leagueService";
 import { PlayersRepository } from "../repositories/players.repository";
+import { ApiScorer } from "../types/api";
 
 const leagueService = new LeagueService();
 const scorersRepo = new ScorersRepository();
@@ -10,15 +11,15 @@ export class ScorersService {
   async getTopScorers(id: number) {
     try {
       const seasonResult = await leagueService.getLeagueCurrentSeason(id);
-      const seasonId = seasonResult.league;
+      const seasonId = seasonResult.league!;
       const scorersResult = await scorersRepo.fetchTopScorers(seasonId);
       const scorers = scorersResult?.data || [];
-      const playerIds = scorers.map((s: any) => s.player_id);
+      const playerIds = scorers.map((s: ApiScorer) => s.player_id);
       const players = await playersRepo.findPlayersByIds(playerIds);
       const playersMap = Object.fromEntries(
-        players.map((p: any) => [p.id, p])
+        players.map((p) => [p.id, p])
       );
-      const enriched = scorers.map((s: any) => {
+      const enriched = scorers.map((s: ApiScorer) => {
         const player = playersMap[s.player_id];
         return {
           ...s,

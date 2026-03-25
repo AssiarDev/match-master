@@ -39,7 +39,7 @@ export class UserService {
     return userRepo.findAll();
   }
 
-  async updateUser(id: number, data: Record<string, any>) {
+  async updateUser(id: number, data: { username: string; email: string }) {
     const user = await userRepo.findById(id);
     if (!user) return { success: false, message: "Utilisateur introuvable" };
 
