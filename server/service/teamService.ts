@@ -32,11 +32,14 @@ export class TeamService {
     return team;
   }
 
-  async teamByLeague(leagueId: number): Promise<Awaited<ReturnType<TeamDBRepository["findByLeague"]>> | ServiceError> {
-    const result = await teamDBRepo.findByLeague(leagueId);
-    if (!result)
+  async teamByLeague(leagueId: number): Promise<ServiceResult<{ teams: any[] }>> {
+    const league = await teamDBRepo.findByLeague(leagueId);
+    if (!league)
       return { success: false, message: "Equipe introuvable via la ligue." };
-    return result.teams;
+    return {
+      success: true,
+      teams: league.teams
+    }
   }
 
   async teamsForLeague(leagueId: number): Promise<ServiceResult<{ result: { season: ApiSeason; teams: ApiTeam[] } }> | []> {
