@@ -2,6 +2,10 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
+export type ServiceSuccess<T = unknown> = { success: true } & T;
+export type ServiceError = { success: false; message: string };
+export type ServiceResult<T = unknown> = ServiceSuccess<T> | ServiceError;
+
 export interface ApiLeague {
   id: number;
   country_id: number | null;

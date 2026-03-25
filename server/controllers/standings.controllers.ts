@@ -3,19 +3,25 @@ import { StandingService } from '../service/standingService';
 
 const standingService = new StandingService();
 
-export const standingsFixtures = async (req: Request, res: Response) => {
+export const standingsFixtures = async (req: Request, res: Response): Promise<void> => {
   try {
     const leagueId = Number(req.params.id);
-    if (!leagueId)
-      return res.status(400).json({ error: 'ID obligatoire' });
+    if (!leagueId) {
+      res.status(400).json({ error: 'ID obligatoire' });
+      return;
+    }
     const data = await standingService.getStandingFixtures(leagueId);
-    return res.json(data.standing);
+    if (!data.success) {
+      res.status(500).json({ error: data.message });
+      return;
+    }
+    res.json(data.standing);
   } catch (error) {
     console.error(
       "Une erreur est survenue lors de l'execution getStandingsFixtures:",
       (error as Error).message
     );
-    return res
+    res
       .status(500)
       .json({
         error:

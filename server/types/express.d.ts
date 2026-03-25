@@ -1,6 +1,6 @@
 import "express-session";
 
-interface UserPayload {
+export interface UserPayload {
   id: number;
   email: string;
   username: string;

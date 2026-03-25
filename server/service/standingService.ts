@@ -2,17 +2,19 @@ import { StandingRepository } from "../repositories/standings.repository";
 import { TeamService } from "./teamService";
 import { LeagueService } from "./leagueService";
 import { mapDetails } from "../utils/mapDetails";
-import { ApiStanding } from "../types/api";
+import type { ApiStanding, ServiceResult } from "../types/api";
+import type { Stats } from "../utils/mapDetails";
 
 const standingRepo = new StandingRepository();
 const teamService = new TeamService();
 const leagueService = new LeagueService();
 
 export class StandingService {
-  async getStandingFixtures(leagueId: number) {
+  async getStandingFixtures(leagueId: number): Promise<ServiceResult<{ standing: (ApiStanding & Stats & { team_name: string; team_image: string | null; team_id: number })[] }>> {
     try {
       const seasonResult =
         await leagueService.getLeagueCurrentSeason(leagueId);
+      if (!seasonResult.success) throw new Error(seasonResult.message);
       const seasonId = seasonResult.league!;
       const seasonStandingResult =
         await standingRepo.fetchStandingBySeason(seasonId);

@@ -1,9 +1,10 @@
 import { SeasonRepository } from "../repositories/season.repository";
+import type { ServiceResult, ApiSeason } from "../types/api";
 
 const seasonRepo = new SeasonRepository();
 
 export class SeasonService {
-  async getSeasonsTeams(seasonId: number) {
+  async getSeasonsTeams(seasonId: number): Promise<ServiceResult<{ seasonsTeams: ApiSeason }>> {
     try {
       const result = await seasonRepo.fetchSeasonsTeams(seasonId);
       return { success: true, seasonsTeams: result.data };
@@ -15,7 +16,7 @@ export class SeasonService {
     }
   }
 
-  async getSeasonFixtures(seasonId: number) {
+  async getSeasonFixtures(seasonId: number): Promise<ServiceResult<{ seasonFixtures: unknown[] }>> {
     try {
       const result = await seasonRepo.fetchSeasonFixtures(seasonId);
       return { success: true, seasonFixtures: result.data ?? [] };

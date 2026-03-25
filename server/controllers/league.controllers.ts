@@ -3,11 +3,13 @@ import { LeagueService } from '../service/leagueService';
 
 const leagueService = new LeagueService();
 
-export const allLeagues = async (req: Request, res: Response) => {
+export const allLeagues = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await leagueService.getAllLeague();
-    if (!result.success)
-      return res.status(404).json({ message: result.message });
+    if (!result.success) {
+      res.status(404).json({ message: result.message });
+      return;
+    }
     res.status(200).json(result.leagues);
   } catch (error) {
     console.error("Erreur lors de l'exécution de la requête", error);
