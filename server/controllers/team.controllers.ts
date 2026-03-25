@@ -5,8 +5,8 @@ const teamService = new TeamService();
 
 export const getAllTeams = async (req: Request, res: Response) => {
   try {
-    const result = await teamService.allTeams() as any;
-    if (result.success === false && result.message)
+    const result = await teamService.allTeams();
+    if ('success' in result && !result.success)
       return res.status(400).json(result);
     return res.json(result);
   } catch (err) {

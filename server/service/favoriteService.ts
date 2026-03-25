@@ -42,14 +42,17 @@ export class FavoriteService {
     if (!user) return [];
 
     const favorites = await this.favRepo.findAllByUser(userId);
-    return favorites.map((fav: any) => ({
-      id: fav.team.id,
-      name: fav.team.name,
-      emblem: fav.team.image_path,
-      leagueId: fav.team.competitions?.[0]?.competition?.id || null,
-      leagueName:
-        fav.team.competitions?.[0]?.competition?.name ||
-        "Compétition inconnue",
-    }));
+    return favorites.map((fav) => {
+      const team = fav.team!;
+      return {
+        id: team.id,
+        name: team.name,
+        emblem: team.image_path,
+        leagueId: team.competitions?.[0]?.competition?.id || null,
+        leagueName:
+          team.competitions?.[0]?.competition?.name ||
+          "Compétition inconnue",
+      };
+    });
   }
 }

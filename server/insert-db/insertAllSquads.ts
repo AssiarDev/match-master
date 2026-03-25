@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { TeamApiRepository } from '../repositories/teamApi.repository';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
 import { SeasonRepository } from '../repositories/season.repository';
+import type { ApiResponse, ApiLeague, ApiSeason, ApiSquad } from '../types/api';
 
 const prisma: PrismaClient = new PrismaClient();
 const teamApiRepo = new TeamApiRepository();
@@ -15,26 +16,26 @@ export const insertAllSquads = async (): Promise<void> => {
     return;
   }
   for (const league of leagues) {
-    const leagueData: any = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    const leagueData: ApiResponse<ApiLeague> = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     const seasons = leagueData.data?.seasons ?? [];
     if (seasons.length === 0) {
       console.warn('No seasons found for league :', league.id);
       continue;
     }
-    const validSeasons = seasons.filter((s: any) => s.id > 20000);
+    const validSeasons = seasons.filter((s: ApiSeason) => s.id > 20000);
     if (validSeasons.length === 0) {
       console.warn(`No valid seasons with squads for league ${league.id}`);
       continue;
     }
     for (const season of validSeasons) {
-      const teamsData: any = await seasonRepo.fetchSeasonsTeams(season.id);
+      const teamsData: ApiResponse<ApiSeason> = await seasonRepo.fetchSeasonsTeams(season.id);
       const teams = teamsData.data?.teams ?? [];
       if (teams.length === 0) {
         console.warn('No teams found for season :', season.id);
         continue;
       }
       for (const team of teams) {
-        const squads: any = await teamApiRepo.fetchTeamSquad(season.id, team.id);
+        const squads: ApiResponse<ApiSquad[]> = await teamApiRepo.fetchTeamSquad(season.id, team.id);
         const squadList = squads.data ? squads.data : [];
         if (squadList.length === 0) {
           console.warn(`No squad found for team ${team.name} in season ${season.id}`);

@@ -1,6 +1,7 @@
 import { MatchesRepository } from "../repositories/matches.repository";
 import { SeasonService } from "./seasonService";
 import { LeagueService } from "./leagueService";
+import { ApiMatch } from "../types/api";
 
 const matchesRepo = new MatchesRepository();
 const leagueService = new LeagueService();
@@ -11,7 +12,7 @@ export class MatchesService {
     try {
       const seasonResult =
         await leagueService.getLeagueCurrentSeason(leagueId);
-      const seasonId = seasonResult.league;
+      const seasonId = seasonResult.league!;
       const fixtures = await seasonService.getSeasonFixtures(seasonId);
       return { success: true, matches: fixtures.seasonFixtures };
     } catch (error) {
@@ -27,7 +28,7 @@ export class MatchesService {
       const result = await matchesRepo.fetchMatchesByDate(date);
       const fixtures = result.data || [];
       const grouped = fixtures.reduce(
-        (acc: Record<string, { flag: string; matches: any[] }>, match: any) => {
+        (acc: Record<string, { flag: string; matches: ApiMatch[] }>, match: ApiMatch) => {
           const leagueName = match.league?.name || "unknown league";
           const flag = match.league?.image_path || "";
           if (!acc[leagueName]) {

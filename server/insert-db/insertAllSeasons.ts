@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import type { ApiResponse, ApiLeague } from '../types/api';
 
 const prisma: PrismaClient = new PrismaClient();
 const leagueApiRepo = new LeagueApiRepository();
@@ -11,7 +12,7 @@ export const insertAllSeasons = async (): Promise<void> => {
     return;
   }
   for (const league of leagues) {
-    const leagueData: any = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    const leagueData: ApiResponse<ApiLeague> = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     const seasons = leagueData.data?.seasons ?? [];
     if (seasons.length === 0) {
       console.error('No season found for the league :', league.id);
