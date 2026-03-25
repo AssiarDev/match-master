@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "dev": "dotenv -e .env.development -- tsx watch server.ts",
-    "prod": "dotenv -e .env.production -- tsx server.ts",
+    "dev": "dotenv -e .env.development -- npx tsx watch server.ts",
+    "prod": "dotenv -e .env.production -- npx tsx server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
