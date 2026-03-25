@@ -36,7 +36,12 @@ export const getTeamsOfLeague = async (req: Request, res: Response): Promise<voi
   try {
     const leagueId = Number(req.params.id);
     const data = await teamService.teamByLeague(leagueId);
-    res.json(data);
+
+    if(!data.success){
+      res.status(500).json({ error: data.message })
+      return;
+    }
+    res.json(data.teams);
   } catch (err) {
     console.error('error backend :', (err as Error).message);
     res
