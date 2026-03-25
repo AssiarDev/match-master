@@ -1,11 +1,14 @@
 import { LeagueApiRepository } from "../repositories/leagueApi.repository";
 import { LeagueDBRepository } from "../repositories/leagueDB.repository";
+import type { ServiceResult, ApiSeason, ApiLeague } from "../types/api";
 
 const leagueApiRepo = new LeagueApiRepository();
 const leagueDBRepo = new LeagueDBRepository();
 
+type LeagueRow = Awaited<ReturnType<LeagueDBRepository["findAllLeague"]>>[number];
+
 export class LeagueService {
-  async getAllLeague() {
+  async getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>> {
     try {
       const result = await leagueDBRepo.findAllLeague();
       return { success: true, leagues: result };
@@ -17,7 +20,7 @@ export class LeagueService {
     }
   }
 
-  async getLeagueSeasons(leagueId: number) {
+  async getLeagueSeasons(leagueId: number): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>> {
     try {
       const result = await leagueApiRepo.fetchLeagueSeasons(leagueId);
       return { success: true, seasons: result.data?.seasons };
@@ -29,7 +32,7 @@ export class LeagueService {
     }
   }
 
-  async getLeague(leagueId: number) {
+  async getLeague(leagueId: number): Promise<ServiceResult<{ league: Awaited<ReturnType<LeagueDBRepository["findLeague"]>> }>> {
     try {
       const result = await leagueDBRepo.findLeague(leagueId);
       return { success: true, league: result };
@@ -41,7 +44,7 @@ export class LeagueService {
     }
   }
 
-  async getLeagueCurrentSeason(leagueId: number) {
+  async getLeagueCurrentSeason(leagueId: number): Promise<ServiceResult<{ league: number | undefined }>> {
     try {
       const result =
         await leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
@@ -54,7 +57,7 @@ export class LeagueService {
     }
   }
 
-  async getLeagueWithSeasons(leagueId: number) {
+  async getLeagueWithSeasons(leagueId: number): Promise<ServiceResult<{ league: ApiLeague }>> {
     try {
       const result = await leagueApiRepo.fetchLeagueWithSeasons(leagueId);
       return { success: true, league: result.data };

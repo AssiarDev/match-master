@@ -3,35 +3,35 @@ import { UserService } from '../service/userService';
 
 const userService = new UserService();
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, mail, password, confirmPassword } = req.body;
-    if (!username || !mail || !password || !confirmPassword)
-      return res
-        .status(400)
-        .json({ error: 'Tous les champs sont obligatoires' });
-    if (password !== confirmPassword)
-      return res
-        .status(400)
-        .json({ error: 'Les mots de passe ne correspondent pas' });
+    if (!username || !mail || !password || !confirmPassword) {
+      res.status(400).json({ error: 'Tous les champs sont obligatoires' });
+      return;
+    }
+    if (password !== confirmPassword) {
+      res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
+      return;
+    }
     const result = await userService.register(username, mail, password);
-    return res.json(result.success);
+    res.json(result.success);
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { mail, password } = req.body;
-    if (!mail || !password)
-      return res
-        .status(400)
-        .json({ error: 'Tous les champs sont obligatoire' });
-    const user = await userService.login(mail, password) as any;
-    if (user.success) {
-      req.session.user = { id: user.id, email: user.mail };
-      res.cookie('token', user.token, {
+    if (!mail || !password) {
+      res.status(400).json({ error: 'Tous les champs sont obligatoire' });
+      return;
+    }
+    const result = await userService.login(mail, password);
+    if (result.success) {
+      req.session.user = { id: result.id, email: result.email };
+      res.cookie('token', result.token, {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
@@ -46,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = (req: Request, res: Response) => {
+export const logout = (req: Request, res: Response): void => {
   res.clearCookie('token', {
     secure: true,
     sameSite: true,
@@ -56,56 +56,61 @@ export const logout = (req: Request, res: Response) => {
   res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await userService.getAllUsers();
-    if (!users)
-      return res
-        .status(500)
-        .json({ error: 'Impossible de récupérer tous les utilisateurs' });
+    if (!users) {
+      res.status(500).json({ error: 'Impossible de récupérer tous les utilisateurs' });
+      return;
+    }
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ error: 'ID invalide' });
+    if (isNaN(id)) {
+      res.status(400).json({ error: 'ID invalide' });
+      return;
+    }
     const result = await userService.deleteUser(id);
-    if (result)
-      return res.json({ message: 'Utilisateur supprimé avec succès' });
-    else return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (result) {
+      res.json({ message: 'Utilisateur supprimé avec succès' });
+    } else {
+      res.status(404).json({ error: 'Utilisateur introuvable' });
+    }
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id);
     const { username, email } = req.body;
-    if (!username || !email)
-      return res
-        .status(400)
-        .json({ error: 'Tous les champs sont obligatoires' });
+    if (!username || !email) {
+      res.status(400).json({ error: 'Tous les champs sont obligatoires' });
+      return;
+    }
     const result = await userService.updateUser(id, { username, email });
-    if (!result)
-      return res
-        .status(404)
-        .json({ error: 'Erreur lors de la mise à jour' });
+    if (!result) {
+      res.status(404).json({ error: 'Erreur lors de la mise à jour' });
+      return;
+    }
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
-export const userProfile = (req: Request, res: Response) => {
-  if (!req.user)
-    return res
-      .status(401)
-      .json({ isAuthenticated: false, message: 'Non authentifié' });
+export const userProfile = (req: Request, res: Response): void => {
+  if (!req.user) {
+    res.status(401).json({ isAuthenticated: false, message: 'Non authentifié' });
+    return;
+  }
   res.json({
     isAuthenticated: true,
     user: {

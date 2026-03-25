@@ -1,16 +1,23 @@
 import { ScorersRepository } from "../repositories/scorers.repository";
 import { LeagueService } from "./leagueService";
 import { PlayersRepository } from "../repositories/players.repository";
-import { ApiScorer } from "../types/api";
+import type { ApiScorer, ServiceResult } from "../types/api";
+
+interface EnrichedScorer extends ApiScorer {
+  player_name: string;
+  player_image: string | null;
+  team_id: number;
+}
 
 const leagueService = new LeagueService();
 const scorersRepo = new ScorersRepository();
 const playersRepo = new PlayersRepository();
 
 export class ScorersService {
-  async getTopScorers(id: number) {
+  async getTopScorers(id: number): Promise<ServiceResult<{ scorers: EnrichedScorer[] }>> {
     try {
       const seasonResult = await leagueService.getLeagueCurrentSeason(id);
+      if (!seasonResult.success) throw new Error(seasonResult.message);
       const seasonId = seasonResult.league!;
       const scorersResult = await scorersRepo.fetchTopScorers(seasonId);
       const scorers = scorersResult?.data || [];

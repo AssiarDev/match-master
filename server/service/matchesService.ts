@@ -1,19 +1,21 @@
 import { MatchesRepository } from "../repositories/matches.repository";
 import { SeasonService } from "./seasonService";
 import { LeagueService } from "./leagueService";
-import { ApiMatch } from "../types/api";
+import type { ApiMatch, ServiceResult } from "../types/api";
 
 const matchesRepo = new MatchesRepository();
 const leagueService = new LeagueService();
 const seasonService = new SeasonService();
 
 export class MatchesService {
-  async getLeagueMatches(leagueId: number) {
+  async getLeagueMatches(leagueId: number): Promise<ServiceResult<{ matches: unknown[] }>> {
     try {
       const seasonResult =
         await leagueService.getLeagueCurrentSeason(leagueId);
+      if (!seasonResult.success) throw new Error(seasonResult.message);
       const seasonId = seasonResult.league!;
       const fixtures = await seasonService.getSeasonFixtures(seasonId);
+      if (!fixtures.success) throw new Error(fixtures.message);
       return { success: true, matches: fixtures.seasonFixtures };
     } catch (error) {
       return {
@@ -23,7 +25,7 @@ export class MatchesService {
     }
   }
 
-  async getMatchesByDate(date: string) {
+  async getMatchesByDate(date: string): Promise<ServiceResult<{ matches: Record<string, { flag: string; matches: ApiMatch[] }> }>> {
     try {
       const result = await matchesRepo.fetchMatchesByDate(date);
       const fixtures = result.data || [];
@@ -48,7 +50,7 @@ export class MatchesService {
     }
   }
 
-  async getMatchesByTeam(teamId: number) {
+  async getMatchesByTeam(teamId: number): Promise<ServiceResult<{ matches: ApiMatch[] }>> {
     try {
       const result = await matchesRepo.fetchMatchesByTeam(teamId);
       return { success: true, matches: result.data || [] };

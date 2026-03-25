@@ -1,13 +1,22 @@
 import { UserRepository } from "../repositories/user.repository";
 import { TeamDBRepository } from "../repositories/teamDB.repository";
 import { UserFavoritesRepository } from "../repositories/userFavorites.repository";
+import type { ServiceResult } from "../types/api";
+
+export interface FavoriteItem {
+  id: number;
+  name: string;
+  emblem: string | null;
+  leagueId: number | null;
+  leagueName: string;
+}
 
 const userRepo = new UserRepository();
 const teamRepo = new TeamDBRepository();
 const favRepo = new UserFavoritesRepository();
 
 export class FavoriteService {
-  async addFavorite(userId: number, teamId: number) {
+  async addFavorite(userId: number, teamId: number): Promise<ServiceResult<{ message: string }>> {
     const user = await userRepo.findById(userId);
     if (!user) return { success: false, message: "Utilisateur introuvable." };
 
@@ -22,7 +31,7 @@ export class FavoriteService {
     return { success: true, message: "Favori ajouté." };
   }
 
-  async removeFavorite(userId: number, teamId: number) {
+  async removeFavorite(userId: number, teamId: number): Promise<ServiceResult<{ message: string }>> {
     const existing = await favRepo.find(userId, teamId);
     if (!existing)
       return { success: false, message: "Ce favoris n'existe pas." };
@@ -31,7 +40,7 @@ export class FavoriteService {
     return { success: true, message: "Favoris supprimé." };
   }
 
-  async getFavorite(userId: number) {
+  async getFavorite(userId: number): Promise<FavoriteItem[]> {
     const user = await userRepo.findById(userId);
     if (!user) return [];
 

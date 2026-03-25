@@ -1,11 +1,18 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import type { User } from "@prisma/client";
 import { UserRepository } from "../repositories/user.repository";
+import type { UserPayload } from "../types/express";
+import type { ServiceResult } from "../types/api";
 
 const userRepo = new UserRepository();
 
+type LoginSuccess = { token: string } & UserPayload;
+type RegisterSuccess = { user: User };
+type UpdateSuccess = { user: User };
+
 export class UserService {
-  async register(username: string, email: string, password: string) {
+  async register(username: string, email: string, password: string): Promise<ServiceResult<RegisterSuccess>> {
     const existing = await userRepo.findByEmail(email);
     if (existing) return { success: false, message: "Email déja utilisé." };
 
@@ -19,7 +26,7 @@ export class UserService {
     return { success: true, user };
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<ServiceResult<LoginSuccess>> {
     const user = await userRepo.findByEmail(email);
     if (!user) return { success: false, message: "Utilisateur introuvable" };
 
@@ -27,19 +34,16 @@ export class UserService {
     if (!isValidPassword)
       return { success: false, message: "Mot de passe incorrect." };
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, username: user.username },
-      process.env.SECRET_KEY!,
-      { expiresIn: "1h" }
-    );
-    return { success: true, token };
+    const payload: UserPayload = { id: user.id, email: user.email, username: user.username };
+    const token = jwt.sign(payload, process.env.SECRET_KEY!, { expiresIn: "1h" });
+    return { success: true, token, ...payload };
   }
 
-  async getAllUsers() {
+  async getAllUsers(): Promise<User[]> {
     return userRepo.findAll();
   }
 
-  async updateUser(id: number, data: { username: string; email: string }) {
+  async updateUser(id: number, data: { username: string; email: string }): Promise<ServiceResult<UpdateSuccess>> {
     const user = await userRepo.findById(id);
     if (!user) return { success: false, message: "Utilisateur introuvable" };
 
@@ -47,7 +51,7 @@ export class UserService {
     return { success: true, user: updated };
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number): Promise<ServiceResult<{ message: string }>> {
     const user = await userRepo.findById(id);
     if (!user) return { success: false, message: "Utilisateur introuvable" };
 

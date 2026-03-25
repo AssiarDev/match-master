@@ -3,11 +3,13 @@ import { FavoriteService } from '../service/favoriteService';
 
 const favoriteService = new FavoriteService();
 
-export const addFavorite = async (req: Request, res: Response) => {
+export const addFavorite = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, clubId } = req.body;
-    if (!userId || !clubId)
-      return res.status(400).json({ error: 'userId et clubId sont requis.' });
+    if (!userId || !clubId) {
+      res.status(400).json({ error: 'userId et clubId sont requis.' });
+      return;
+    }
     const result = await favoriteService.addFavorite(userId, clubId);
     if (result.success) res.status(201).json({ message: result.message });
     else res.status(500).json({ error: result.message });
@@ -16,7 +18,7 @@ export const addFavorite = async (req: Request, res: Response) => {
   }
 };
 
-export const removeFavorite = async (req: Request, res: Response) => {
+export const removeFavorite = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.id;
     const clubId = parseInt(req.params.clubId, 10);
@@ -28,11 +30,13 @@ export const removeFavorite = async (req: Request, res: Response) => {
   }
 };
 
-export const getFavorites = async (req: Request, res: Response) => {
+export const getFavorites = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = parseInt(req.params.usersId, 10);
-    if (isNaN(userId))
-      return res.status(400).json({ error: 'ID utilisateur invalide' });
+    if (isNaN(userId)) {
+      res.status(400).json({ error: 'ID utilisateur invalide' });
+      return;
+    }
     const favorites = await favoriteService.getFavorite(userId);
     res.status(200).json(favorites);
   } catch (err) {
