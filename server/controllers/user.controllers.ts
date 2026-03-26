@@ -85,10 +85,10 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
     const result = await userService.deleteUser(id);
-    if (result) {
-      res.json({ message: 'Utilisateur supprimé avec succès' });
+    if (result.success) {
+      res.json({ message: result.message });
     } else {
-      res.status(404).json({ error: 'Utilisateur introuvable' });
+      res.status(404).json({ error: result.message });
     }
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
@@ -112,11 +112,11 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
     const result = await userService.updateUser(id, { username, email });
-    if (!result) {
-      res.status(404).json({ error: 'Erreur lors de la mise à jour' });
+    if (!result.success) {
+      res.status(404).json({ error: result.message });
       return;
     }
-    res.json(result);
+    res.json(result.user);
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
