@@ -22,7 +22,7 @@ const port = process.env.PORT;
 const allowedOrigins = [
   process.env.URL_SERVER_CLIENT,
   process.env.URL_PROD_CLIENT,
-];
+].filter((o): o is string => !!o);
 
 app.set('trust proxy', 1);
 
