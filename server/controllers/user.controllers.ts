@@ -15,7 +15,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     const result = await userService.register(username, mail, password);
-    res.json(result.success);
+    if (!result.success) {
+      res.status(400).json({ error: result.message });
+      return;
+    }
+    res.status(201).json({ message: 'Inscription réussie.' });
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
