@@ -18,7 +18,8 @@ export class ScorersService {
     try {
       const seasonResult = await leagueService.getLeagueCurrentSeason(id);
       if (!seasonResult.success) throw new Error(seasonResult.message);
-      const seasonId = seasonResult.league!;
+      if (seasonResult.league == null) throw new Error("No current season for this league");
+      const seasonId = seasonResult.league;
       const scorersResult = await scorersRepo.fetchTopScorers(seasonId);
       const scorers = scorersResult?.data || [];
       const playerIds = scorers.map((s: ApiScorer) => s.player_id);

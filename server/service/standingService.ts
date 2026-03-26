@@ -15,7 +15,8 @@ export class StandingService {
       const seasonResult =
         await leagueService.getLeagueCurrentSeason(leagueId);
       if (!seasonResult.success) throw new Error(seasonResult.message);
-      const seasonId = seasonResult.league!;
+      if (seasonResult.league == null) throw new Error("No current season for this league");
+      const seasonId = seasonResult.league;
       const seasonStandingResult =
         await standingRepo.fetchStandingBySeason(seasonId);
       const seasonStanding = seasonStandingResult.data || [];
