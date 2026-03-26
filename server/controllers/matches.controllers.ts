@@ -31,7 +31,11 @@ export const matchByDate = async (req: Request, res: Response): Promise<void> =>
 
 export const leaguesMatches = async (req: Request, res: Response): Promise<void> => {
   try {
-    const leagueId = Number(req.params.id);
+    const leagueId = parseInt(req.params.id, 10);
+    if (isNaN(leagueId) || leagueId <= 0) {
+      res.status(400).json({ error: 'ID invalide' });
+      return;
+    }
     const data = await matchesService.getLeagueMatches(leagueId);
     if (!data.success) {
       res.status(500).json({ error: data.message });
@@ -53,7 +57,11 @@ export const leaguesMatches = async (req: Request, res: Response): Promise<void>
 
 export const matchesByTeam = async (req: Request, res: Response): Promise<void> => {
   try {
-    const teamId = Number(req.params.teamId);
+    const teamId = parseInt(req.params.teamId, 10);
+    if (isNaN(teamId) || teamId <= 0) {
+      res.status(400).json({ error: 'ID invalide' });
+      return;
+    }
     const result = await matchesService.getMatchesByTeam(teamId);
     if (!result.success) {
       res.status(500).json({ error: result.message });

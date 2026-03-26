@@ -32,7 +32,7 @@ export class TeamService {
     return team;
   }
 
-  async teamByLeague(leagueId: number) {
+  async teamByLeague(leagueId: number): Promise<{ success: true; teams: NonNullable<Awaited<ReturnType<TeamDBRepository["findByLeague"]>>>["teams"] } | ServiceError> {
     const league = await teamDBRepo.findByLeague(leagueId);
     if (!league)
       return { success: false as const, message: "Equipe introuvable via la ligue." };
