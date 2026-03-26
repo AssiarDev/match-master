@@ -42,12 +42,12 @@ export class TeamService {
     }
   }
 
-  async teamsForLeague(leagueId: number): Promise<ServiceResult<{ result: { season: ApiSeason; teams: ApiTeam[] } }> | []> {
+  async teamsForLeague(leagueId: number): Promise<ServiceResult<{ result: { season: ApiSeason; teams: ApiTeam[] } }>> {
     try {
       const seasonData = await leagueApiRepo.fetchLeagueSeasons(leagueId);
       const seasons = seasonData.data?.seasons ?? [];
       const activeSeason = seasons.find((s: ApiSeason) => s.is_current === true);
-      if (!activeSeason) return [];
+      if (!activeSeason) return { success: false, message: "No active season found" };
       const teamsData = await seasonRepo.fetchSeasonsTeams(activeSeason.id);
       const result = {
         season: activeSeason,
