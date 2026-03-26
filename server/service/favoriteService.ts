@@ -26,7 +26,7 @@ export class FavoriteService {
     const user = await this.userRepo.findById(userId);
     if (!user) return { success: false, message: "Utilisateur introuvable." };
 
-    const team = await this.teamRepo.getOneTeamById(teamId);
+    const team = await this.teamRepo.findById(teamId);
     if (!team) return { success: false, message: "Equipe introuvable." };
 
     const existing = await this.favRepo.find(userId, teamId);

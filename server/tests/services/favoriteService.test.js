@@ -9,7 +9,7 @@ describe("FavoriteService", () => {
 
     beforeEach(() => {
         userRepoMock = { findById: jest.fn() }
-        teamRepoMock = { getOneTeamById: jest.fn() }
+        teamRepoMock = { findById: jest.fn() }
         favRepoMock = {
             find: jest.fn(),
             create: jest.fn(),
@@ -34,7 +34,7 @@ describe("FavoriteService", () => {
 
         it("retourne une erreur si l'équipe n'existe pas", async () => {
             userRepoMock.findById.mockResolvedValue({ id: 1 });
-            teamRepoMock.getOneTeamById.mockResolvedValue(null);
+            teamRepoMock.findById.mockResolvedValue(null);
 
             const result = await service.addFavorite(1, 10);
 
@@ -46,7 +46,7 @@ describe("FavoriteService", () => {
 
         it("retourne un message si le favori existe déjà", async () => {
             userRepoMock.findById.mockResolvedValue({ id: 1 });
-            teamRepoMock.getOneTeamById.mockResolvedValue({ id: 10 });
+            teamRepoMock.findById.mockResolvedValue({ id: 10 });
             favRepoMock.find.mockResolvedValue({ id: 99 });
 
             const result = await service.addFavorite(1, 10);
@@ -59,7 +59,7 @@ describe("FavoriteService", () => {
 
         it("ajoute un favori si tout est valide", async () => {
             userRepoMock.findById.mockResolvedValue({ id: 1 });
-            teamRepoMock.getOneTeamById.mockResolvedValue({ id: 10 });
+            teamRepoMock.findById.mockResolvedValue({ id: 10 });
             favRepoMock.find.mockResolvedValue(null);
 
             const result = await service.addFavorite(1, 10);
