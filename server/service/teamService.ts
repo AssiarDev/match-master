@@ -32,12 +32,12 @@ export class TeamService {
     return team;
   }
 
-  async teamByLeague(leagueId: number): Promise<ServiceResult<{ teams: any[] }>> {
+  async teamByLeague(leagueId: number) {
     const league = await teamDBRepo.findByLeague(leagueId);
     if (!league)
-      return { success: false, message: "Equipe introuvable via la ligue." };
+      return { success: false as const, message: "Equipe introuvable via la ligue." };
     return {
-      success: true,
+      success: true as const,
       teams: league.teams
     }
   }
