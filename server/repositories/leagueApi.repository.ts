@@ -1,5 +1,5 @@
 import { urlAPI, token } from "../config";
-import { ApiResponse, ApiLeague } from "../types/api";
+import type { ApiResponse, ApiLeague } from "../types/api";
 
 export class LeagueApiRepository {
   private readonly baseUrl: string | undefined;
