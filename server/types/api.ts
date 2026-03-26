@@ -2,9 +2,9 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-export type ServiceSuccess<T = unknown> = { success: true } & T;
+export type ServiceSuccess<T extends object = Record<never, never>> = { success: true } & T;
 export type ServiceError = { success: false; message: string };
-export type ServiceResult<T = unknown> = ServiceSuccess<T> | ServiceError;
+export type ServiceResult<T extends object = Record<never, never>> = ServiceSuccess<T> | ServiceError;
 
 export interface ApiLeague {
   id: number;
