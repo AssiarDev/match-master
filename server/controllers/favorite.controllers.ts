@@ -12,9 +12,10 @@ const favoriteService = new FavoriteService(
 
 export const addFavorite = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId, clubId } = req.body;
-    if (!userId || !clubId) {
-      res.status(400).json({ error: 'userId et clubId sont requis.' });
+    const userId = req.user!.id;
+    const { clubId } = req.body;
+    if (!clubId) {
+      res.status(400).json({ error: 'clubId est requis.' });
       return;
     }
     const result = await favoriteService.addFavorite(userId, clubId);
