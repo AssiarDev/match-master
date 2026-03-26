@@ -11,6 +11,11 @@ import { protectedRoutes } from './routes/protected';
 import { scorers } from './routes/scorers';
 import { favorites } from './routes/favorites';
 
+const requiredEnv = ['PORT', 'SESSION_KEY', 'SECRET_KEY'] as const;
+for (const key of requiredEnv) {
+  if (!process.env[key]) throw new Error(`Missing required env var: ${key}`);
+}
+
 const app = express();
 const port = process.env.PORT;
 
