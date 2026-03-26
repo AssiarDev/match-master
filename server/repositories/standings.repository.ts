@@ -2,8 +2,8 @@ import { urlAPI, token } from "../config";
 import { ApiResponse, ApiStanding } from "../types/api";
 
 export class StandingRepository {
-  private readonly baseUrl: string | undefined;
-  private readonly token: string | undefined;
+  private readonly baseUrl: string;
+  private readonly token: string;
 
   constructor() {
     this.baseUrl = urlAPI;
