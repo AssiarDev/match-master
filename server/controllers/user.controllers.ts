@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
     const result = await userService.login(mail, password);
     if (result.success) {
-      req.session.user = { id: result.id, email: result.email };
+      req.session.user = { id: result.id, email: result.email, username: result.username };
       res.cookie('token', result.token, {
         httpOnly: true,
         secure: true,

@@ -16,6 +16,8 @@ declare global {
 
 declare module "express-session" {
   interface SessionData {
-    user?: { id: number; email: string };
+    user?: { id: number; email: string; username: string };
   }
 }
+
+export {};
