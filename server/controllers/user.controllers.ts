@@ -75,9 +75,13 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
       res.status(400).json({ error: 'ID invalide' });
+      return;
+    }
+    if (req.user!.id !== id) {
+      res.status(403).json({ error: 'Action non autorisée' });
       return;
     }
     const result = await userService.deleteUser(id);
@@ -93,7 +97,15 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ error: 'ID invalide' });
+      return;
+    }
+    if (req.user!.id !== id) {
+      res.status(403).json({ error: 'Action non autorisée' });
+      return;
+    }
     const { username, email } = req.body;
     if (!username || !email) {
       res.status(400).json({ error: 'Tous les champs sont obligatoires' });
