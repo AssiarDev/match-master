@@ -29,6 +29,10 @@ export const removeFavorite = async (req: Request, res: Response): Promise<void>
   try {
     const userId = req.user!.id;
     const clubId = parseInt(req.params.clubId, 10);
+    if (isNaN(clubId)) {
+      res.status(400).json({ error: 'clubId invalide' });
+      return;
+    }
     const result = await favoriteService.removeFavorite(userId, clubId);
     if (result.success) res.status(200).json({ message: result.message });
     else res.status(500).json({ error: result.message });
