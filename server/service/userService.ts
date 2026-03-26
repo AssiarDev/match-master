@@ -16,8 +16,8 @@ export class UserService {
     const existing = await userRepo.findByEmail(email);
     if (existing) return { success: false, message: "Email déja utilisé." };
 
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const user = await userRepo.create({
       username,
       email,
