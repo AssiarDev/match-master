@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.get('/competitions', allLeagues);
 router.get('/competitions/:id/teams', getTeamsOfLeague);
-router.get('/competitions/:id/matches', leaguesMatches);
 router.get('/competitions/matches', matchByDate);
+router.get('/competitions/:id/matches', leaguesMatches);
 router.get('/teams/:teamId/matches', matchesByTeam);
 
 export { router as competitions };
