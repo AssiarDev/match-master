@@ -47,9 +47,6 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(cookieParser());
-
 app.use(teams);
 app.use(competitions);
 app.use(standings);
