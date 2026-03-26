@@ -5,9 +5,9 @@ const standingService = new StandingService();
 
 export const standingsFixtures = async (req: Request, res: Response): Promise<void> => {
   try {
-    const leagueId = Number(req.params.id);
-    if (!leagueId) {
-      res.status(400).json({ error: 'ID obligatoire' });
+    const leagueId = parseInt(req.params.id, 10);
+    if (isNaN(leagueId) || leagueId <= 0) {
+      res.status(400).json({ error: 'ID invalide' });
       return;
     }
     const data = await standingService.getStandingFixtures(leagueId);
