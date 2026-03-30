@@ -3,7 +3,10 @@ import { TeamService } from '../service/teamService';
 
 const teamService = new TeamService();
 
-export const getAllTeams = async (req: Request, res: Response): Promise<void> => {
+export const getAllTeams = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const result = await teamService.allTeams();
     if ('success' in result && !result.success) {
@@ -13,9 +16,7 @@ export const getAllTeams = async (req: Request, res: Response): Promise<void> =>
     res.json(result);
   } catch (err) {
     console.error('Une erreur est survenue', err);
-    res
-      .status(500)
-      .json({ success: false, message: 'Erreur serveur' });
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 };
 
@@ -26,28 +27,27 @@ export const getTeamId = async (req: Request, res: Response): Promise<void> => {
     res.json(data);
   } catch (err) {
     console.error('error backend :', (err as Error).message);
-    res
-      .status(500)
-      .json({ error: "Impossible de récupérer l'id de l'equipe" });
+    res.status(500).json({ error: "Impossible de récupérer l'id de l'equipe" });
   }
 };
 
-export const getTeamsOfLeague = async (req: Request, res: Response): Promise<void> => {
+export const getTeamsOfLeague = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const leagueId = Number(req.params.id);
     const data = await teamService.teamByLeague(leagueId);
 
-    if(!data.success){
-      res.status(500).json({ error: data.message })
+    if (!data.success) {
+      res.status(500).json({ error: data.message });
       return;
     }
     res.json(data.teams);
   } catch (err) {
     console.error('error backend :', (err as Error).message);
-    res
-      .status(500)
-      .json({
-        error: 'Impossible de récupérer les équipes de la compétition',
-      });
+    res.status(500).json({
+      error: 'Impossible de récupérer les équipes de la compétition',
+    });
   }
 };

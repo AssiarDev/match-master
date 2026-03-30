@@ -1,7 +1,15 @@
-import { urlAPI, token } from "../config";
-import type { ApiResponse, ApiLeague } from "../types/api";
+import { urlAPI, token } from '../config';
+import type { ApiResponse, ApiLeague } from '../types/api';
 
-export class LeagueApiRepository {
+export interface ILeagueApiRepository {
+  fetchAllLeague(): Promise<ApiResponse<ApiLeague[]>>;
+  fetchLeague(leagueId: number): Promise<ApiResponse<ApiLeague>>;
+  fetchLeagueSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>>;
+  fetchLeagueCurrentSeason(leagueId: number): Promise<ApiResponse<ApiLeague>>;
+  fetchLeagueWithSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>>;
+}
+
+export class LeagueApiRepository implements ILeagueApiRepository {
   private readonly baseUrl: string;
   private readonly token: string;
 
@@ -18,7 +26,7 @@ export class LeagueApiRepository {
         throw new Error(`API Error fetchAllLeague : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
-      console.error("Erreur fetchAllLeague :", (error as Error).message);
+      console.error('Erreur fetchAllLeague :', (error as Error).message);
       throw error;
     }
   }
@@ -31,7 +39,7 @@ export class LeagueApiRepository {
         throw new Error(`API Error fetchLeague : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
-      console.error("Erreur fetchLeague :", (error as Error).message);
+      console.error('Erreur fetchLeague :', (error as Error).message);
       throw error;
     }
   }
@@ -41,17 +49,17 @@ export class LeagueApiRepository {
       const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=seasons`;
       const response = await fetch(url);
       if (!response.ok)
-        throw new Error(
-          `API Error fetchLeagueSeasons : ${response.status}`
-        );
+        throw new Error(`API Error fetchLeagueSeasons : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
-      console.error("Erreur fetchLeagueSeasons :", (error as Error).message);
+      console.error('Erreur fetchLeagueSeasons :', (error as Error).message);
       throw error;
     }
   }
 
-  async fetchLeagueCurrentSeason(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+  async fetchLeagueCurrentSeason(
+    leagueId: number
+  ): Promise<ApiResponse<ApiLeague>> {
     try {
       const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=currentSeason.stages`;
       const response = await fetch(url);
@@ -61,22 +69,25 @@ export class LeagueApiRepository {
         );
       return await response.json();
     } catch (error: unknown) {
-      console.error("Erreur fetchLeagueCurrentSeason :", (error as Error).message);
+      console.error(
+        'Erreur fetchLeagueCurrentSeason :',
+        (error as Error).message
+      );
       throw error;
     }
   }
 
-  async fetchLeagueWithSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+  async fetchLeagueWithSeasons(
+    leagueId: number
+  ): Promise<ApiResponse<ApiLeague>> {
     try {
       const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=seasons`;
       const response = await fetch(url);
       if (!response.ok)
-        throw new Error(
-          `API Error fetchLeagueWithSeason : ${response.status}`
-        );
+        throw new Error(`API Error fetchLeagueWithSeason : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
-      console.error("Erreur fetchLeagueWithSeason :", (error as Error).message);
+      console.error('Erreur fetchLeagueWithSeason :', (error as Error).message);
       throw error;
     }
   }

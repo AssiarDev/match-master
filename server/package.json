@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
     "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prettier:fix": "npx prettier . --write"
   },
   "keywords": [],
   "author": "",

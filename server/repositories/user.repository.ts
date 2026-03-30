@@ -1,8 +1,19 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, type User } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export class UserRepository {
+export interface IUserRepository {
+  findById(id: number): Promise<User | null>;
+  findByEmail(
+    email: string
+  ): Promise<Pick<User, 'id' | 'email' | 'username' | 'password'> | null>;
+  findAll(): Promise<User[]>;
+  create(data: Prisma.UserCreateInput): Promise<User>;
+  update(id: number, data: Prisma.UserUpdateInput): Promise<User>;
+  delete(id: number): Promise<User>;
+}
+
+export class UserRepository implements IUserRepository {
   findById(id: number) {
     return prisma.user.findUnique({ where: { id } });
   }

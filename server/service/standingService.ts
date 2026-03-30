@@ -1,32 +1,59 @@
-import { StandingRepository } from "../repositories/standings.repository";
-import { TeamService } from "./teamService";
-import { LeagueService } from "./leagueService";
-import { mapDetails } from "../utils/mapDetails";
-import type { ApiStanding, ServiceResult } from "../types/api";
-import type { Stats } from "../utils/mapDetails";
+import { IStandingRepository } from '../repositories/standings.repository';
+import { ITeamService } from './teamService';
+import { ILeagueService } from './leagueService';
+import { mapDetails } from '../utils/mapDetails';
+import type { ApiStanding, ServiceResult } from '../types/api';
+import type { Stats } from '../utils/mapDetails';
 
-const standingRepo = new StandingRepository();
-const teamService = new TeamService();
-const leagueService = new LeagueService();
+export interface IStandingService {
+  getStandingFixtures(leagueId: number): Promise<
+    ServiceResult<{
+      standing: (ApiStanding &
+        Stats & {
+          team_name: string;
+          team_image: string | null;
+          team_id: number;
+        })[];
+    }>
+  >;
+}
 
-export class StandingService {
-  async getStandingFixtures(leagueId: number): Promise<ServiceResult<{ standing: (ApiStanding & Stats & { team_name: string; team_image: string | null; team_id: number })[] }>> {
+export class StandingService implements IStandingService {
+  constructor(
+    private readonly standingRepo: IStandingRepository,
+    private readonly teamService: ITeamService,
+    private readonly leagueService: ILeagueService
+  ) {}
+
+  async getStandingFixtures(leagueId: number): Promise<
+    ServiceResult<{
+      standing: (ApiStanding &
+        Stats & {
+          team_name: string;
+          team_image: string | null;
+          team_id: number;
+        })[];
+    }>
+  > {
     try {
       const seasonResult =
-        await leagueService.getLeagueCurrentSeason(leagueId);
+        await this.leagueService.getLeagueCurrentSeason(leagueId);
       if (!seasonResult.success) throw new Error(seasonResult.message);
-      if (seasonResult.league == null) throw new Error("No current season for this league");
+      if (seasonResult.league == null)
+        throw new Error('No current season for this league');
       const seasonId = seasonResult.league;
       const seasonStandingResult =
-        await standingRepo.fetchStandingBySeason(seasonId);
+        await this.standingRepo.fetchStandingBySeason(seasonId);
       const seasonStanding = seasonStandingResult.data || [];
       const teamIds = seasonStanding.map((s: ApiStanding) => s.participant_id);
-      const teams = await teamService.teamsByIds(teamIds);
+      const teams = await this.teamService.teamsByIds(teamIds);
       if ('success' in teams && !teams.success) throw new Error(teams.message);
-      const teamsArray = teams as { id: number; name: string; image_path: string | null }[];
-      const teamsById = Object.fromEntries(
-        teamsArray.map((s) => [s.id, s])
-      );
+      const teamsArray = teams as {
+        id: number;
+        name: string;
+        image_path: string | null;
+      }[];
+      const teamsById = Object.fromEntries(teamsArray.map((s) => [s.id, s]));
       const enriched = seasonStanding.map((s: ApiStanding) => {
         const standings = teamsById[s.participant_id];
         const stats = mapDetails(s.details || []);

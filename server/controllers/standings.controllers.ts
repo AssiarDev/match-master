@@ -3,7 +3,10 @@ import { StandingService } from '../service/standingService';
 
 const standingService = new StandingService();
 
-export const standingsFixtures = async (req: Request, res: Response): Promise<void> => {
+export const standingsFixtures = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const leagueId = parseInt(req.params.id, 10);
     if (isNaN(leagueId) || leagueId <= 0) {
@@ -21,11 +24,8 @@ export const standingsFixtures = async (req: Request, res: Response): Promise<vo
       "Une erreur est survenue lors de l'execution getStandingsFixtures:",
       (error as Error).message
     );
-    res
-      .status(500)
-      .json({
-        error:
-          "Une erreur est survenue lors de l'execution getStandingsFixtures",
-      });
+    res.status(500).json({
+      error: "Une erreur est survenue lors de l'execution getStandingsFixtures",
+    });
   }
 };

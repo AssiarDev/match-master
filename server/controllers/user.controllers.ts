@@ -34,7 +34,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
     const result = await userService.login(mail, password);
     if (result.success) {
-      req.session.user = { id: result.id, email: result.email, username: result.username };
+      req.session.user = {
+        id: result.id,
+        email: result.email,
+        username: result.username,
+      };
       res.cookie('token', result.token, {
         httpOnly: true,
         secure: true,
@@ -64,7 +68,9 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await userService.getAllUsers();
     if (!users) {
-      res.status(500).json({ error: 'Impossible de récupérer tous les utilisateurs' });
+      res
+        .status(500)
+        .json({ error: 'Impossible de récupérer tous les utilisateurs' });
       return;
     }
     res.json(users);
@@ -73,7 +79,10 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
@@ -95,7 +104,10 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const updateUser = async (req: Request, res: Response): Promise<void> => {
+export const updateUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
@@ -124,7 +136,9 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 
 export const userProfile = (req: Request, res: Response): void => {
   if (!req.user) {
-    res.status(401).json({ isAuthenticated: false, message: 'Non authentifié' });
+    res
+      .status(401)
+      .json({ isAuthenticated: false, message: 'Non authentifié' });
     return;
   }
   res.json({

@@ -7,7 +7,8 @@ const leagueApiRepo = new LeagueApiRepository();
 
 export const insertLeagues = async (): Promise<void> => {
   try {
-    const leaguesData: ApiResponse<ApiLeague[]> = await leagueApiRepo.fetchAllLeague();
+    const leaguesData: ApiResponse<ApiLeague[]> =
+      await leagueApiRepo.fetchAllLeague();
     if (!leaguesData || !Array.isArray(leaguesData.data)) {
       console.error('No leagues found');
       return;
@@ -25,7 +26,10 @@ export const insertLeagues = async (): Promise<void> => {
       category: c.category ?? 0,
       has_jerseys: false,
     }));
-    await prisma.competitions.createMany({ data: leagues, skipDuplicates: true });
+    await prisma.competitions.createMany({
+      data: leagues,
+      skipDuplicates: true,
+    });
     console.log('Leagues successfully entered into the database');
   } catch (e) {
     console.error(`Error inserting leagues :`, (e as Error).message);

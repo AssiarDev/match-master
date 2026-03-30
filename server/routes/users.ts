@@ -1,6 +1,14 @@
 import express from 'express';
 import { loginCheck } from '../middleware/loginMiddleware';
-import { getUsers, deleteUser, updateUser, userProfile, logout, login, register } from '../controllers/user.controllers';
+import {
+  getUsers,
+  deleteUser,
+  updateUser,
+  userProfile,
+  logout,
+  login,
+  register,
+} from '../controllers/user.controllers';
 
 const router = express.Router();
 

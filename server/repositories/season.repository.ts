@@ -1,7 +1,12 @@
-import { urlAPI, token } from "../config";
-import { ApiResponse, ApiSeason } from "../types/api";
+import { urlAPI, token } from '../config';
+import { ApiResponse, ApiSeason } from '../types/api';
 
-export class SeasonRepository {
+export interface ISeasonRepository {
+  fetchSeasonsTeams(seasonId: number): Promise<ApiResponse<ApiSeason>>;
+  fetchSeasonFixtures(seasonId: number): Promise<ApiResponse<unknown[]>>;
+}
+
+export class SeasonRepository implements ISeasonRepository {
   private readonly baseUrl: string;
   private readonly token: string;
 
@@ -15,9 +20,7 @@ export class SeasonRepository {
       const url = `${this.baseUrl}/seasons/${seasonId}?api_token=${this.token}&include=teams`;
       const response = await fetch(url);
       if (!response.ok)
-        throw new Error(
-          ` API Error fetchSeasonsTeams : ${response.status}`
-        );
+        throw new Error(` API Error fetchSeasonsTeams : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
       console.error("Erreur lors de l'appel API :", error);
@@ -30,15 +33,10 @@ export class SeasonRepository {
       const url = `${this.baseUrl}/schedules/seasons/${seasonId}?api_token=${this.token}`;
       const response = await fetch(url);
       if (!response.ok)
-        throw new Error(
-          `API Error fetchSeasonsFixtures : ${response.status}`
-        );
+        throw new Error(`API Error fetchSeasonsFixtures : ${response.status}`);
       return await response.json();
     } catch (error: unknown) {
-      console.error(
-        "Erreur lors de l'appel API fetchSeasonsFixtures",
-        error
-      );
+      console.error("Erreur lors de l'appel API fetchSeasonsFixtures", error);
       throw error;
     }
   }

@@ -1,16 +1,38 @@
-import { LeagueApiRepository } from "../repositories/leagueApi.repository";
-import { LeagueDBRepository } from "../repositories/leagueDB.repository";
-import type { ServiceResult, ApiSeason, ApiLeague } from "../types/api";
+import { ILeagueApiRepository } from '../repositories/leagueApi.repository';
+import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
+import type { ServiceResult, ApiSeason, ApiLeague } from '../types/api';
 
-const leagueApiRepo = new LeagueApiRepository();
-const leagueDBRepo = new LeagueDBRepository();
+type LeagueRow = Awaited<
+  ReturnType<ILeagueDBRepository['findAllLeague']>
+>[number];
 
-type LeagueRow = Awaited<ReturnType<LeagueDBRepository["findAllLeague"]>>[number];
+export interface ILeagueService {
+  getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>>;
+  getLeagueSeasons(
+    leagueId: number
+  ): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>>;
+  getLeague(leagueId: number): Promise<
+    ServiceResult<{
+      league: Awaited<ReturnType<ILeagueDBRepository['findLeague']>>;
+    }>
+  >;
+  getLeagueCurrentSeason(
+    leagueId: number
+  ): Promise<ServiceResult<{ league: number | undefined }>>;
+  getLeagueWithSeasons(
+    leagueId: number
+  ): Promise<ServiceResult<{ league: ApiLeague }>>;
+}
 
-export class LeagueService {
+export class LeagueService implements ILeagueService {
+  constructor(
+    private readonly leagueApiRepo: ILeagueApiRepository,
+    private readonly leagueDBRepo: ILeagueDBRepository
+  ) {}
+
   async getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>> {
     try {
-      const result = await leagueDBRepo.findAllLeague();
+      const result = await this.leagueDBRepo.findAllLeague();
       return { success: true, leagues: result };
     } catch (error) {
       return {
@@ -20,9 +42,11 @@ export class LeagueService {
     }
   }
 
-  async getLeagueSeasons(leagueId: number): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>> {
+  async getLeagueSeasons(
+    leagueId: number
+  ): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>> {
     try {
-      const result = await leagueApiRepo.fetchLeagueSeasons(leagueId);
+      const result = await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
       return { success: true, seasons: result.data?.seasons };
     } catch (error) {
       return {
@@ -32,9 +56,13 @@ export class LeagueService {
     }
   }
 
-  async getLeague(leagueId: number): Promise<ServiceResult<{ league: Awaited<ReturnType<LeagueDBRepository["findLeague"]>> }>> {
+  async getLeague(leagueId: number): Promise<
+    ServiceResult<{
+      league: Awaited<ReturnType<ILeagueDBRepository['findLeague']>>;
+    }>
+  > {
     try {
-      const result = await leagueDBRepo.findLeague(leagueId);
+      const result = await this.leagueDBRepo.findLeague(leagueId);
       return { success: true, league: result };
     } catch (error) {
       return {
@@ -44,10 +72,12 @@ export class LeagueService {
     }
   }
 
-  async getLeagueCurrentSeason(leagueId: number): Promise<ServiceResult<{ league: number | undefined }>> {
+  async getLeagueCurrentSeason(
+    leagueId: number
+  ): Promise<ServiceResult<{ league: number | undefined }>> {
     try {
       const result =
-        await leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
+        await this.leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
       return { success: true, league: result.data?.currentseason?.id };
     } catch (error) {
       return {
@@ -57,9 +87,11 @@ export class LeagueService {
     }
   }
 
-  async getLeagueWithSeasons(leagueId: number): Promise<ServiceResult<{ league: ApiLeague }>> {
+  async getLeagueWithSeasons(
+    leagueId: number
+  ): Promise<ServiceResult<{ league: ApiLeague }>> {
     try {
-      const result = await leagueApiRepo.fetchLeagueWithSeasons(leagueId);
+      const result = await this.leagueApiRepo.fetchLeagueWithSeasons(leagueId);
       return { success: true, league: result.data };
     } catch (error) {
       return {

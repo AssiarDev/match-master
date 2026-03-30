@@ -3,7 +3,10 @@ import { LeagueService } from '../service/leagueService';
 
 const leagueService = new LeagueService();
 
-export const allLeagues = async (req: Request, res: Response): Promise<void> => {
+export const allLeagues = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const result = await leagueService.getAllLeague();
     if (!result.success) {

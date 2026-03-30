@@ -1,7 +1,7 @@
-import { UserRepository } from "../repositories/user.repository";
-import { TeamDBRepository } from "../repositories/teamDB.repository";
-import { UserFavoritesRepository } from "../repositories/userFavorites.repository";
-import type { ServiceResult } from "../types/api";
+import { IUserRepository } from '../repositories/user.repository';
+import { ITeamDBRepository } from '../repositories/teamDB.repository';
+import { IUserFavoritesRepository } from '../repositories/userFavorites.repository';
+import type { ServiceResult } from '../types/api';
 
 export interface FavoriteItem {
   id: number;
@@ -10,40 +10,53 @@ export interface FavoriteItem {
   leagueId: number | null;
   leagueName: string;
 }
+export interface IFavoriteService {
+  addFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>>;
+  removeFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>>;
+  getFavorite(userId: number): Promise<FavoriteItem[]>;
+}
 
-export class FavoriteService {
-  private userRepo: UserRepository;
-  private teamRepo: TeamDBRepository;
-  private favRepo: UserFavoritesRepository;
+export class FavoriteService implements IFavoriteService {
+  constructor(
+    private readonly userRepo: IUserRepository,
+    private readonly teamRepo: ITeamDBRepository,
+    private readonly favRepo: IUserFavoritesRepository
+  ) {}
 
-  constructor(userRepo: UserRepository, teamRepo: TeamDBRepository, favRepo: UserFavoritesRepository) {
-    this.userRepo = userRepo;
-    this.teamRepo = teamRepo;
-    this.favRepo = favRepo;
-  }
-
-  async addFavorite(userId: number, teamId: number): Promise<ServiceResult<{ message: string }>> {
+  async addFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>> {
     const user = await this.userRepo.findById(userId);
-    if (!user) return { success: false, message: "Utilisateur introuvable." };
+    if (!user) return { success: false, message: 'Utilisateur introuvable.' };
 
     const team = await this.teamRepo.findById(teamId);
-    if (!team) return { success: false, message: "Equipe introuvable." };
+    if (!team) return { success: false, message: 'Equipe introuvable.' };
 
     const existing = await this.favRepo.find(userId, teamId);
     if (existing)
-      return { success: true, message: "Equipe déjà dans les favoris." };
+      return { success: true, message: 'Equipe déjà dans les favoris.' };
 
     await this.favRepo.create(userId, teamId);
-    return { success: true, message: "Favori ajouté." };
+    return { success: true, message: 'Favori ajouté.' };
   }
 
-  async removeFavorite(userId: number, teamId: number): Promise<ServiceResult<{ message: string }>> {
+  async removeFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>> {
     const existing = await this.favRepo.find(userId, teamId);
     if (!existing)
       return { success: false, message: "Ce favoris n'existe pas." };
 
     await this.favRepo.delete(userId, teamId);
-    return { success: true, message: "Favoris supprimé." };
+    return { success: true, message: 'Favoris supprimé.' };
   }
 
   async getFavorite(userId: number): Promise<FavoriteItem[]> {
@@ -61,8 +74,7 @@ export class FavoriteService {
           emblem: team.image_path,
           leagueId: team.competitions?.[0]?.competition?.id || null,
           leagueName:
-            team.competitions?.[0]?.competition?.name ||
-            "Compétition inconnue",
+            team.competitions?.[0]?.competition?.name || 'Compétition inconnue',
         };
       });
   }

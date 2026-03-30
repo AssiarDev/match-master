@@ -16,7 +16,8 @@ export const insertAllSquads = async (): Promise<void> => {
     return;
   }
   for (const league of leagues) {
-    const leagueData: ApiResponse<ApiLeague> = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    const leagueData: ApiResponse<ApiLeague> =
+      await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     const seasons = leagueData.data?.seasons ?? [];
     if (seasons.length === 0) {
       console.warn('No seasons found for league :', league.id);
@@ -28,27 +29,37 @@ export const insertAllSquads = async (): Promise<void> => {
       continue;
     }
     for (const season of validSeasons) {
-      const teamsData: ApiResponse<ApiSeason> = await seasonRepo.fetchSeasonsTeams(season.id);
+      const teamsData: ApiResponse<ApiSeason> =
+        await seasonRepo.fetchSeasonsTeams(season.id);
       const teams = teamsData.data?.teams ?? [];
       if (teams.length === 0) {
         console.warn('No teams found for season :', season.id);
         continue;
       }
       for (const team of teams) {
-        const squads: ApiResponse<ApiSquad[]> = await teamApiRepo.fetchTeamSquad(season.id, team.id);
+        const squads: ApiResponse<ApiSquad[]> =
+          await teamApiRepo.fetchTeamSquad(season.id, team.id);
         const squadList = squads.data ? squads.data : [];
         if (squadList.length === 0) {
-          console.warn(`No squad found for team ${team.name} in season ${season.id}`);
+          console.warn(
+            `No squad found for team ${team.name} in season ${season.id}`
+          );
         }
         for (const squad of squadList) {
           const player = squad.player;
           if (!player || !player.id) {
-            console.warn(`Player ${squad.player_id} missing in API response, skipping.`);
+            console.warn(
+              `Player ${squad.player_id} missing in API response, skipping.`
+            );
             continue;
           }
-          const teamExists = await prisma.team.findUnique({ where: { id: squad.team_id } });
+          const teamExists = await prisma.team.findUnique({
+            where: { id: squad.team_id },
+          });
           if (!teamExists) {
-            console.warn(`Skipping squad ${squad.id} because team ${squad.team_id} does not exist in DB`);
+            console.warn(
+              `Skipping squad ${squad.id} because team ${squad.team_id} does not exist in DB`
+            );
             continue;
           }
           await prisma.player.upsert({
@@ -69,7 +80,9 @@ export const insertAllSquads = async (): Promise<void> => {
               image_path: player.image_path,
               height: player.height,
               weight: player.weight,
-              date_of_birth: player.date_of_birth ? new Date(player.date_of_birth) : null,
+              date_of_birth: player.date_of_birth
+                ? new Date(player.date_of_birth)
+                : null,
               gender: player.gender,
             },
             create: {
@@ -89,7 +102,9 @@ export const insertAllSquads = async (): Promise<void> => {
               image_path: player.image_path,
               height: player.height,
               weight: player.weight,
-              date_of_birth: player.date_of_birth ? new Date(player.date_of_birth) : null,
+              date_of_birth: player.date_of_birth
+                ? new Date(player.date_of_birth)
+                : null,
               gender: player.gender,
             },
           });
@@ -113,7 +128,9 @@ export const insertAllSquads = async (): Promise<void> => {
               jersey_number: squad.jersey_number,
             },
           });
-          console.log(`Player ${squad.player_id} upserted for season ${season.id}`);
+          console.log(
+            `Player ${squad.player_id} upserted for season ${season.id}`
+          );
         }
       }
     }

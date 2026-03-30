@@ -12,7 +12,8 @@ export const insertAllSeasons = async (): Promise<void> => {
     return;
   }
   for (const league of leagues) {
-    const leagueData: ApiResponse<ApiLeague> = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    const leagueData: ApiResponse<ApiLeague> =
+      await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     const seasons = leagueData.data?.seasons ?? [];
     if (seasons.length === 0) {
       console.error('No season found for the league :', league.id);

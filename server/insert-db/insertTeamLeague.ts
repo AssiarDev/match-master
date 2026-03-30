@@ -13,7 +13,12 @@ const insertTeamLeague = async (): Promise<void> => {
     for (const team of teams) {
       console.log('Trying to link team:', team.id, 'to league:', league.id);
       await prisma.teamCompetition.upsert({
-        where: { team_id_competition_id: { team_id: team.id, competition_id: league.id } },
+        where: {
+          team_id_competition_id: {
+            team_id: team.id,
+            competition_id: league.id,
+          },
+        },
         update: {},
         create: { team_id: team.id, competition_id: league.id },
       });

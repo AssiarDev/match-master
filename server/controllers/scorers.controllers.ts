@@ -3,7 +3,10 @@ import { ScorersService } from '../service/scorersService';
 
 const scorersService = new ScorersService();
 
-export const topScorers = async (req: Request, res: Response): Promise<void> => {
+export const topScorers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const leagueId = Number(req.params.id);
     const data = await scorersService.getTopScorers(leagueId);
@@ -17,10 +20,8 @@ export const topScorers = async (req: Request, res: Response): Promise<void> => 
       'Impossible de récupérer la liste des meilleurs buteurs',
       (err as Error).message
     );
-    res
-      .status(500)
-      .json({
-        error: 'Impossible de récupérer la liste des meilleurs buteurs',
-      });
+    res.status(500).json({
+      error: 'Impossible de récupérer la liste des meilleurs buteurs',
+    });
   }
 };

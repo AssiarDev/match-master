@@ -10,7 +10,10 @@ const favoriteService = new FavoriteService(
   new UserFavoritesRepository()
 );
 
-export const addFavorite = async (req: Request, res: Response): Promise<void> => {
+export const addFavorite = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = req.user!.id;
     const { clubId } = req.body;
@@ -26,7 +29,10 @@ export const addFavorite = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const removeFavorite = async (req: Request, res: Response): Promise<void> => {
+export const removeFavorite = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = req.user!.id;
     const clubId = parseInt(req.params.clubId, 10);
@@ -42,7 +48,10 @@ export const removeFavorite = async (req: Request, res: Response): Promise<void>
   }
 };
 
-export const getFavorites = async (req: Request, res: Response): Promise<void> => {
+export const getFavorites = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = parseInt(req.params.usersId, 10);
     if (isNaN(userId)) {

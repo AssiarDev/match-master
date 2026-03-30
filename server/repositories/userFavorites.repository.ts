@@ -1,8 +1,26 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type UserFavorite } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export class UserFavoritesRepository {
+export type FavoriteWithTeam = {
+  team: {
+    id: number;
+    name: string;
+    image_path: string | null;
+    competitions: Array<{
+      competition: { id: number; name: string };
+    }>;
+  } | null;
+};
+
+export interface IUserFavoritesRepository {
+  find(userId: number, teamId: number): Promise<UserFavorite | null>;
+  create(userId: number, teamId: number): Promise<UserFavorite>;
+  delete(userId: number, teamId: number): Promise<UserFavorite>;
+  findAllByUser(userId: number): Promise<FavoriteWithTeam[]>;
+}
+
+export class UserFavoritesRepository implements IUserFavoritesRepository {
   find(userId: number, teamId: number) {
     return prisma.userFavorite.findFirst({
       where: { user_id: userId, team_id: teamId },

@@ -1,7 +1,7 @@
-import { ScorersRepository } from "../repositories/scorers.repository";
-import { LeagueService } from "./leagueService";
-import { PlayersRepository } from "../repositories/players.repository";
-import type { ApiScorer, ServiceResult } from "../types/api";
+import { IScorersRepository } from '../repositories/scorers.repository';
+import { ILeagueService } from './leagueService';
+import { IPlayersRepository } from '../repositories/players.repository';
+import type { ApiScorer, ServiceResult } from '../types/api';
 
 interface EnrichedScorer extends ApiScorer {
   player_name: string;
@@ -9,24 +9,27 @@ interface EnrichedScorer extends ApiScorer {
   team_id: number;
 }
 
-const leagueService = new LeagueService();
-const scorersRepo = new ScorersRepository();
-const playersRepo = new PlayersRepository();
-
 export class ScorersService {
-  async getTopScorers(id: number): Promise<ServiceResult<{ scorers: EnrichedScorer[] }>> {
+  constructor(
+    private readonly scorersRepo: IScorersRepository,
+    private readonly leagueService: ILeagueService,
+    private readonly playersRepo: IPlayersRepository
+  ) {}
+
+  async getTopScorers(
+    id: number
+  ): Promise<ServiceResult<{ scorers: EnrichedScorer[] }>> {
     try {
-      const seasonResult = await leagueService.getLeagueCurrentSeason(id);
+      const seasonResult = await this.leagueService.getLeagueCurrentSeason(id);
       if (!seasonResult.success) throw new Error(seasonResult.message);
-      if (seasonResult.league == null) throw new Error("No current season for this league");
+      if (seasonResult.league == null)
+        throw new Error('No current season for this league');
       const seasonId = seasonResult.league;
-      const scorersResult = await scorersRepo.fetchTopScorers(seasonId);
+      const scorersResult = await this.scorersRepo.fetchTopScorers(seasonId);
       const scorers = scorersResult?.data || [];
       const playerIds = scorers.map((s: ApiScorer) => s.player_id);
-      const players = await playersRepo.findPlayersByIds(playerIds);
-      const playersMap = Object.fromEntries(
-        players.map((p) => [p.id, p])
-      );
+      const players = await this.playersRepo.findPlayersByIds(playerIds);
+      const playersMap = Object.fromEntries(players.map((p) => [p.id, p]));
       const enriched = scorers.map((s: ApiScorer) => {
         const player = playersMap[s.player_id];
         return {

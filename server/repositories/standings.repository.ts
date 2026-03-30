@@ -1,7 +1,11 @@
-import { urlAPI, token } from "../config";
-import { ApiResponse, ApiStanding } from "../types/api";
+import { urlAPI, token } from '../config';
+import { ApiResponse, ApiStanding } from '../types/api';
 
-export class StandingRepository {
+export interface IStandingRepository {
+  fetchStandingBySeason(seasonId: number): Promise<ApiResponse<ApiStanding[]>>;
+}
+
+export class StandingRepository implements IStandingRepository {
   private readonly baseUrl: string;
   private readonly token: string;
 
@@ -10,14 +14,14 @@ export class StandingRepository {
     this.token = token;
   }
 
-  async fetchStandingBySeason(seasonId: number): Promise<ApiResponse<ApiStanding[]>> {
+  async fetchStandingBySeason(
+    seasonId: number
+  ): Promise<ApiResponse<ApiStanding[]>> {
     try {
       const url = `${this.baseUrl}/standings/seasons/${seasonId}?api_token=${this.token}&include=form;details.type&filters=standingdetailTypes:128,129,130,131,132,133,134,135,136,137,138`;
       const response = await fetch(url);
       if (!response.ok)
-        throw new Error(
-          `API Error fetchStandingBySeason : ${response.status}`
-        );
+        throw new Error(`API Error fetchStandingBySeason : ${response.status}`);
       return response.json();
     } catch (error: unknown) {
       console.error(

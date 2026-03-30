@@ -1,6 +1,10 @@
 import express from 'express';
 import { loginCheck } from '../middleware/loginMiddleware';
-import { addFavorite, getFavorites, removeFavorite } from '../controllers/favorite.controllers';
+import {
+  addFavorite,
+  getFavorites,
+  removeFavorite,
+} from '../controllers/favorite.controllers';
 
 const router = express.Router();
 

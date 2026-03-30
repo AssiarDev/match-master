@@ -1,7 +1,11 @@
 import express from 'express';
 import { getTeamsOfLeague } from '../controllers/team.controllers';
 import { allLeagues } from '../controllers/league.controllers';
-import { leaguesMatches, matchByDate, matchesByTeam } from '../controllers/matches.controllers';
+import {
+  leaguesMatches,
+  matchByDate,
+  matchesByTeam,
+} from '../controllers/matches.controllers';
 
 const router = express.Router();
 

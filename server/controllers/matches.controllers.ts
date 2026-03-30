@@ -3,7 +3,10 @@ import { MatchesService } from '../service/matchesService';
 
 const matchesService = new MatchesService();
 
-export const matchByDate = async (req: Request, res: Response): Promise<void> => {
+export const matchByDate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const date = req.query.date as string | undefined;
     if (!date) {
@@ -21,15 +24,16 @@ export const matchByDate = async (req: Request, res: Response): Promise<void> =>
       "Une error est survenue lors de l'execution de matchByDate :",
       error
     );
-    res
-      .status(500)
-      .json({
-        error: "Une error est survenue lors de l'execution de matchByDate",
-      });
+    res.status(500).json({
+      error: "Une error est survenue lors de l'execution de matchByDate",
+    });
   }
 };
 
-export const leaguesMatches = async (req: Request, res: Response): Promise<void> => {
+export const leaguesMatches = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const leagueId = parseInt(req.params.id, 10);
     if (isNaN(leagueId) || leagueId <= 0) {
@@ -47,15 +51,16 @@ export const leaguesMatches = async (req: Request, res: Response): Promise<void>
       "Une erreur est survenue lors de l'execution de leaguesMatches",
       error
     );
-    res
-      .status(500)
-      .json({
-        error: "Une erreur est survenue lors de l'execution de leaguesMatches",
-      });
+    res.status(500).json({
+      error: "Une erreur est survenue lors de l'execution de leaguesMatches",
+    });
   }
 };
 
-export const matchesByTeam = async (req: Request, res: Response): Promise<void> => {
+export const matchesByTeam = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const teamId = parseInt(req.params.teamId, 10);
     if (isNaN(teamId) || teamId <= 0) {
@@ -72,10 +77,8 @@ export const matchesByTeam = async (req: Request, res: Response): Promise<void> 
     console.error(
       "Une erreur est survenu lors de l'éxecution de matchesByTeam"
     );
-    res
-      .status(500)
-      .json({
-        error: "Une erreur est survenu lors de l'éxecution de matchesByTeam",
-      });
+    res.status(500).json({
+      error: "Une erreur est survenu lors de l'éxecution de matchesByTeam",
+    });
   }
 };
