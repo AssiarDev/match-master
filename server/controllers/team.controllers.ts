@@ -1,7 +1,14 @@
 import type { Request, Response } from 'express';
 import { TeamService } from '../service/teamService';
+import { TeamDBRepository } from '../repositories/teamDB.repository';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import { SeasonRepository } from '../repositories/season.repository';
 
-const teamService = new TeamService();
+const teamService = new TeamService(
+  new TeamDBRepository(),
+  new LeagueApiRepository(),
+  new SeasonRepository()
+);
 
 export const getAllTeams = async (
   req: Request,

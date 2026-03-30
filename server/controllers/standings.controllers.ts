@@ -1,7 +1,25 @@
 import type { Request, Response } from 'express';
 import { StandingService } from '../service/standingService';
+import { StandingRepository } from '../repositories/standings.repository';
+import { TeamService } from '../service/teamService';
+import { TeamDBRepository } from '../repositories/teamDB.repository';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import { SeasonRepository } from '../repositories/season.repository';
+import { LeagueService } from '../service/leagueService';
+import { LeagueDBRepository } from '../repositories/leagueDB.repository';
 
-const standingService = new StandingService();
+const standingService = new StandingService(
+  new StandingRepository(),
+  new TeamService(
+    new TeamDBRepository(),
+    new LeagueApiRepository(),
+    new SeasonRepository()
+  ),
+  new LeagueService(
+    new LeagueApiRepository(),
+    new LeagueDBRepository()
+  )
+);
 
 export const standingsFixtures = async (
   req: Request,

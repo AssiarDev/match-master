@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
 import { LeagueService } from '../service/leagueService';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import { LeagueDBRepository } from '../repositories/leagueDB.repository';
 
-const leagueService = new LeagueService();
+const leagueService = new LeagueService(
+  new LeagueApiRepository(),
+  new LeagueDBRepository()
+);
 
 export const allLeagues = async (
   req: Request,
