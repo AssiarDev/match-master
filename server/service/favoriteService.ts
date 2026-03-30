@@ -1,0 +1,81 @@
+import { IUserRepository } from '../repositories/user.repository';
+import { ITeamDBRepository } from '../repositories/teamDB.repository';
+import { IUserFavoritesRepository } from '../repositories/userFavorites.repository';
+import type { ServiceResult } from '../types/api';
+
+export interface FavoriteItem {
+  id: number;
+  name: string;
+  emblem: string | null;
+  leagueId: number | null;
+  leagueName: string;
+}
+export interface IFavoriteService {
+  addFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>>;
+  removeFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>>;
+  getFavorite(userId: number): Promise<FavoriteItem[]>;
+}
+
+export class FavoriteService implements IFavoriteService {
+  constructor(
+    private readonly userRepo: IUserRepository,
+    private readonly teamRepo: ITeamDBRepository,
+    private readonly favRepo: IUserFavoritesRepository
+  ) {}
+
+  async addFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>> {
+    const user = await this.userRepo.findById(userId);
+    if (!user) return { success: false, message: 'Utilisateur introuvable.' };
+
+    const team = await this.teamRepo.findById(teamId);
+    if (!team) return { success: false, message: 'Equipe introuvable.' };
+
+    const existing = await this.favRepo.find(userId, teamId);
+    if (existing)
+      return { success: true, message: 'Equipe déjà dans les favoris.' };
+
+    await this.favRepo.create(userId, teamId);
+    return { success: true, message: 'Favori ajouté.' };
+  }
+
+  async removeFavorite(
+    userId: number,
+    teamId: number
+  ): Promise<ServiceResult<{ message: string }>> {
+    const existing = await this.favRepo.find(userId, teamId);
+    if (!existing)
+      return { success: false, message: "Ce favoris n'existe pas." };
+
+    await this.favRepo.delete(userId, teamId);
+    return { success: true, message: 'Favoris supprimé.' };
+  }
+
+  async getFavorite(userId: number): Promise<FavoriteItem[]> {
+    const user = await this.userRepo.findById(userId);
+    if (!user) return [];
+
+    const favorites = await this.favRepo.findAllByUser(userId);
+    return favorites
+      .filter((fav) => fav.team != null)
+      .map((fav) => {
+        const team = fav.team!;
+        return {
+          id: team.id,
+          name: team.name,
+          emblem: team.image_path,
+          leagueId: team.competitions?.[0]?.competition?.id || null,
+          leagueName:
+            team.competitions?.[0]?.competition?.name || 'Compétition inconnue',
+        };
+      });
+  }
+}
