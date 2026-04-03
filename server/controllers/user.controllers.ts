@@ -1,10 +1,5 @@
 import type { Request, Response } from 'express';
-import { UserService } from '../service/userService';
-import { UserRepository } from '../repositories/user.repository';
-
-const userService = new UserService(
-  new UserRepository()
-);
+import { userService } from '../lib/container';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {

@@ -1,14 +1,5 @@
 import type { Request, Response } from 'express';
-import { TeamDBRepository } from '../repositories/teamDB.repository';
-import { UserRepository } from '../repositories/user.repository';
-import { UserFavoritesRepository } from '../repositories/userFavorites.repository';
-import { FavoriteService } from '../service/favoriteService';
-
-const favoriteService = new FavoriteService(
-  new UserRepository(),
-  new TeamDBRepository(),
-  new UserFavoritesRepository()
-);
+import { favoriteService } from '../lib/container';
 
 export const addFavorite = async (
   req: Request,

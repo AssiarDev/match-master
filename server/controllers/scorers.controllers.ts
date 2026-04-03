@@ -1,19 +1,5 @@
 import type { Request, Response } from 'express';
-import { ScorersService } from '../service/scorersService';
-import { ScorersRepository } from '../repositories/scorers.repository';
-import { LeagueService } from '../service/leagueService';
-import { LeagueApiRepository } from '../repositories/leagueApi.repository';
-import { LeagueDBRepository } from '../repositories/leagueDB.repository';
-import { PlayersRepository } from '../repositories/players.repository';
-
-const scorersService = new ScorersService(
-  new ScorersRepository(),
-  new LeagueService(
-    new LeagueApiRepository(),
-    new LeagueDBRepository()
-  ),
-  new PlayersRepository()
-);
+import { scorersService } from '../lib/container';
 
 export const topScorers = async (
   req: Request,
