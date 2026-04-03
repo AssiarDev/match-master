@@ -1,7 +1,23 @@
 import type { Request, Response } from 'express';
 import { MatchesService } from '../service/matchesService';
+import { MatchesRepository } from '../repositories/matches.repository';
+import { LeagueService } from '../service/leagueService';
+import { SeasonService } from '../service/seasonService';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import { LeagueDBRepository } from '../repositories/leagueDB.repository';
+import { SeasonRepository } from '../repositories/season.repository';
 
-const matchesService = new MatchesService();
+
+const matchesService = new MatchesService(
+  new MatchesRepository(),
+  new LeagueService(
+    new LeagueApiRepository(),
+    new LeagueDBRepository()
+  ),
+  new SeasonService(
+    new SeasonRepository()
+  )
+)
 
 export const matchByDate = async (
   req: Request,

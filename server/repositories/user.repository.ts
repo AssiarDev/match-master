@@ -10,7 +10,7 @@ export interface IUserRepository {
   findAll(): Promise<User[]>;
   create(data: Prisma.UserCreateInput): Promise<User>;
   update(id: number, data: Prisma.UserUpdateInput): Promise<User>;
-  delete(id: number): Promise<User>;
+  delete(id: number): Promise<void>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -37,7 +37,7 @@ export class UserRepository implements IUserRepository {
     return prisma.user.update({ where: { id }, data });
   }
 
-  delete(id: number) {
-    return prisma.user.delete({ where: { id } });
+  async delete(id: number): Promise<void> {
+    await prisma.user.delete({ where: { id } });
   }
 }

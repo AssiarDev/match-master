@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import argon2  from 'argon2';
 import jwt from 'jsonwebtoken';
 import type { User } from '@prisma/client';
 import { IUserRepository } from '../repositories/user.repository';
@@ -35,8 +35,7 @@ export class UserService implements IUserService {
     const existing = await this.userRepo.findByEmail(email);
     if (existing) return { success: false, message: 'Email déja utilisé.' };
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await argon2.hash(password);
     const user = await this.userRepo.create({
       username,
       email,
@@ -52,7 +51,7 @@ export class UserService implements IUserService {
     const user = await this.userRepo.findByEmail(email);
     if (!user) return { success: false, message: 'Utilisateur introuvable' };
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await argon2.verify(user.password, password);
     if (!isValidPassword)
       return { success: false, message: 'Mot de passe incorrect.' };
 
