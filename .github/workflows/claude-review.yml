@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Ne pas tourner sur les PRs en draft
-    if: github.event.pull_request.draft == false
+    if: ${{ github.event.pull_request.draft == false }}
 
     permissions:
       contents: read
@@ -30,7 +30,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          direct_prompt: |
+          prompt: |
             Tu es un expert JavaScript/TypeScript senior.
             Effectue une review complète de cette PR en français.
 
