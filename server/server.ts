@@ -25,6 +25,9 @@ for (const key of requiredEnv) {
 const app = express();
 const port = process.env.PORT;
 
+const siteName = process.env.NETLIFY_SITE_NAME
+const previewRegex = siteName ? new RegExp(`^https:\\/\\/deploy-preview-\\d+--${siteName}\\.netlify\\.app$`) : null
+
 const allowedOrigins = [
   process.env.URL_SERVER_CLIENT,
   process.env.URL_PROD_CLIENT,
@@ -36,10 +39,13 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
+      const isAllowed = allowedOrigins.includes(origin) || 
+        (previewRegex ? previewRegex.test(origin) : false)
+
+      if(isAllowed){
+        callback(null, true)
       } else {
-        callback(new Error(`CORS error: origin ${origin} not allowed`));
+        callback(new Error(`CORS error: origin ${origin} not allowed`))
       }
     },
     credentials: true,
