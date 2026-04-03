@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
 import type { ApiResponse, ApiLeague } from '../types/api';
-
-const prisma: PrismaClient = new PrismaClient();
 const leagueApiRepo = new LeagueApiRepository();
 
 export const insertLeagues = async (): Promise<void> => {

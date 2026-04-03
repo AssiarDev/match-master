@@ -1,6 +1,4 @@
-import { PrismaClient, type Competitions } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma';
 
 export type LeagueDBResult = {
   id: number;

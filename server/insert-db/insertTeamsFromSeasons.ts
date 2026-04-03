@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
 import { SeasonRepository } from '../repositories/season.repository';
 import type { ApiResponse, ApiLeague, ApiSeason, ApiTeam } from '../types/api';
-
-const prisma: PrismaClient = new PrismaClient();
 const leagueApiRepo = new LeagueApiRepository();
 const seasonRepo = new SeasonRepository();
 

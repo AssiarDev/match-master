@@ -1,6 +1,5 @@
-import { PrismaClient, type Team } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { type Team } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export type LeagueWithTeams = {
   id: number;

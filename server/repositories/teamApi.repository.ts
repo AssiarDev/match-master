@@ -24,8 +24,11 @@ export class TeamApiRepository implements ITeamApiRepository {
     try {
       const url = `${this.baseUrl}/squads/seasons/${seasonId}/teams/${teamId}?api_token=${this.token}&include=player`;
       const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(`API Error fetchTeamSquad : ${response.status}`);
+      if (!response.ok) {
+        const error = new Error(`API Error fetchTeamSquad : ${response.status}`) as Error & { status: number };
+        error.status = response.status;
+        throw error;
+      }
       return await response.json();
     } catch (error: unknown) {
       console.error('Erreur fetchTeamSquad :', (error as Error).message);

@@ -1,6 +1,5 @@
-import { PrismaClient, type UserFavorite } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { type UserFavorite } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export type FavoriteWithTeam = {
   team: {

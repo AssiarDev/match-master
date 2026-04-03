@@ -1,8 +1,13 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 import { TeamService } from '../service/teamService';
-
-const prisma: PrismaClient = new PrismaClient();
-const teamService = new TeamService();
+import { TeamDBRepository } from '../repositories/teamDB.repository';
+import { LeagueApiRepository } from '../repositories/leagueApi.repository';
+import { SeasonRepository } from '../repositories/season.repository';
+const teamService = new TeamService(
+  new TeamDBRepository(),
+  new LeagueApiRepository(),
+  new SeasonRepository()
+);
 
 const insertTeamLeague = async (): Promise<void> => {
   const leagues = await prisma.competitions.findMany();

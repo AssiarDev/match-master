@@ -32,7 +32,7 @@ export class MatchesRepository implements IMatchRepository {
     try {
       const url = `${this.baseUrl}/schedules/teams/${teamId}?api_token=${this.token}&include=league;participants;venue`;
       const response = await fetch(url);
-      if (response.ok)
+      if (!response.ok)
         throw new Error(`API Error fetchMatchesByTeam : ${response.status}`);
       return response.json();
     } catch (error: unknown) {

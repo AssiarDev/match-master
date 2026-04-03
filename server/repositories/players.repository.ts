@@ -1,6 +1,5 @@
-import { PrismaClient, type Player } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { type Player } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export interface IPlayersRepository {
   findPlayersByIds(playerIds: number[]): Promise<Player[]>;

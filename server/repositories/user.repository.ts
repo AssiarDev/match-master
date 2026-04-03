@@ -1,6 +1,5 @@
-import { PrismaClient, Prisma, type User } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Prisma, type User } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export interface IUserRepository {
   findById(id: number): Promise<User | null>;
