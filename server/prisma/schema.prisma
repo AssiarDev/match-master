@@ -131,7 +131,7 @@ model UserFavorite {
   competition_id Int?
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   team Team? @relation(fields: [team_id], references: [id])
   player Player? @relation(fields: [player_id], references: [id])
   competition Competitions? @relation(fields: [competition_id], references: [id])
