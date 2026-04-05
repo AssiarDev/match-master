@@ -86,6 +86,6 @@ export class UserService implements IUserService {
     if (!user) return { success: false, message: 'Utilisateur introuvable' };
 
     await this.userRepo.delete(id);
-    return { success: true, message: 'Utilisateur supprimé' };
+    return { success: true, message: 'Votre compte à bien été supprimé' };
   }
 }
