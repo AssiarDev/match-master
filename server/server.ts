@@ -1,7 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import cors from 'cors';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { teams } from './routes/teams';
 import { competitions } from './routes/competitions';
@@ -13,7 +12,6 @@ import { favorites } from './routes/favorites';
 
 const requiredEnv = [
   'PORT',
-  'SESSION_KEY',
   'SECRET_KEY',
   'URL_API',
   'API_TOKEN',
@@ -54,15 +52,6 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(
-  session({
-    secret: process.env.SESSION_KEY!,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: true, maxAge: 3600000, sameSite: 'none' },
-  })
-);
 
 app.use(teams);
 app.use(competitions);
