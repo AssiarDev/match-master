@@ -1,11 +1,9 @@
 import argon2  from 'argon2';
-import jwt from 'jsonwebtoken';
 import type { User } from '@prisma/client';
 import { IUserRepository } from '../repositories/user.repository';
 import type { UserPayload } from '../types/express';
 import type { ServiceResult } from '../types/api';
 
-type LoginSuccess = { token: string } & UserPayload;
 type RegisterSuccess = { user: User };
 type UpdateSuccess = { user: User };
 
@@ -15,11 +13,11 @@ export interface IUserService {
     email: string,
     password: string
   ): Promise<ServiceResult<RegisterSuccess>>;
-  login(email: string, password: string): Promise<ServiceResult<LoginSuccess>>;
+  login(email: string, password: string): Promise<ServiceResult<UserPayload>>;
   getAllUsers(): Promise<User[]>;
   updateUser(
     id: number,
-    data: { username: string; email: string }
+    data: { username: string; password: string }
   ): Promise<ServiceResult<UpdateSuccess>>;
   deleteUser(id: number): Promise<ServiceResult<{ message: string }>>;
 }
@@ -47,7 +45,7 @@ export class UserService implements IUserService {
   async login(
     email: string,
     password: string
-  ): Promise<ServiceResult<LoginSuccess>> {
+  ): Promise<ServiceResult<UserPayload>> {
     const user = await this.userRepo.findByEmail(email);
     if (!user) return { success: false, message: 'Utilisateur introuvable' };
 
@@ -55,31 +53,47 @@ export class UserService implements IUserService {
     if (!isValidPassword)
       return { success: false, message: 'Mot de passe incorrect.' };
 
+    const createDateAccount = user.createdAt
+
     const payload: UserPayload = {
       id: user.id,
       email: user.email,
       username: user.username,
+      createdAt: createDateAccount.toLocaleDateString('fr-FR')
     };
-    const token = jwt.sign(payload, process.env.SECRET_KEY!, {
-      expiresIn: '1h',
-    });
-    return { success: true, token, ...payload };
+
+    return { success: true, ...payload };
   }
 
   async getAllUsers(): Promise<User[]> {
     return this.userRepo.findAll();
   }
 
-  async updateUser(
-    id: number,
-    data: { username: string; email: string }
-  ): Promise<ServiceResult<UpdateSuccess>> {
-    const user = await this.userRepo.findById(id);
-    if (!user) return { success: false, message: 'Utilisateur introuvable' };
+async updateUser(
+  id: number,
+  data: { username?: string; password?: string; currentPassword?: string }
+): Promise<ServiceResult<UpdateSuccess>> {
+  const user = await this.userRepo.findById(id);
+  if (!user) return { success: false, message: 'Utilisateur introuvable' };
 
-    const updated = await this.userRepo.update(id, data);
-    return { success: true, user: updated };
+  const updateData: { username?: string; password?: string } = {};
+  if (data.username) updateData.username = data.username;
+
+  if (data.password) {
+    if (!data.currentPassword) {
+      return { success: false, message: 'Mot de passe actuel requis' };
+    }
+    const isValid = await argon2.verify(user.password, data.currentPassword);
+    if (!isValid) {
+      return { success: false, message: 'Mot de passe actuel incorrect' };
+    }
+    const newPassword = data.password;
+    updateData.password = await argon2.hash(newPassword);
   }
+
+  const updated = await this.userRepo.update(id, updateData);
+  return { success: true, user: updated };
+}
 
   async deleteUser(id: number): Promise<ServiceResult<{ message: string }>> {
     const user = await this.userRepo.findById(id);
