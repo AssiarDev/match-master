@@ -2,24 +2,35 @@ import type { Request, Response } from 'express';
 import { userService } from '../lib/container';
 import jwt from 'jsonwebtoken'
 import { addToBlacklist } from '../lib/tokenBlacklist';
+import { validatePassword } from '../utils/validatePassword';
 
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, mail, password, confirmPassword } = req.body;
+
     if (!username || !mail || !password || !confirmPassword) {
       res.status(400).json({ error: 'Tous les champs sont obligatoires' });
       return;
     }
+
     if (password !== confirmPassword) {
       res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
       return;
     }
+
+    const validPassword = validatePassword(password)
+    if (validPassword) {
+      res.status(400).json({error: validPassword})
+      return
+    }
+
     const result = await userService.register(username, mail, password);
     if (!result.success) {
       res.status(400).json({ error: result.message });
       return;
     }
+
     res.status(201).json({ message: 'Inscription réussie.' });
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
@@ -137,10 +148,22 @@ export const updateUser = async (
         res.status(400).json({ message: 'Les mots de passe ne correspondent pas' })
         return
       }
+
+      const validPassword = validatePassword(newPassword)
+      if (validPassword) {
+        res.status(400).json({error: validPassword})
+        return
+      }
     }
 
     if (!username && !newPassword) {
       res.status(400).json({ error: 'Aucun champ à mettre à jour' })
+      return
+    }
+
+    const validPassword = validatePassword(newPassword)
+    if (validPassword) {
+      res.status(400).json({error: validPassword})
       return
     }
 
