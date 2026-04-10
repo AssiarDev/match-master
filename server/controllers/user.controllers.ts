@@ -161,12 +161,6 @@ export const updateUser = async (
       return
     }
 
-    const validPassword = validatePassword(newPassword)
-    if (validPassword) {
-      res.status(400).json({error: validPassword})
-      return
-    }
-
     const result = await userService.updateUser(id, { username, password: newPassword, currentPassword  });
     if (!result.success) {
       res.status(404).json({ error: result.message });
