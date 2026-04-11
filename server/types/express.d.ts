@@ -4,6 +4,7 @@ export interface UserPayload {
   id: number;
   email: string;
   username: string;
+  createdAt: string
 }
 
 declare global {
@@ -16,7 +17,7 @@ declare global {
 
 declare module 'express-session' {
   interface SessionData {
-    user?: { id: number; email: string; username: string };
+    user?: { id: number; email: string; username: string, created: string };
   }
 }
 
