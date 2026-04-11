@@ -3,14 +3,9 @@ import type { IUserRepository } from "../../repositories/user.repository";
 
 const mockHash = jest.fn<() => Promise<string>>();
 const mockVerify = jest.fn<() => Promise<boolean>>();
-const mockSign = jest.fn<() => string>();
 
 jest.unstable_mockModule("argon2", () => ({
   default: { hash: mockHash, verify: mockVerify },
-}));
-
-jest.unstable_mockModule("jsonwebtoken", () => ({
-  default: { sign: mockSign },
 }));
 
 const { UserService } = await import("../../service/userService");
@@ -88,22 +83,24 @@ describe("UserService", () => {
     expect(result).toEqual({ success: false, message: "Mot de passe incorrect." });
   });
 
-  it("retourne un token si login OK", async () => {
+  it("retourne le payload si login OK", async () => {
     userRepoMock.findByEmail.mockResolvedValue({
       id: 1,
       email: "test@mail.com",
       username: "John",
       password: "hashedPassword",
+      createdAt: new Date()
     } as any);
     mockVerify.mockResolvedValue(true);
-    mockSign.mockReturnValue("fakeToken");
 
     const result = await service.login("test@mail.com", "pass");
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.token).toBe("fakeToken");
+      expect(result.id).toBe(1);
       expect(result.email).toBe("test@mail.com");
+      expect(result.username).toBe("John");
+      expect(result.createdAt).toBeDefined();
     }
   });
 
@@ -120,24 +117,32 @@ describe("UserService", () => {
   it("retourne une erreur si utilisateur introuvable (update)", async () => {
     userRepoMock.findById.mockResolvedValue(null);
 
-    const result = await service.updateUser(1, { username: "New", email: "new@mail.com" });
+    const result = await service.updateUser(1, { username: "New", password: "1234" });
 
     expect(result).toEqual({ success: false, message: "Utilisateur introuvable" });
   });
 
   it("met à jour un utilisateur", async () => {
-    userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+    userRepoMock.findById.mockResolvedValue({ id: 1, password: "oldHashedPassword" } as any);
+    mockVerify.mockResolvedValue(true);
+    mockHash.mockResolvedValue("newHashedPassword");
     userRepoMock.update.mockResolvedValue({
       id: 1,
       username: "New",
       email: "new@mail.com",
     } as any);
 
-    const result = await service.updateUser(1, { username: "New", email: "new@mail.com" });
+    const result = await service.updateUser(1, {
+      username: "New",
+      password: "newPass123",
+      currentPassword: "oldPass",
+    });
 
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.user.username).toBe("New");
+      expect(mockVerify).toHaveBeenCalled();
+      expect(mockHash).toHaveBeenCalled();
     }
   });
 
@@ -156,6 +161,6 @@ describe("UserService", () => {
 
     const result = await service.deleteUser(1);
 
-    expect(result).toEqual({ success: true, message: "Utilisateur supprimé" });
+    expect(result).toEqual({ success: true, message: "Votre compte à bien été supprimé" });
   });
 });

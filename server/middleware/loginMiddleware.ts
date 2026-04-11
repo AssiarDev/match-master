@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
 import type { UserPayload } from '../types/express';
+import { isBlacklisted } from '../lib/tokenBlacklist';
 
 export const loginCheck = (
   req: Request,
@@ -14,6 +15,11 @@ export const loginCheck = (
       .status(401)
       .json({ redirect: '/login', message: 'Accès refusé. Token absent.' });
     return;
+  }
+
+  if (isBlacklisted(token)) {
+    res.status(401).json({ error: 'Token invalide' });
+    return
   }
 
   try {
