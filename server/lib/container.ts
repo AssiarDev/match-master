@@ -38,4 +38,4 @@ export const teamService = new TeamService(teamDBRepository, leagueApiRepository
 export const matchesService = new MatchesService(matchesRepository, leagueService, seasonService);
 export const scorersService = new ScorersService(scorersRepository, leagueService, playersRepository);
 export const standingService = new StandingService(standingRepository, teamService, leagueService);
-export const favoriteService = new FavoriteService(userRepository, teamDBRepository, userFavoritesRepository);
+export const favoriteService = new FavoriteService(userRepository, teamDBRepository, userFavoritesRepository, leagueDBRepository);
