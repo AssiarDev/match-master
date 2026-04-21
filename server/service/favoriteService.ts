@@ -121,7 +121,7 @@ export class FavoriteService implements IFavoriteService {
     userId: number, 
     leagueId: number
   ): Promise<ServiceResult<{ message: string; }>> {
-    const existing = await this.favRepo.find(userId, leagueId);
+    const existing = await this.favRepo.findLeague(userId, leagueId);
       if (!existing)
         return { success: false, message: "Cette compétition n'existe pas dans les favoris." };
     
