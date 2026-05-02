@@ -16,6 +16,12 @@ export class ScorersService {
     private readonly playersRepo: IPlayersRepository
   ) {}
 
+  /**
+   * Retrieves the top scorers for the current season of a given league,
+   * enriched with player name and image from the database.
+   * @param id - The ID of the league
+   * @returns A ServiceResult containing an array of enriched scorers
+   */
   async getTopScorers(
     id: number
   ): Promise<ServiceResult<{ scorers: EnrichedScorer[] }>> {

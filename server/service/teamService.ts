@@ -43,6 +43,10 @@ export class TeamService implements ITeamService {
     private readonly seasonRepo: ISeasonRepository
   ) {}
 
+  /**
+   * Retrieves all teams from the database.
+   * @returns An array of teams or a ServiceError
+   */
   async allTeams(): Promise<
     Awaited<ReturnType<ITeamDBRepository['findAllTeams']>> | ServiceError
   > {
@@ -55,6 +59,11 @@ export class TeamService implements ITeamService {
     return teams;
   }
 
+  /**
+   * Retrieves a single team by its ID from the database.
+   * @param teamId - The ID of the team
+   * @returns The team or a ServiceError if not found
+   */
   async teamById(
     teamId: number
   ): Promise<
@@ -66,6 +75,11 @@ export class TeamService implements ITeamService {
     return team;
   }
 
+  /**
+   * Retrieves multiple teams by their IDs from the database.
+   * @param teamIds - An array of team IDs
+   * @returns An array of teams or a ServiceError
+   */
   async teamsByIds(
     teamIds: number[]
   ): Promise<
@@ -77,6 +91,11 @@ export class TeamService implements ITeamService {
     return team;
   }
 
+  /**
+   * Retrieves all teams belonging to a given league from the database.
+   * @param leagueId - The ID of the league
+   * @returns An object with teams or a ServiceError if the league is not found
+   */
   async teamByLeague(leagueId: number): Promise<
     | {
         success: true;
@@ -98,6 +117,11 @@ export class TeamService implements ITeamService {
     };
   }
 
+  /**
+   * Retrieves the teams for the active season of a given league from the external API.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing the active season and its teams
+   */
   async teamsForLeague(
     leagueId: number
   ): Promise<
