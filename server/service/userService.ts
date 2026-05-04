@@ -25,6 +25,13 @@ export interface IUserService {
 export class UserService implements IUserService {
   constructor(private readonly userRepo: IUserRepository) {}
 
+  /**
+   * Registers a new user after checking email availability and hashing the password.
+   * @param username - The desired username
+   * @param email - The user's email address
+   * @param password - The user's plain text password
+   * @returns A ServiceResult containing the created user
+   */
   async register(
     username: string,
     email: string,
@@ -42,6 +49,12 @@ export class UserService implements IUserService {
     return { success: true, user };
   }
 
+  /**
+   * Authenticates a user by verifying their email and password.
+   * @param email - The user's email address
+   * @param password - The user's plain text password
+   * @returns A ServiceResult containing the user payload on success
+   */
   async login(
     email: string,
     password: string
@@ -65,11 +78,22 @@ export class UserService implements IUserService {
     return { success: true, ...payload };
   }
 
+  /**
+   * Retrieves all users from the database.
+   * @returns An array of all users
+   */
   async getAllUsers(): Promise<User[]> {
     return this.userRepo.findAll();
   }
 
-async updateUser(
+  /**
+   * Updates a user's username and/or password.
+   * Requires the current password to be provided when changing the password.
+   * @param id - The ID of the user to update
+   * @param data - The fields to update (username, password, currentPassword)
+   * @returns A ServiceResult containing the updated user
+   */
+  async updateUser(
   id: number,
   data: { username?: string; password?: string; currentPassword?: string }
 ): Promise<ServiceResult<UpdateSuccess>> {
@@ -95,6 +119,11 @@ async updateUser(
   return { success: true, user: updated };
 }
 
+  /**
+   * Deletes a user account by its ID.
+   * @param id - The ID of the user to delete
+   * @returns A ServiceResult with a confirmation message
+   */
   async deleteUser(id: number): Promise<ServiceResult<{ message: string }>> {
     const user = await this.userRepo.findById(id);
     if (!user) return { success: false, message: 'Utilisateur introuvable' };

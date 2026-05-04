@@ -30,6 +30,10 @@ export class LeagueService implements ILeagueService {
     private readonly leagueDBRepo: ILeagueDBRepository
   ) {}
 
+  /**
+   * Retrieves all leagues from the database.
+   * @returns A ServiceResult containing an array of leagues
+   */
   async getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>> {
     try {
       const result = await this.leagueDBRepo.findAllLeague();
@@ -42,6 +46,11 @@ export class LeagueService implements ILeagueService {
     }
   }
 
+  /**
+   * Retrieves all seasons for a given league from the external API.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing an array of seasons
+   */
   async getLeagueSeasons(
     leagueId: number
   ): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>> {
@@ -56,6 +65,11 @@ export class LeagueService implements ILeagueService {
     }
   }
 
+  /**
+   * Retrieves a single league by its ID from the database.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing the league or null if not found
+   */
   async getLeague(leagueId: number): Promise<
     ServiceResult<{
       league: Awaited<ReturnType<ILeagueDBRepository['findLeague']>>;
@@ -72,6 +86,11 @@ export class LeagueService implements ILeagueService {
     }
   }
 
+  /**
+   * Retrieves the current season ID for a given league from the external API.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing the current season ID
+   */
   async getLeagueCurrentSeason(
     leagueId: number
   ): Promise<ServiceResult<{ league: number | undefined }>> {
@@ -87,6 +106,11 @@ export class LeagueService implements ILeagueService {
     }
   }
 
+  /**
+   * Retrieves a league along with all its seasons from the external API.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing the league with its seasons
+   */
   async getLeagueWithSeasons(
     leagueId: number
   ): Promise<ServiceResult<{ league: ApiLeague }>> {

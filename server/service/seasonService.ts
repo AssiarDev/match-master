@@ -12,6 +12,11 @@ export interface ISeasonService {
 
 export class SeasonService implements ISeasonService {
   constructor(private readonly seasonRepo: ISeasonRepository) {}
+  /**
+   * Retrieves all teams for a given season from the external API.
+   * @param seasonId - The ID of the season
+   * @returns A ServiceResult containing the season data with its teams
+   */
   async getSeasonsTeams(
     seasonId: number
   ): Promise<ServiceResult<{ seasonsTeams: ApiSeason }>> {
@@ -26,6 +31,11 @@ export class SeasonService implements ISeasonService {
     }
   }
 
+  /**
+   * Retrieves all fixtures (matches) for a given season from the external API.
+   * @param seasonId - The ID of the season
+   * @returns A ServiceResult containing an array of fixtures
+   */
   async getSeasonFixtures(
     seasonId: number
   ): Promise<ServiceResult<{ seasonFixtures: unknown[] }>> {

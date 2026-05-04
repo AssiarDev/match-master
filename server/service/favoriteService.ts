@@ -49,6 +49,12 @@ export class FavoriteService implements IFavoriteService {
     private readonly leagueRepo: ILeagueDBRepository
   ) {}
 
+  /**
+   * Adds a team to a user's favorites.
+   * @param userId - The ID of the user
+   * @param teamId - The ID of the team to add
+   * @returns A ServiceResult with a success message or an error message
+   */
   async addFavorite(
     userId: number,
     teamId: number
@@ -67,6 +73,12 @@ export class FavoriteService implements IFavoriteService {
     return { success: true, message: 'Favori ajouté.' };
   }
 
+  /**
+   * Removes a team from a user's favorites.
+   * @param userId - The ID of the user
+   * @param teamId - The ID of the team to remove
+   * @returns A ServiceResult with a success message or an error message
+   */
   async removeFavorite(
     userId: number,
     teamId: number
@@ -79,6 +91,11 @@ export class FavoriteService implements IFavoriteService {
     return { success: true, message: 'Favoris supprimé.' };
   }
 
+  /**
+   * Retrieves all favorite teams for a given user.
+   * @param userId - The ID of the user
+   * @returns An array of FavoriteItem, or an empty array if the user does not exist
+   */
   async getFavorite(userId: number): Promise<FavoriteItem[]> {
     const user = await this.userRepo.findById(userId);
     if (!user) return [];
@@ -99,8 +116,14 @@ export class FavoriteService implements IFavoriteService {
       });
   }
 
+  /**
+   * Adds a league to a user's favorites.
+   * @param userId - The ID of the user
+   * @param leagueId - The ID of the league to add
+   * @returns A ServiceResult with a success message or an error message
+   */
   async addLeagueFavorite(
-    userId: number, 
+    userId: number,
     leagueId: number
   ): Promise<ServiceResult<{ message: string; }>> {
     const user = await this.userRepo.findById(userId);
@@ -117,8 +140,14 @@ export class FavoriteService implements IFavoriteService {
     return { success: true, message: 'La compétition à bien été ajouté.' };
   }
 
+  /**
+   * Removes a league from a user's favorites.
+   * @param userId - The ID of the user
+   * @param leagueId - The ID of the league to remove
+   * @returns A ServiceResult with a success message or an error message
+   */
   async removeLeagueFavorite(
-    userId: number, 
+    userId: number,
     leagueId: number
   ): Promise<ServiceResult<{ message: string; }>> {
     const existing = await this.favRepo.findLeague(userId, leagueId);
@@ -129,6 +158,11 @@ export class FavoriteService implements IFavoriteService {
     return { success: true, message: 'La compétition à bien été supprimé de vos favoris.' };
   }
 
+  /**
+   * Retrieves all favorite leagues for a given user.
+   * @param userId - The ID of the user
+   * @returns An array of LeagueFavoriteItem, or an empty array if the user does not exist
+   */
   async getLeagueFavorite(userId: number): Promise<LeagueFavoriteItem[]> {
     const user = await this.userRepo.findById(userId)
     if (!user) return [];

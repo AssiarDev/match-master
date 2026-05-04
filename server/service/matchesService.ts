@@ -24,6 +24,11 @@ export class MatchesService implements IMatchesService {
     private readonly seasonService: ISeasonService
   ) {}
 
+  /**
+   * Retrieves all matches for the current season of a given league.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing an array of matches
+   */
   async getLeagueMatches(
     leagueId: number
   ): Promise<ServiceResult<{ matches: unknown[] }>> {
@@ -45,6 +50,11 @@ export class MatchesService implements IMatchesService {
     }
   }
 
+  /**
+   * Retrieves all matches for a given date, grouped by league.
+   * @param date - The date in YYYY-MM-DD format
+   * @returns A ServiceResult containing matches grouped by league name
+   */
   async getMatchesByDate(date: string): Promise<
     ServiceResult<{
       matches: Record<string, { flag: string; matches: ApiMatch[] }>;
@@ -77,6 +87,11 @@ export class MatchesService implements IMatchesService {
     }
   }
 
+  /**
+   * Retrieves all matches (past and upcoming) for a given team.
+   * @param teamId - The ID of the team
+   * @returns A ServiceResult containing an array of matches
+   */
   async getMatchesByTeam(
     teamId: number
   ): Promise<ServiceResult<{ matches: ApiMatch[] }>> {

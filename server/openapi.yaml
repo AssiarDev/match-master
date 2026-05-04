@@ -1,0 +1,490 @@
+openapi: 3.0.3
+info:
+  title: Match Master API
+  version: 1.0.0
+  description: API REST de l'application Match Master
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+
+  schemas:
+    League:
+      type: object
+      properties:
+        id: { type: integer }
+        country_id: { type: integer, nullable: true }
+        name: { type: string }
+        active: { type: boolean }
+        short_code: { type: string, nullable: true }
+        image_path: { type: string, nullable: true }
+        type: { type: string }
+        sub_type: { type: string, nullable: true }
+        category: { type: integer }
+        has_jerseys: { type: boolean }
+
+    Team:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        short_code: { type: string, nullable: true }
+        image_path: { type: string, nullable: true }
+        country_id: { type: integer, nullable: true }
+        founded: { type: integer, nullable: true }
+        gender: { type: string, nullable: true }
+        type: { type: string, nullable: true }
+        placeholder: { type: boolean }
+        last_played_at: { type: string, nullable: true }
+
+    Match:
+      type: object
+      properties:
+        id: { type: integer }
+        league:
+          type: object
+          properties:
+            name: { type: string }
+            image_path: { type: string }
+
+    FavoriteItem:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        emblem: { type: string, nullable: true }
+        leagueId: { type: integer, nullable: true }
+        leagueName: { type: string }
+
+    LeagueFavoriteItem:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        emblem: { type: string, nullable: true }
+
+    UserProfile:
+      type: object
+      properties:
+        id: { type: integer }
+        email: { type: string }
+        username: { type: string }
+        createdAt: { type: string }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+
+    MessageResponse:
+      type: object
+      properties:
+        message: { type: string }
+
+paths:
+  # ── Competitions ──────────────────────────────────────────
+  /competitions:
+    get:
+      summary: Get all leagues
+      tags: [Competitions]
+      responses:
+        200:
+          description: List of leagues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/League'
+
+  /competitions/{id}/teams:
+    get:
+      summary: Get teams of a league
+      tags: [Competitions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of teams in the league
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+
+  /competitions/matches:
+    get:
+      summary: Get matches grouped by league for a given date
+      tags: [Competitions]
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, example: '2024-03-15' }
+      responses:
+        200:
+          description: Matches grouped by league name
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    flag: { type: string }
+                    matches:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Match'
+
+  /competitions/{id}/matches:
+    get:
+      summary: Get matches for the current season of a league
+      tags: [Competitions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of matches
+
+  # ── Teams ─────────────────────────────────────────────────
+  /teams:
+    get:
+      summary: Get all teams
+      tags: [Teams]
+      responses:
+        200:
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+
+  /teams/{id}:
+    get:
+      summary: Get a team by ID
+      tags: [Teams]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Team details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+
+  /teams/{teamId}/matches:
+    get:
+      summary: Get matches for a team
+      tags: [Teams]
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of matches for the team
+
+  # ── Standings ─────────────────────────────────────────────
+  /standings/{id}:
+    get:
+      summary: Get standings for a league
+      tags: [Standings]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: League standings table
+
+  # ── Scorers ───────────────────────────────────────────────
+  /scorers/{id}:
+    get:
+      summary: Get top scorers for a league
+      tags: [Scorers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of top scorers
+
+  # ── Users ─────────────────────────────────────────────────
+  /users:
+    get:
+      summary: Get all users
+      tags: [Users]
+      responses:
+        200:
+          description: List of users
+
+  /register:
+    post:
+      summary: Register a new user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username: { type: string }
+                email: { type: string }
+                password: { type: string }
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        500:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /login:
+    post:
+      summary: Log in a user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: Login successful, sets cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        401:
+          description: Invalid credentials
+
+  /logout:
+    post:
+      summary: Log out the current user
+      tags: [Users]
+      responses:
+        200:
+          description: Logged out
+
+  /user/profile:
+    get:
+      summary: Get the profile of the logged-in user
+      tags: [Users]
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        401:
+          description: Unauthorized
+
+  /users/{id}:
+    put:
+      summary: Update a user
+      tags: [Users]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: { type: string }
+                password: { type: string }
+                currentPassword: { type: string }
+      responses:
+        200:
+          description: User updated
+        401:
+          description: Unauthorized
+    delete:
+      summary: Delete a user
+      tags: [Users]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: User deleted
+        401:
+          description: Unauthorized
+
+  # ── Favorites (Teams) ─────────────────────────────────────
+  /protected/users/favorites:
+    post:
+      summary: Add a team to favorites
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clubId]
+              properties:
+                clubId: { type: integer }
+      responses:
+        201:
+          description: Favorite added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        401:
+          description: Unauthorized
+
+  /protected/users/favorites/{clubId}:
+    delete:
+      summary: Remove a team from favorites
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Favorite removed
+        401:
+          description: Unauthorized
+
+  /protected/users/{usersId}/favorites:
+    get:
+      summary: Get favorite teams for a user
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: usersId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of favorite teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FavoriteItem'
+        401:
+          description: Unauthorized
+
+  # ── Favorites (Leagues) ───────────────────────────────────
+  /protected/users/favorites-leagues:
+    post:
+      summary: Add a league to favorites
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [leagueId]
+              properties:
+                leagueId: { type: integer }
+      responses:
+        201:
+          description: League favorite added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        401:
+          description: Unauthorized
+
+  /protected/users/favorites-leagues/{leagueId}:
+    delete:
+      summary: Remove a league from favorites
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: leagueId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: League favorite removed
+        401:
+          description: Unauthorized
+
+  /protected/users/{userId}/favorites-leagues:
+    get:
+      summary: Get favorite leagues for a user
+      tags: [Favorites]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: List of favorite leagues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeagueFavoriteItem'
+        401:
+          description: Unauthorized

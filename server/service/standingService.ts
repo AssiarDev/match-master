@@ -25,6 +25,12 @@ export class StandingService implements IStandingService {
     private readonly leagueService: ILeagueService
   ) {}
 
+  /**
+   * Retrieves the standings for the current season of a given league,
+   * enriched with team name and image from the database.
+   * @param leagueId - The ID of the league
+   * @returns A ServiceResult containing an array of enriched standings
+   */
   async getStandingFixtures(leagueId: number): Promise<
     ServiceResult<{
       standing: (ApiStanding &
