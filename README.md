@@ -42,7 +42,25 @@ git clone <url-du-repo>
 cd match-master
 ```
 
-### 2. Configurer les variables d'environnement
+### 2. Installer Cocogitto (hook de commit)
+
+Ce projet utilise [Cocogitto](https://docs.cocogitto.io/) pour enforcer les [Conventional Commits](https://www.conventionalcommits.org/).
+
+**macOS / Linux**
+```sh
+brew install cocogitto
+cog install-hook --all
+```
+
+**Windows**
+```sh
+winget install cocogitto
+cog install-hook --all
+```
+
+> Le hook valide le format de chaque message de commit. Cette étape est à refaire sur chaque nouvelle machine après un clone.
+
+### 3. Configurer les variables d'environnement
 
 ```sh
 cd server
