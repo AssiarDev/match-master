@@ -54,9 +54,11 @@ cog install-hook --all
 
 **Windows**
 ```sh
-winget install cocogitto
+cargo install cocogitto
 cog install-hook --all
 ```
+
+> Si `cargo` n'est pas disponible, installe [Rust](https://rustup.rs/) au préalable.
 
 > Le hook valide le format de chaque message de commit. Cette étape est à refaire sur chaque nouvelle machine après un clone.
 
