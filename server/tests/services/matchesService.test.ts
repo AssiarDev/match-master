@@ -14,6 +14,7 @@ describe("MatchesService", () => {
     matchesRepoMock = {
       fetchMatchesByDate: jest.fn(),
       fetchMatchesByTeam: jest.fn(),
+      fetchLiveMatches: jest.fn(),
     };
 
     leagueServiceMock = {
@@ -146,6 +147,49 @@ describe("MatchesService", () => {
             success: false,
             message: "Impossible de récupérer les matchs groupés par date : Error: DB error"
         })
+    });
+  });
+
+  /** Get live matches */
+  describe("getLiveMatches", () => {
+    it("retourne les matchs en direct", async () => {
+      matchesRepoMock.fetchLiveMatches!.mockResolvedValue({
+        data: [{ id: 1, name: "PSG vs Lyon" }, { id: 2, name: "OM vs Nice" }] as any,
+      });
+
+      const result = await service.getLiveMatches();
+
+      expect(result).toEqual({
+        success: true,
+        matches: [{ id: 1, name: "PSG vs Lyon" }, { id: 2, name: "OM vs Nice" }],
+      });
+    });
+
+    it("retourne un tableau vide quand aucun match n'est en cours", async () => {
+      matchesRepoMock.fetchLiveMatches!.mockResolvedValue({
+        data: [],
+      });
+
+      const result = await service.getLiveMatches();
+
+      expect(result).toEqual({
+        success: true,
+        matches: [],
+      });
+    });
+
+    it("retourne une erreur si le repo plante", async () => {
+      matchesRepoMock.fetchLiveMatches!.mockRejectedValue(
+        new Error("API error")
+      );
+
+      const result = await service.getLiveMatches();
+
+      expect(result.success).toBe(false);
+      expect(result).toEqual({
+        success: false,
+        message: "Impossible de récupérer les matchs en direct : Error: API error",
+      });
     });
   });
 

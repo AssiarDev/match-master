@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { matchesService } from '../lib/container';
+import { liveMatchesBroadcaster } from '../lib/container';
 
 export const matchByDate = async (
   req: Request,
@@ -80,3 +81,32 @@ export const matchesByTeam = async (
     });
   }
 };
+
+export const liveMatches = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const result = await matchesService.getLiveMatches();
+    if (!result.success) {
+      res.status(500).json({ error: result.message });
+      return;
+    }
+    res.json({ data: result.matches });
+  } catch (error) {
+    console.error(
+      "Une erreur est survenue lors de l'éxecution de liveMatches",
+      error
+    );
+    res.status(500).json({
+      error: "Une erreur est survenue lors de l'éxecution de liveMatches",
+    });
+  }
+};
+
+export const liveMatchesUpdate = (
+  req: Request,
+  res: Response
+) => {
+  liveMatchesBroadcaster.addClient(req, res)
+}

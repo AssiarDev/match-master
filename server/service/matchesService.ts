@@ -1,7 +1,7 @@
 import { IMatchRepository } from '../repositories/matches.repository';
 import { ISeasonService } from './seasonService';
 import { ILeagueService } from './leagueService';
-import type { ApiMatch, ServiceResult } from '../types/api';
+import type { ApiMatch, ApiLiveMatch, ServiceResult } from '../types/api';
 
 export interface IMatchesService {
   getLeagueMatches(
@@ -15,6 +15,7 @@ export interface IMatchesService {
   getMatchesByTeam(
     teamId: number
   ): Promise<ServiceResult<{ matches: ApiMatch[] }>>;
+  getLiveMatches(): Promise<ServiceResult<{ matches: ApiLiveMatch[] }>>;
 }
 
 export class MatchesService implements IMatchesService {
@@ -102,6 +103,22 @@ export class MatchesService implements IMatchesService {
       return {
         success: false,
         message: `Impossible de récupérer les matchs par équipes : ${error}`,
+      };
+    }
+  }
+
+  /**
+   * Retrieves all currently live matches.
+   * @returns A ServiceResult containing an array of live matches
+   */
+  async getLiveMatches(): Promise<ServiceResult<{ matches: ApiLiveMatch[] }>> {
+    try {
+      const result = await this.matchesRepo.fetchLiveMatches();
+      return { success: true, matches: result.data || [] };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Impossible de récupérer les matchs en direct : ${error}`,
       };
     }
   }

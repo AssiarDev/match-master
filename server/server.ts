@@ -11,6 +11,7 @@ import { scorers } from './routes/scorers';
 import { favorites } from './routes/favorites';
 import {serve, setup } from 'swagger-ui-express'
 import { swaggerSpec } from './swagger';
+import { liveMatchesBroadcaster } from './lib/container';
 
 const requiredEnv = [
   'PORT',
@@ -55,6 +56,8 @@ app.use(
     credentials: true,
   })
 );
+
+liveMatchesBroadcaster.start()
 
 app.use(express.json());
 app.use(cookieParser());

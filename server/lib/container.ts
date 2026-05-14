@@ -18,6 +18,8 @@ import { ScorersService } from '../service/scorersService';
 import { StandingService } from '../service/standingService';
 import { FavoriteService } from '../service/favoriteService';
 
+import { LiveMatchesBroadcaster } from '../sse/liveMatchesBroadcaster';
+
 // Repositories
 const userRepository = new UserRepository();
 const userFavoritesRepository = new UserFavoritesRepository();
@@ -39,3 +41,5 @@ export const matchesService = new MatchesService(matchesRepository, leagueServic
 export const scorersService = new ScorersService(scorersRepository, leagueService, playersRepository);
 export const standingService = new StandingService(standingRepository, teamService, leagueService);
 export const favoriteService = new FavoriteService(userRepository, teamDBRepository, userFavoritesRepository, leagueDBRepository);
+
+export const liveMatchesBroadcaster = new LiveMatchesBroadcaster(matchesService)
