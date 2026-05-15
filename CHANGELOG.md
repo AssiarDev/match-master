@@ -93,6 +93,20 @@
 
 
 - - -
+## [0.2.0](https://github.com/AssiarDev/match-master/compare/21db173d3cad9f01528765242f1619d9d1ad5bf1..0.2.0) - 2026-05-15
+#### Bug Fixes
+- **(ci)** manually push version bump commit and tags after cocogitto release - ([e52b057](https://github.com/AssiarDev/match-master/commit/e52b057108af6ee68109263b83cf6db5e87b7492)) - AssiarDev
+#### Chores
+- update ci with release check - ([19d9ce3](https://github.com/AssiarDev/match-master/commit/19d9ce3a70a0ec10d28cae4854ca9437e2b96432)) - AssiarDev
+#### Documentation
+- add CONTRIBUTING.md and simplify README setup section - ([4fdf5f3](https://github.com/AssiarDev/match-master/commit/4fdf5f37a8ad4e9a2d42d2ad2cdbdf55445e0022)) - AssiarDev
+- update documentation for windows user for cocogitto - ([5946555](https://github.com/AssiarDev/match-master/commit/5946555910f354944733629d7bd790a2e2f47cf1)) - AssiarDev
+- add cocogitto setup instructions - ([21db173](https://github.com/AssiarDev/match-master/commit/21db173d3cad9f01528765242f1619d9d1ad5bf1)) - AssiarDev
+#### Features
+- add live scores with SSE broadcaster - ([1c4954e](https://github.com/AssiarDev/match-master/commit/1c4954efd0abc6fbe2c922ae912f24e79cbd8124)) - AssiarDev
+
+- - -
+
 ## [0.1.0](https://github.com/AssiarDev/match-master/compare/3707718fc3a503a793610018ae84ed4a22b5dac2..0.1.0) - 2026-05-09
 #### Features
 - extend favorite controller with leagues - ([d60694e](https://github.com/AssiarDev/match-master/commit/d60694e36bde20ab73d3ebbd4b704bc41d6976cf)) - AssiarDev
