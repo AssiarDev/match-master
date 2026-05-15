@@ -33,85 +33,19 @@ L'objectif futur de Match Master est d'élargir ces fonctionnalités à **tous l
 - [Docker](https://www.docker.com/) et Docker Compose
 - Un compte [Sportmonks](https://www.sportmonks.com/) pour obtenir un `API_TOKEN`
 
-## 🔧 Installation et lancement
-
-### 1. Cloner le projet
+## 🚀 Lancement rapide
 
 ```sh
 git clone <url-du-repo>
-cd match-master
-```
-
-### 2. Installer Cocogitto (hook de commit)
-
-Ce projet utilise [Cocogitto](https://docs.cocogitto.io/) pour enforcer les [Conventional Commits](https://www.conventionalcommits.org/).
-
-**macOS / Linux**
-```sh
-brew install cocogitto
-cog install-hook --all
-```
-
-**Windows**
-```sh
-cargo install cocogitto
-cog install-hook --all
-```
-
-> Si `cargo` n'est pas disponible, installe [Rust](https://rustup.rs/) au préalable.
-
-> Le hook valide le format de chaque message de commit. Cette étape est à refaire sur chaque nouvelle machine après un clone.
-
-### 3. Configurer les variables d'environnement
-
-```sh
-cd server
+cd match-master/server
 cp .env.example .env.development
-```
-
-Remplir les valeurs dans `.env.development` (voir `.env.example` pour la description de chaque variable).
-
-### 3. Lancer le backend
-
-```sh
+# Remplir les valeurs dans .env.development
 docker-compose up --build
 ```
 
-Le serveur démarre sur `http://localhost:3000`.
-
+Le serveur démarre sur `http://localhost:3000`.  
 La documentation de l'API est disponible sur `http://localhost:3000/api-docs`.
 
-### 4. Alimenter la base de données
+## 🤝 Contribuer
 
-Les scripts suivants permettent d'importer les données depuis l'API Sportmonks. Ils doivent être exécutés **dans l'ordre** depuis le container Docker :
-
-```sh
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertLeagues.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertAllSeasons.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertTeamsFromSeasons.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertTeamLeague.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertAllSquads.ts
-```
-
-> ⚠️ Chaque script dépend du précédent. Ne pas sauter d'étape.
-
-## 🧪 Tests
-
-```sh
-cd server
-npm run test
-```
-
-## 🗄️ Migrations Prisma
-
-Appliquer les migrations en développement :
-
-```sh
-npm run migrate:dev
-```
-
-Appliquer les migrations en production :
-
-```sh
-npm run migrate:prod
-```
+Pour configurer l'environnement de développement, appliquer les migrations, alimenter la base de données et respecter les conventions du projet, consulte [CONTRIBUTING.md](CONTRIBUTING.md).
