@@ -121,6 +121,23 @@ export interface ApiMatchState {
   developer_name: MatchStateDeveloperName;
 }
 
+export interface ApiPeriod {
+  id: number;
+  fixture_id: number;
+  type_id: number;
+  started: number | null;
+  ended: number | null;
+  ticking: boolean;
+  minutes: number;
+  seconds: number;
+  counts_from: number;
+  period_length: number;
+  sort_order: number;
+  time_added: number | null;
+  description: string;
+  has_timer: boolean;
+}
+
 export interface ApiMatch {
   id: number;
   league?: { name: string; image_path: string | null };
@@ -155,6 +172,7 @@ export interface ApiLiveMatch {
   participants?: ApiParticipant[];
   scores?: ApiScore[];
   state?: ApiMatchState;
+  periods?: ApiPeriod[];
 }
 
 export interface ApiScorer {

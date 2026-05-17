@@ -44,7 +44,7 @@ export class MatchesRepository implements IMatchRepository {
 
   async fetchLiveMatches(): Promise<ApiResponse<ApiLiveMatch[]>> {
     try {
-      const url = `${this.baseUrl}/livescores/inplay?api_token=${this.token}&include=league;participants;scores;state`;
+      const url = `${this.baseUrl}/livescores/inplay?api_token=${this.token}&include=league;participants;scores;state;periods`;
       const response = await fetch(url);
       if (!response.ok)
         throw new Error(`API Error fetchLiveMatches : ${response.status}`);

@@ -31,7 +31,9 @@ const previewRegex = siteName ? new RegExp(`^https:\\/\\/deploy-preview-\\d+--${
 
 const allowedOrigins = [
   process.env.URL_SERVER_CLIENT,
+  process.env.URL_SERVER_CLIENT_DEV,
   process.env.URL_PROD_CLIENT,
+  process.env.URL_SWAGGER_CLIENT
 ].filter((o): o is string => !!o);
 
 app.set('trust proxy', 1);
