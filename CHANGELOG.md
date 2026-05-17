@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.1](https://github.com/AssiarDev/match-master/compare/fd4f52697745950af2f6d7a8cfe61fca58eb0f00..0.2.1) - 2026-05-17
+#### Bug Fixes
+- **(live-matches)** add periods data to live scores endpoint - ([fd4f526](https://github.com/AssiarDev/match-master/commit/fd4f52697745950af2f6d7a8cfe61fca58eb0f00)) - AssiarDev
+
+- - -
+
 ## [0.2.0](https://github.com/AssiarDev/match-master/compare/21db173d3cad9f01528765242f1619d9d1ad5bf1..0.2.0) - 2026-05-15
 #### Bug Fixes
 - **(ci)** manually push version bump commit and tags after cocogitto release - ([e52b057](https://github.com/AssiarDev/match-master/commit/e52b057108af6ee68109263b83cf6db5e87b7492)) - AssiarDev
