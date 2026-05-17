@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.2](https://github.com/AssiarDev/match-master/compare/9a96bfe99bde6b5759e59ea8405b8b868117ac79..0.2.2) - 2026-05-17
+#### Bug Fixes
+- **(auth)** use SameSite strict cookie via Netlify proxy - ([9a96bfe](https://github.com/AssiarDev/match-master/commit/9a96bfe99bde6b5759e59ea8405b8b868117ac79)) - AssiarDev
+
+- - -
+
 ## [0.2.1](https://github.com/AssiarDev/match-master/compare/fd4f52697745950af2f6d7a8cfe61fca58eb0f00..0.2.1) - 2026-05-17
 #### Bug Fixes
 - **(live-matches)** add periods data to live scores endpoint - ([fd4f526](https://github.com/AssiarDev/match-master/commit/fd4f52697745950af2f6d7a8cfe61fca58eb0f00)) - AssiarDev
