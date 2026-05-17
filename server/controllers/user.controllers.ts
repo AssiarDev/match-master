@@ -59,7 +59,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
+      sameSite: 'strict',
       maxAge: 36000000,
     });
     res.status(200).json({ message: 'Connexion reussie' });
@@ -76,7 +76,7 @@ export const logout = (req: Request, res: Response): void => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
+    sameSite: 'strict',
     path: '/',
   });
   res.status(200).json({ message: 'Déconnexion réussie' });
@@ -175,7 +175,7 @@ export const updateUser = async (
     res.cookie('token', newToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
+      sameSite: 'strict',
       maxAge: 36000000,
     })
       
