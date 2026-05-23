@@ -5,7 +5,10 @@ export interface IUserRepository {
   findById(id: number): Promise<User | null>;
   findByEmail(
     email: string
-  ): Promise<Pick<User, 'id' | 'email' | 'username' | 'password' | 'createdAt'> | null>;
+  ): Promise<Pick<
+    User,
+    'id' | 'email' | 'username' | 'password' | 'createdAt'
+  > | null>;
   findAll(): Promise<User[]>;
   create(data: Prisma.UserCreateInput): Promise<User>;
   update(id: number, data: Prisma.UserUpdateInput): Promise<User>;
@@ -20,7 +23,13 @@ export class UserRepository implements IUserRepository {
   findByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, username: true, password: true, createdAt: true },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        password: true,
+        createdAt: true,
+      },
     });
   }
 

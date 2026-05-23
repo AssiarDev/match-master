@@ -84,7 +84,19 @@ components:
           items:
             type: object
             properties:
-              description: { type: string, enum: [CURRENT, 1ST_HALF, 2ND_HALF, 2ND_HALF_ONLY, EXTRA_TIME, PENALTIES] }
+              description:
+                {
+                  type: string,
+                  enum:
+                    [
+                      CURRENT,
+                      1ST_HALF,
+                      2ND_HALF,
+                      2ND_HALF_ONLY,
+                      EXTRA_TIME,
+                      PENALTIES,
+                    ],
+                }
               score:
                 type: object
                 properties:

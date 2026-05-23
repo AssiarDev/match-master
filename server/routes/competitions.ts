@@ -6,7 +6,7 @@ import {
   liveMatches,
   matchByDate,
   matchesByTeam,
-  liveMatchesUpdate
+  liveMatchesUpdate,
 } from '../controllers/matches.controllers';
 
 const router = express.Router();
@@ -17,6 +17,6 @@ router.get('/competitions/matches', matchByDate);
 router.get('/competitions/:id/matches', leaguesMatches);
 router.get('/teams/:teamId/matches', matchesByTeam);
 router.get('/matches/live', liveMatches);
-router.get('/matches/live/stream', liveMatchesUpdate)
+router.get('/matches/live/stream', liveMatchesUpdate);
 
 export { router as competitions };

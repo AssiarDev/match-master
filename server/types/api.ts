@@ -55,31 +55,31 @@ export interface ApiTeam {
 }
 
 export enum ScoreDescription {
-  CURRENT = "CURRENT",
-  FIRST_HALF = "1ST_HALF",
-  SECOND_HALF = "2ND_HALF",
-  SECOND_HALF_ONLY = "2ND_HALF_ONLY",
-  EXTRA_TIME = "EXTRA_TIME",
-  EXTRA_TIME_ONLY = "EXTRA_TIME_ONLY",
-  PENALTIES = "PENALTIES",
+  CURRENT = 'CURRENT',
+  FIRST_HALF = '1ST_HALF',
+  SECOND_HALF = '2ND_HALF',
+  SECOND_HALF_ONLY = '2ND_HALF_ONLY',
+  EXTRA_TIME = 'EXTRA_TIME',
+  EXTRA_TIME_ONLY = 'EXTRA_TIME_ONLY',
+  PENALTIES = 'PENALTIES',
 }
 
 export enum MatchStateDeveloperName {
-  NOT_STARTED = "NS",
-  INPLAY_FIRST_HALF = "INPLAY_1ST_HALF",
-  HALF_TIME = "HT",
-  INPLAY_SECOND_HALF = "INPLAY_2ND_HALF",
-  INPLAY_EXTRA_TIME = "INPLAY_ET",
-  EXTRA_TIME_BREAK = "EXTRA_TIME_BREAK",
-  INPLAY_PENALTIES = "INPLAY_PENALTIES",
-  PENALTIES_BREAK = "PEN_BREAK",
-  FULL_TIME = "FT",
-  AFTER_EXTRA_TIME = "AET",
-  FULL_TIME_PENALTIES = "FT_PEN",
-  POSTPONED = "POSTPONED",
-  CANCELLED = "CANCELLED",
-  ABANDONED = "ABANDONED",
-  SUSPENDED = "SUSPENDED",
+  NOT_STARTED = 'NS',
+  INPLAY_FIRST_HALF = 'INPLAY_1ST_HALF',
+  HALF_TIME = 'HT',
+  INPLAY_SECOND_HALF = 'INPLAY_2ND_HALF',
+  INPLAY_EXTRA_TIME = 'INPLAY_ET',
+  EXTRA_TIME_BREAK = 'EXTRA_TIME_BREAK',
+  INPLAY_PENALTIES = 'INPLAY_PENALTIES',
+  PENALTIES_BREAK = 'PEN_BREAK',
+  FULL_TIME = 'FT',
+  AFTER_EXTRA_TIME = 'AET',
+  FULL_TIME_PENALTIES = 'FT_PEN',
+  POSTPONED = 'POSTPONED',
+  CANCELLED = 'CANCELLED',
+  ABANDONED = 'ABANDONED',
+  SUSPENDED = 'SUSPENDED',
 }
 
 export interface ApiParticipant {
@@ -96,7 +96,7 @@ export interface ApiParticipant {
   placeholder: boolean;
   last_played_at: string | null;
   meta: {
-    location: "home" | "away";
+    location: 'home' | 'away';
     winner: boolean;
     position: number | null;
   };
@@ -110,7 +110,7 @@ export interface ApiScore {
   description: ScoreDescription;
   score: {
     goals: number;
-    participant: "home" | "away";
+    participant: 'home' | 'away';
   };
 }
 

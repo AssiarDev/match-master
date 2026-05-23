@@ -34,12 +34,38 @@ const playersRepository = new PlayersRepository();
 
 // Services
 export const userService = new UserService(userRepository);
-export const leagueService = new LeagueService(leagueApiRepository, leagueDBRepository);
+export const leagueService = new LeagueService(
+  leagueApiRepository,
+  leagueDBRepository
+);
 export const seasonService = new SeasonService(seasonRepository);
-export const teamService = new TeamService(teamDBRepository, leagueApiRepository, seasonRepository);
-export const matchesService = new MatchesService(matchesRepository, leagueService, seasonService);
-export const scorersService = new ScorersService(scorersRepository, leagueService, playersRepository);
-export const standingService = new StandingService(standingRepository, teamService, leagueService);
-export const favoriteService = new FavoriteService(userRepository, teamDBRepository, userFavoritesRepository, leagueDBRepository);
+export const teamService = new TeamService(
+  teamDBRepository,
+  leagueApiRepository,
+  seasonRepository
+);
+export const matchesService = new MatchesService(
+  matchesRepository,
+  leagueService,
+  seasonService
+);
+export const scorersService = new ScorersService(
+  scorersRepository,
+  leagueService,
+  playersRepository
+);
+export const standingService = new StandingService(
+  standingRepository,
+  teamService,
+  leagueService
+);
+export const favoriteService = new FavoriteService(
+  userRepository,
+  teamDBRepository,
+  userFavoritesRepository,
+  leagueDBRepository
+);
 
-export const liveMatchesBroadcaster = new LiveMatchesBroadcaster(matchesService)
+export const liveMatchesBroadcaster = new LiveMatchesBroadcaster(
+  matchesService
+);

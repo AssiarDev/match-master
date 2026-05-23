@@ -1,9 +1,8 @@
 import type { Request, Response } from 'express';
 import { userService } from '../lib/container';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import { addToBlacklist } from '../lib/tokenBlacklist';
 import { validatePassword } from '../utils/validatePassword';
-
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -19,10 +18,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const validPassword = validatePassword(password)
+    const validPassword = validatePassword(password);
     if (validPassword) {
-      res.status(400).json({error: validPassword})
-      return
+      res.status(400).json({ error: validPassword });
+      return;
     }
 
     const result = await userService.register(username, mail, password);
@@ -51,7 +50,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = jwt.sign(
-      { id: result.id, email: result.email, username: result.username, createdAt: result.createdAt },
+      {
+        id: result.id,
+        email: result.email,
+        username: result.username,
+        createdAt: result.createdAt,
+      },
       process.env.SECRET_KEY!,
       { expiresIn: '1h' }
     );
@@ -63,15 +67,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       maxAge: 36000000,
     });
     res.status(200).json({ message: 'Connexion reussie' });
-
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
 export const logout = (req: Request, res: Response): void => {
-  const token = req.cookies.token
-  if (token) addToBlacklist(token)
+  const token = req.cookies.token;
+  if (token) addToBlacklist(token);
 
   res.clearCookie('token', {
     httpOnly: true,
@@ -136,53 +139,64 @@ export const updateUser = async (
       res.status(403).json({ error: 'Action non autorisée' });
       return;
     }
-    const { username, confirmPassword, newPassword, currentPassword } = req.body;
+    const { username, confirmPassword, newPassword, currentPassword } =
+      req.body;
 
-    if (newPassword || confirmPassword){
-      if(!currentPassword){
-        res.status(400).json({ message: 'Le mot de passe est incorrecte.'})
-        return
+    if (newPassword || confirmPassword) {
+      if (!currentPassword) {
+        res.status(400).json({ message: 'Le mot de passe est incorrecte.' });
+        return;
       }
 
       if (newPassword !== confirmPassword) {
-        res.status(400).json({ message: 'Les mots de passe ne correspondent pas' })
-        return
+        res
+          .status(400)
+          .json({ message: 'Les mots de passe ne correspondent pas' });
+        return;
       }
 
-      const validPassword = validatePassword(newPassword)
+      const validPassword = validatePassword(newPassword);
       if (validPassword) {
-        res.status(400).json({error: validPassword})
-        return
+        res.status(400).json({ error: validPassword });
+        return;
       }
     }
 
     if (!username && !newPassword) {
-      res.status(400).json({ error: 'Aucun champ à mettre à jour' })
-      return
+      res.status(400).json({ error: 'Aucun champ à mettre à jour' });
+      return;
     }
 
-    const result = await userService.updateUser(id, { username, password: newPassword, currentPassword  });
+    const result = await userService.updateUser(id, {
+      username,
+      password: newPassword,
+      currentPassword,
+    });
     if (!result.success) {
       res.status(404).json({ error: result.message });
       return;
     }
 
     const newToken = jwt.sign(
-        { id: result.user.id, email: result.user.email, username: result.user.username, createdAt: result.user.createdAt.toLocaleDateString('FR-fr') },
-        process.env.SECRET_KEY as string
-    )
-      
+      {
+        id: result.user.id,
+        email: result.user.email,
+        username: result.user.username,
+        createdAt: result.user.createdAt.toLocaleDateString('FR-fr'),
+      },
+      process.env.SECRET_KEY as string
+    );
+
     res.cookie('token', newToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       maxAge: 36000000,
-    })
-      
-    res.json(result.user)
+    });
 
+    res.json(result.user);
   } catch (err) {
-    console.error('updateUser error:', err)
+    console.error('updateUser error:', err);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
@@ -200,7 +214,7 @@ export const userProfile = (req: Request, res: Response): void => {
       id: req.user.id,
       mail: req.user.email,
       username: req.user.username,
-      createdAt: req.user.createdAt
+      createdAt: req.user.createdAt,
     },
   });
 };

@@ -13,9 +13,9 @@ export interface FavoriteItem {
 }
 
 export interface LeagueFavoriteItem {
-  id: number,
-  name: string,
-  emblem: string | null
+  id: number;
+  name: string;
+  emblem: string | null;
 }
 
 export interface IFavoriteService {
@@ -31,14 +31,12 @@ export interface IFavoriteService {
   addLeagueFavorite(
     userId: number,
     leagueId: number
-  ): Promise<ServiceResult<{ message: string }>>
+  ): Promise<ServiceResult<{ message: string }>>;
   removeLeagueFavorite(
     userId: number,
     leagueId: number
-  ): Promise<ServiceResult<{ message: string }>>
-  getLeagueFavorite(
-    userId: number,
-  ): Promise<LeagueFavoriteItem[]>
+  ): Promise<ServiceResult<{ message: string }>>;
+  getLeagueFavorite(userId: number): Promise<LeagueFavoriteItem[]>;
 }
 
 export class FavoriteService implements IFavoriteService {
@@ -125,18 +123,21 @@ export class FavoriteService implements IFavoriteService {
   async addLeagueFavorite(
     userId: number,
     leagueId: number
-  ): Promise<ServiceResult<{ message: string; }>> {
+  ): Promise<ServiceResult<{ message: string }>> {
     const user = await this.userRepo.findById(userId);
     if (!user) return { success: false, message: 'Utilisateur introuvable.' };
 
-    const league = await this.leagueRepo.findLeague(leagueId)
+    const league = await this.leagueRepo.findLeague(leagueId);
     if (!league) return { success: false, message: 'Compétition introuvable.' };
 
-    const existing = await this.favRepo.findLeague(userId, leagueId)
+    const existing = await this.favRepo.findLeague(userId, leagueId);
     if (existing)
-      return { success: true, message: 'La compétition est déjà dans les favoris.' };
+      return {
+        success: true,
+        message: 'La compétition est déjà dans les favoris.',
+      };
 
-    await this.favRepo.createLeague(userId, leagueId)
+    await this.favRepo.createLeague(userId, leagueId);
     return { success: true, message: 'La compétition à bien été ajouté.' };
   }
 
@@ -149,13 +150,19 @@ export class FavoriteService implements IFavoriteService {
   async removeLeagueFavorite(
     userId: number,
     leagueId: number
-  ): Promise<ServiceResult<{ message: string; }>> {
+  ): Promise<ServiceResult<{ message: string }>> {
     const existing = await this.favRepo.findLeague(userId, leagueId);
-      if (!existing)
-        return { success: false, message: "Cette compétition n'existe pas dans les favoris." };
-    
-    await this.favRepo.deleteLeague(userId, leagueId)
-    return { success: true, message: 'La compétition à bien été supprimé de vos favoris.' };
+    if (!existing)
+      return {
+        success: false,
+        message: "Cette compétition n'existe pas dans les favoris.",
+      };
+
+    await this.favRepo.deleteLeague(userId, leagueId);
+    return {
+      success: true,
+      message: 'La compétition à bien été supprimé de vos favoris.',
+    };
   }
 
   /**
@@ -164,19 +171,19 @@ export class FavoriteService implements IFavoriteService {
    * @returns An array of LeagueFavoriteItem, or an empty array if the user does not exist
    */
   async getLeagueFavorite(userId: number): Promise<LeagueFavoriteItem[]> {
-    const user = await this.userRepo.findById(userId)
+    const user = await this.userRepo.findById(userId);
     if (!user) return [];
 
-    const leagueFavorites = await this.favRepo.findAllByUser(userId)
+    const leagueFavorites = await this.favRepo.findAllByUser(userId);
     return leagueFavorites
       .filter((fav) => fav.competition != null)
       .map((fav) => {
-        const league = fav.competition!
+        const league = fav.competition!;
         return {
           id: league.id,
           name: league.name,
-          emblem: league.image_path
-        }
-      })
+          emblem: league.image_path,
+        };
+      });
   }
 }

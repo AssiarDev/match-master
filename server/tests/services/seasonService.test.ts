@@ -1,8 +1,8 @@
-import { jest } from "@jest/globals";
-import type { ISeasonRepository } from "../../repositories/season.repository";
-import { SeasonService } from "../../service/seasonService";
+import { jest } from '@jest/globals';
+import type { ISeasonRepository } from '../../repositories/season.repository';
+import { SeasonService } from '../../service/seasonService';
 
-describe("SeasonService", () => {
+describe('SeasonService', () => {
   let seasonRepoMock: Partial<jest.Mocked<ISeasonRepository>>;
   let service: SeasonService;
 
@@ -18,23 +18,23 @@ describe("SeasonService", () => {
   });
 
   /** Get seasons teams */
-  describe("getSeasonsTeams", () => {
+  describe('getSeasonsTeams', () => {
     it("retourne les équipes d'une saison", async () => {
       seasonRepoMock.fetchSeasonsTeams?.mockResolvedValue({
-        data: { id: 2024, teams: [{ id: 1, name: "PSG" }] } as any,
+        data: { id: 2024, teams: [{ id: 1, name: 'PSG' }] } as any,
       });
 
       const result = await service.getSeasonsTeams(2024);
 
       expect(result).toEqual({
         success: true,
-        seasonsTeams: { id: 2024, teams: [{ id: 1, name: "PSG" }] },
+        seasonsTeams: { id: 2024, teams: [{ id: 1, name: 'PSG' }] },
       });
     });
 
-    it("retourne une erreur si le repo plante", async () => {
+    it('retourne une erreur si le repo plante', async () => {
       seasonRepoMock.fetchSeasonsTeams?.mockRejectedValue(
-        new Error("DB error")
+        new Error('DB error')
       );
 
       const result = await service.getSeasonsTeams(2024);
@@ -48,7 +48,7 @@ describe("SeasonService", () => {
   });
 
   /** Get season fixtures */
-  describe("getSeasonFixtures", () => {
+  describe('getSeasonFixtures', () => {
     it("retourne les fixtures d'une saison", async () => {
       seasonRepoMock.fetchSeasonFixtures?.mockResolvedValue({
         data: [{ id: 1 }, { id: 2 }],
@@ -62,10 +62,10 @@ describe("SeasonService", () => {
       });
     });
 
-    it("retourne un tableau vide si data est null", async () => {
+    it('retourne un tableau vide si data est null', async () => {
       seasonRepoMock.fetchSeasonFixtures?.mockResolvedValue({
         data: null,
-      } as any );
+      } as any);
 
       const result = await service.getSeasonFixtures(2024);
 
@@ -75,9 +75,9 @@ describe("SeasonService", () => {
       });
     });
 
-    it("retourne une erreur si le repo plante", async () => {
+    it('retourne une erreur si le repo plante', async () => {
       seasonRepoMock.fetchSeasonFixtures?.mockRejectedValue(
-        new Error("API error")
+        new Error('API error')
       );
 
       const result = await service.getSeasonFixtures(2024);
@@ -85,7 +85,7 @@ describe("SeasonService", () => {
       expect(result).toEqual({
         success: false,
         message:
-          "Impossible de récupérer les fixtures de la saison : Error: API error",
+          'Impossible de récupérer les fixtures de la saison : Error: API error',
       });
     });
   });

@@ -104,9 +104,6 @@ export const liveMatches = async (
   }
 };
 
-export const liveMatchesUpdate = (
-  req: Request,
-  res: Response
-) => {
-  liveMatchesBroadcaster.addClient(req, res)
-}
+export const liveMatchesUpdate = (req: Request, res: Response) => {
+  liveMatchesBroadcaster.addClient(req, res);
+};

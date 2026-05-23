@@ -1,6 +1,6 @@
-import fs from 'fs'
-import path from 'path'
-import yaml from 'js-yaml'
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
 
-const file = fs.readFileSync(path.resolve('./openapi.yaml'), 'utf8')
-export const swaggerSpec = yaml.load(file) as Record<string, unknown>
+const file = fs.readFileSync(path.resolve('./openapi.yaml'), 'utf8');
+export const swaggerSpec = yaml.load(file) as Record<string, unknown>;

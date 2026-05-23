@@ -1,0 +1,29 @@
+[files]
+extend-exclude = [
+    "server/generated/",
+    "CHANGELOG.md",
+]
+
+[default.extend-words]
+# Mots français intentionnels
+matchs = "matchs"
+invalide = "invalide"
+projet = "projet"
+environnement = "environnement"
+Authentification = "Authentification"
+Contribuer = "Contribuer"
+futur = "futur"
+valide = "valide"
+existant = "existant"
+davantage = "davantage"
+cours = "cours"
+groupe = "groupe"
+installe = "installe"
+importent = "importent"
+Exemples = "Exemples"
+fonction = "fonction"
+sur = "sur"
+ba = "ba"
+donn = "donn"
+# Valeurs d'enum API (ex: 2ND_HALF)
+ND = "ND"

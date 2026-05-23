@@ -9,19 +9,19 @@ export type FavoriteWithRelation = {
     competitions: Array<{
       competition: { id: number; name: string };
     }>;
-  } | null,
+  } | null;
   competition?: {
-    id: number, 
-    country_id: number | null,
-    name: string,
-    active: boolean,
-    short_code: string | null,
-    image_path: string | null,
-    type: string,
-    sub_type: string | null,
-    category: number,
-    has_jerseys: boolean
-  } | null
+    id: number;
+    country_id: number | null;
+    name: string;
+    active: boolean;
+    short_code: string | null;
+    image_path: string | null;
+    type: string;
+    sub_type: string | null;
+    category: number;
+    has_jerseys: boolean;
+  } | null;
 };
 
 export interface IUserFavoritesRepository {
@@ -29,9 +29,9 @@ export interface IUserFavoritesRepository {
   create(userId: number, teamId: number): Promise<UserFavorite>;
   delete(userId: number, teamId: number): Promise<UserFavorite>;
   findAllByUser(userId: number): Promise<FavoriteWithRelation[]>;
-  findLeague(userId: number, leagueId: number): Promise<UserFavorite | null>
-  createLeague(userId: number, leagueId: number): Promise<UserFavorite>
-  deleteLeague(userId: number, leagueId: number): Promise<UserFavorite>
+  findLeague(userId: number, leagueId: number): Promise<UserFavorite | null>;
+  createLeague(userId: number, leagueId: number): Promise<UserFavorite>;
+  deleteLeague(userId: number, leagueId: number): Promise<UserFavorite>;
 }
 
 export class UserFavoritesRepository implements IUserFavoritesRepository {
@@ -84,32 +84,33 @@ export class UserFavoritesRepository implements IUserFavoritesRepository {
             type: true,
             sub_type: true,
             category: true,
-            has_jerseys: true
-          }
-        }
+            has_jerseys: true,
+          },
+        },
       },
     });
   }
 
   findLeague(userId: number, leagueId: number): Promise<UserFavorite | null> {
     return prisma.userFavorite.findFirst({
-      where: { user_id: userId, competition_id: leagueId}
-    })
+      where: { user_id: userId, competition_id: leagueId },
+    });
   }
 
   createLeague(userId: number, leagueId: number): Promise<UserFavorite> {
     return prisma.userFavorite.create({
-      data: { user_id: userId, competition_id: leagueId}
-    })
+      data: { user_id: userId, competition_id: leagueId },
+    });
   }
 
   deleteLeague(userId: number, leagueId: number): Promise<UserFavorite> {
     return prisma.userFavorite.delete({
       where: {
         user_id_competition_id: {
-          user_id: userId, competition_id: leagueId
-        }
-      }
-    })
+          user_id: userId,
+          competition_id: leagueId,
+        },
+      },
+    });
   }
 }

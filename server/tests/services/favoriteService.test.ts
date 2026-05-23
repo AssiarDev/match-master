@@ -2,12 +2,14 @@ import { jest } from '@jest/globals';
 import type { IUserRepository } from '../../repositories/user.repository';
 import type { ITeamDBRepository } from '../../repositories/teamDB.repository';
 import type { IUserFavoritesRepository } from '../../repositories/userFavorites.repository';
+import type { ILeagueDBRepository } from '../../repositories/leagueDB.repository';
 import { FavoriteService } from '../../service/favoriteService';
 
 describe('FavoriteService', () => {
   let userRepoMock: jest.Mocked<IUserRepository>;
   let teamRepoMock: jest.Mocked<ITeamDBRepository>;
   let favRepoMock: jest.Mocked<IUserFavoritesRepository>;
+  let leagueRepoMock: jest.Mocked<ILeagueDBRepository>;
   let service: FavoriteService;
 
   beforeEach(() => {
@@ -32,9 +34,22 @@ describe('FavoriteService', () => {
       create: jest.fn(),
       delete: jest.fn(),
       findAllByUser: jest.fn(),
+      findLeague: jest.fn(),
+      createLeague: jest.fn(),
+      deleteLeague: jest.fn(),
     };
 
-    service = new FavoriteService(userRepoMock, teamRepoMock, favRepoMock);
+    leagueRepoMock = {
+      findAllLeague: jest.fn(),
+      findLeague: jest.fn(),
+    };
+
+    service = new FavoriteService(
+      userRepoMock,
+      teamRepoMock,
+      favRepoMock,
+      leagueRepoMock
+    );
   });
 
   /**Add Favorite */

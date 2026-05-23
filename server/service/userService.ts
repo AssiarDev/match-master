@@ -1,4 +1,4 @@
-import argon2  from 'argon2';
+import argon2 from 'argon2';
 import type { User } from '@prisma/client';
 import { IUserRepository } from '../repositories/user.repository';
 import type { UserPayload } from '../types/express';
@@ -66,13 +66,13 @@ export class UserService implements IUserService {
     if (!isValidPassword)
       return { success: false, message: 'Mot de passe incorrect.' };
 
-    const createDateAccount = user.createdAt
+    const createDateAccount = user.createdAt;
 
     const payload: UserPayload = {
       id: user.id,
       email: user.email,
       username: user.username,
-      createdAt: createDateAccount.toLocaleDateString('fr-FR')
+      createdAt: createDateAccount.toLocaleDateString('fr-FR'),
     };
 
     return { success: true, ...payload };
@@ -94,30 +94,30 @@ export class UserService implements IUserService {
    * @returns A ServiceResult containing the updated user
    */
   async updateUser(
-  id: number,
-  data: { username?: string; password?: string; currentPassword?: string }
-): Promise<ServiceResult<UpdateSuccess>> {
-  const user = await this.userRepo.findById(id);
-  if (!user) return { success: false, message: 'Utilisateur introuvable' };
+    id: number,
+    data: { username?: string; password?: string; currentPassword?: string }
+  ): Promise<ServiceResult<UpdateSuccess>> {
+    const user = await this.userRepo.findById(id);
+    if (!user) return { success: false, message: 'Utilisateur introuvable' };
 
-  const updateData: { username?: string; password?: string } = {};
-  if (data.username) updateData.username = data.username;
+    const updateData: { username?: string; password?: string } = {};
+    if (data.username) updateData.username = data.username;
 
-  if (data.password) {
-    if (!data.currentPassword) {
-      return { success: false, message: 'Mot de passe actuel requis' };
+    if (data.password) {
+      if (!data.currentPassword) {
+        return { success: false, message: 'Mot de passe actuel requis' };
+      }
+      const isValid = await argon2.verify(user.password, data.currentPassword);
+      if (!isValid) {
+        return { success: false, message: 'Mot de passe actuel incorrect' };
+      }
+      const newPassword = data.password;
+      updateData.password = await argon2.hash(newPassword);
     }
-    const isValid = await argon2.verify(user.password, data.currentPassword);
-    if (!isValid) {
-      return { success: false, message: 'Mot de passe actuel incorrect' };
-    }
-    const newPassword = data.password;
-    updateData.password = await argon2.hash(newPassword);
+
+    const updated = await this.userRepo.update(id, updateData);
+    return { success: true, user: updated };
   }
-
-  const updated = await this.userRepo.update(id, updateData);
-  return { success: true, user: updated };
-}
 
   /**
    * Deletes a user account by its ID.

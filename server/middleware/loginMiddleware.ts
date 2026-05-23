@@ -19,7 +19,7 @@ export const loginCheck = (
 
   if (isBlacklisted(token)) {
     res.status(401).json({ error: 'Token invalide' });
-    return
+    return;
   }
 
   try {

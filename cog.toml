@@ -7,6 +7,11 @@ remote = "github.com"
 repository = "match-master"
 owner = "AssiarDev"
 
+[git_hooks.pre-commit]
+script = """#!/bin/sh
+npm --prefix server run typecheck && npm --prefix server run prettier:check && typos
+"""
+
 [git_hooks.commit-msg]
 script = """#!/bin/sh
 cog verify --file $1
@@ -21,3 +26,4 @@ chore    = { changelog_title = "Chores" }
 refactor = { changelog_title = "Refactoring" }
 test     = { changelog_title = "Tests" }
 perf     = { changelog_title = "Performance" }
+ci     = { changelog_title = "Continuous Integration" }
