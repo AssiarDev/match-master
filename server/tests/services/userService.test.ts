@@ -161,6 +161,59 @@ describe('UserService', () => {
     }
   });
 
+  it('met à jour uniquement le username sans changer le mot de passe', async () => {
+    userRepoMock.findById.mockResolvedValue({
+      id: 1,
+      password: 'oldHashedPassword',
+    } as any);
+    userRepoMock.update.mockResolvedValue({
+      id: 1,
+      username: 'NewName',
+      email: 'test@mail.com',
+    } as any);
+
+    const result = await service.updateUser(1, { username: 'NewName' });
+
+    expect(mockVerify).not.toHaveBeenCalled();
+    expect(mockHash).not.toHaveBeenCalled();
+    expect(userRepoMock.update).toHaveBeenCalledWith(1, {
+      username: 'NewName',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('retourne une erreur si nouveau mot de passe fourni sans mot de passe actuel', async () => {
+    userRepoMock.findById.mockResolvedValue({
+      id: 1,
+      password: 'oldHashedPassword',
+    } as any);
+
+    const result = await service.updateUser(1, { password: 'newPass123' });
+
+    expect(result).toEqual({
+      success: false,
+      message: 'Mot de passe actuel requis',
+    });
+  });
+
+  it('retourne une erreur si le mot de passe actuel est incorrect', async () => {
+    userRepoMock.findById.mockResolvedValue({
+      id: 1,
+      password: 'oldHashedPassword',
+    } as any);
+    mockVerify.mockResolvedValue(false);
+
+    const result = await service.updateUser(1, {
+      password: 'newPass123',
+      currentPassword: 'wrongPass',
+    });
+
+    expect(result).toEqual({
+      success: false,
+      message: 'Mot de passe actuel incorrect',
+    });
+  });
+
   // DELETE USER
   it('retourne une erreur si utilisateur introuvable (delete)', async () => {
     userRepoMock.findById.mockResolvedValue(null);

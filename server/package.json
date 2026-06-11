@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "dev": "dotenv -e .env.development -- npx tsx watch server.ts",
     "prod": "dotenv -e .env.production -- npx tsx server.ts",
     "build": "tsc",

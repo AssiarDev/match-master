@@ -144,4 +144,40 @@ describe('StandingService', () => {
       message: 'Impossible de récupérer le classement Error: Teams error',
     });
   });
+
+  it('retourne une liste vide si aucun standing disponible', async () => {
+    leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
+      success: true,
+      league: 2024,
+    });
+
+    standingRepoMock.fetchStandingBySeason?.mockResolvedValue({ data: [] });
+
+    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+
+    const result = await service.getStandingFixtures(1);
+
+    expect(result).toEqual({ success: true, standing: [] });
+  });
+
+  it("utilise le nom générique si l'équipe est absente du map", async () => {
+    leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
+      success: true,
+      league: 2024,
+    });
+
+    standingRepoMock.fetchStandingBySeason?.mockResolvedValue({
+      data: [{ participant_id: 99, team_id: 99, details: [] } as any],
+    });
+
+    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+
+    const result = await service.getStandingFixtures(1);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.standing[0].team_name).toBe('Equipe #99');
+      expect(result.standing[0].team_image).toBeNull();
+    }
+  });
 });

@@ -101,6 +101,14 @@ describe('TeamService', () => {
     });
   });
 
+  it('retourne un tableau vide si teamsByIds appelé avec array vide', async () => {
+    teamDBRepoMock.findByIds!.mockResolvedValue([] as any);
+
+    const result = await service.teamsByIds([]);
+
+    expect(result).toEqual([]);
+  });
+
   // teamByLeague
   it("retourne les équipes d'une ligue", async () => {
     teamDBRepoMock.findByLeague!.mockResolvedValue({
@@ -176,6 +184,28 @@ describe('TeamService', () => {
       success: false,
       message:
         'Impossible de récupérer les équipes pour la ligue : Error: API error',
+    });
+  });
+
+  it('retourne un tableau vide si teamsData.data est null', async () => {
+    leagueApiRepoMock.fetchLeagueSeasons!.mockResolvedValue({
+      data: {
+        seasons: [{ id: 2024, is_current: true } as any],
+      } as any,
+    });
+
+    seasonRepoMock.fetchSeasonsTeams!.mockResolvedValue({
+      data: null,
+    } as any);
+
+    const result = await service.teamsForLeague(1);
+
+    expect(result).toEqual({
+      success: true,
+      result: {
+        season: { id: 2024, is_current: true },
+        teams: [],
+      },
     });
   });
 });

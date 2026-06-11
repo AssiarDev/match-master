@@ -172,4 +172,118 @@ describe('FavoriteService', () => {
       ]);
     });
   });
+
+  /** Add League Favorite */
+  describe('addLeagueFavorite', () => {
+    it("retourne une erreur si l'utilisateur n'existe pas", async () => {
+      userRepoMock.findById.mockResolvedValue(null);
+
+      const result = await service.addLeagueFavorite(1, 10);
+
+      expect(result).toEqual({
+        success: false,
+        message: 'Utilisateur introuvable.',
+      });
+    });
+
+    it("retourne une erreur si la compétition n'existe pas", async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      leagueRepoMock.findLeague.mockResolvedValue(null);
+
+      const result = await service.addLeagueFavorite(1, 10);
+
+      expect(result).toEqual({
+        success: false,
+        message: 'Compétition introuvable.',
+      });
+    });
+
+    it('retourne un message si la compétition est déjà en favoris', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      leagueRepoMock.findLeague.mockResolvedValue({ id: 10 } as any);
+      favRepoMock.findLeague.mockResolvedValue({ id: 99 } as any);
+
+      const result = await service.addLeagueFavorite(1, 10);
+
+      expect(result).toEqual({
+        success: true,
+        message: 'La compétition est déjà dans les favoris.',
+      });
+    });
+
+    it('ajoute la compétition en favoris si tout est valide', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      leagueRepoMock.findLeague.mockResolvedValue({ id: 10 } as any);
+      favRepoMock.findLeague.mockResolvedValue(null);
+
+      const result = await service.addLeagueFavorite(1, 10);
+
+      expect(favRepoMock.createLeague).toHaveBeenCalledWith(1, 10);
+      expect(result).toEqual({
+        success: true,
+        message: 'La compétition à bien été ajouté.',
+      });
+    });
+  });
+
+  /** Remove League Favorite */
+  describe('removeLeagueFavorite', () => {
+    it("retourne une erreur si la compétition n'est pas dans les favoris", async () => {
+      favRepoMock.findLeague.mockResolvedValue(null);
+
+      const result = await service.removeLeagueFavorite(1, 10);
+
+      expect(result).toEqual({
+        success: false,
+        message: "Cette compétition n'existe pas dans les favoris.",
+      });
+    });
+
+    it('supprime la compétition des favoris si elle existe', async () => {
+      favRepoMock.findLeague.mockResolvedValue({ id: 99 } as any);
+
+      const result = await service.removeLeagueFavorite(1, 10);
+
+      expect(favRepoMock.deleteLeague).toHaveBeenCalledWith(1, 10);
+      expect(result).toEqual({
+        success: true,
+        message: 'La compétition à bien été supprimé de vos favoris.',
+      });
+    });
+  });
+
+  /** Get League Favorite */
+  describe('getLeagueFavorite', () => {
+    it("retourne un tableau vide si l'utilisateur n'existe pas", async () => {
+      userRepoMock.findById.mockResolvedValue(null);
+
+      const result = await service.getLeagueFavorite(1);
+
+      expect(result).toEqual([]);
+    });
+
+    it('retourne la liste des compétitions favorites formatée', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+
+      favRepoMock.findAllByUser.mockResolvedValue([
+        {
+          competition: {
+            id: 301,
+            name: 'Ligue 1',
+            image_path: 'ligue1.png',
+          },
+        },
+      ] as any);
+
+      const result = await service.getLeagueFavorite(1);
+
+      expect(result).toEqual([
+        {
+          id: 301,
+          name: 'Ligue 1',
+          emblem: 'ligue1.png',
+        },
+      ]);
+    });
+  });
 });

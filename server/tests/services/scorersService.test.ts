@@ -142,5 +142,41 @@ describe('ScorersService', () => {
         expect(result.message).toContain('Players error');
       }
     });
+
+    it('retourne une liste vide si aucun buteur disponible', async () => {
+      leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
+        success: true,
+        league: 2024,
+      });
+
+      scorersRepoMock.fetchTopScorers?.mockResolvedValue({ data: [] });
+
+      playersRepoMock.findPlayersByIds?.mockResolvedValue([]);
+
+      const result = await service.getTopScorers(1);
+
+      expect(result).toEqual({ success: true, scorers: [] });
+    });
+
+    it('utilise le nom générique si le joueur est absent du map', async () => {
+      leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
+        success: true,
+        league: 2024,
+      });
+
+      scorersRepoMock.fetchTopScorers?.mockResolvedValue({
+        data: [{ player_id: 99, goals: 5, participant_id: 55 }],
+      });
+
+      playersRepoMock.findPlayersByIds?.mockResolvedValue([]);
+
+      const result = await service.getTopScorers(1);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.scorers[0].player_name).toBe('Joueur #99');
+        expect(result.scorers[0].player_image).toBeNull();
+      }
+    });
   });
 });

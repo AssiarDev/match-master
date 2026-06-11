@@ -150,6 +150,29 @@ describe('MatchesService', () => {
           'Impossible de récupérer les matchs groupés par date : Error: DB error',
       });
     });
+
+    it('retourne un objet vide si aucun match pour la date', async () => {
+      matchesRepoMock.fetchMatchesByDate!.mockResolvedValue({ data: [] });
+
+      const result = await service.getMatchesByDate('2024-01-01');
+
+      expect(result).toEqual({ success: true, matches: {} });
+    });
+
+    it("groupe sous 'unknown league' si le match n'a pas d'info de ligue", async () => {
+      matchesRepoMock.fetchMatchesByDate!.mockResolvedValue({
+        data: [{ id: 1, league: null }] as any,
+      });
+
+      const result = await service.getMatchesByDate('2024-01-01');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.matches['unknown league']).toBeDefined();
+        expect(result.matches['unknown league'].matches.length).toBe(1);
+        expect(result.matches['unknown league'].flag).toBe('');
+      }
+    });
   });
 
   /** Get live matches */

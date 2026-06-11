@@ -25,5 +25,6 @@ fonction = "fonction"
 sur = "sur"
 ba = "ba"
 donn = "donn"
+objet = "objet"
 # Valeurs d'enum API (ex: 2ND_HALF)
 ND = "ND"
