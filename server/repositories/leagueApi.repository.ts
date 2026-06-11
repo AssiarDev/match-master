@@ -46,7 +46,7 @@ export class LeagueApiRepository implements ILeagueApiRepository {
 
   async fetchLeagueSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>> {
     try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=seasons`;
+      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=seasons`;
       const response = await fetch(url);
       if (!response.ok)
         throw new Error(`API Error fetchLeagueSeasons : ${response.status}`);
@@ -61,7 +61,7 @@ export class LeagueApiRepository implements ILeagueApiRepository {
     leagueId: number
   ): Promise<ApiResponse<ApiLeague>> {
     try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=currentSeason.stages`;
+      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=currentSeason.stages`;
       const response = await fetch(url);
       if (!response.ok)
         throw new Error(
@@ -81,7 +81,7 @@ export class LeagueApiRepository implements ILeagueApiRepository {
     leagueId: number
   ): Promise<ApiResponse<ApiLeague>> {
     try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&includes=seasons`;
+      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=seasons`;
       const response = await fetch(url);
       if (!response.ok)
         throw new Error(`API Error fetchLeagueWithSeason : ${response.status}`);
