@@ -37,8 +37,7 @@ export class MatchesService implements IMatchesService {
       const seasonResult =
         await this.leagueService.getLeagueCurrentSeason(leagueId);
       if (!seasonResult.success) throw new Error(seasonResult.message);
-      if (seasonResult.league == null)
-        throw new Error('No current season for this league');
+      if (seasonResult.league == null) return { success: true, matches: [] };
       const seasonId = seasonResult.league;
       const fixtures = await this.seasonService.getSeasonFixtures(seasonId);
       if (!fixtures.success) throw new Error(fixtures.message);

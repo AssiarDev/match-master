@@ -61,11 +61,10 @@ describe('MatchesService', () => {
 
       const result = await service.getLeagueMatches(1);
 
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs de la ligues : Error: No current season for this league',
+        success: true,
+        matches: [],
       });
     });
 
