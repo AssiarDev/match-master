@@ -87,9 +87,10 @@ export class LeagueService implements ILeagueService {
   }
 
   /**
-   * Retrieves the current season ID for a given league from the external API.
+   * Retrieves the active season ID for a given league.
+   * If the current season has not started yet, falls back to the most recently completed season.
    * @param leagueId - The ID of the league
-   * @returns A ServiceResult containing the current season ID
+   * @returns A ServiceResult containing the season ID, or undefined if none is found
    */
   async getLeagueCurrentSeason(
     leagueId: number
@@ -97,7 +98,25 @@ export class LeagueService implements ILeagueService {
     try {
       const result =
         await this.leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
-      return { success: true, league: result.data?.currentseason?.id };
+      const currentSeason = result.data?.currentseason;
+
+      if (
+        currentSeason?.starting_at &&
+        new Date(currentSeason.starting_at) > new Date()
+      ) {
+        const seasonsResult =
+          await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
+        const pastSeasons = (seasonsResult.data?.seasons ?? []).filter(
+          (s) => s.ending_at !== null && new Date(s.ending_at!) < new Date()
+        );
+        pastSeasons.sort(
+          (a, b) =>
+            new Date(b.ending_at!).getTime() - new Date(a.ending_at!).getTime()
+        );
+        return { success: true, league: pastSeasons[0]?.id };
+      }
+
+      return { success: true, league: currentSeason?.id };
     } catch (error) {
       return {
         success: false,

@@ -22,7 +22,7 @@ export interface ApiLeague {
   category: number;
   has_jerseys: boolean;
   seasons?: ApiSeason[];
-  currentseason?: { id: number };
+  currentseason?: { id: number; starting_at: string | null };
 }
 
 export interface ApiSeason {

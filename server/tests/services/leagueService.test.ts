@@ -128,6 +128,40 @@ describe('LeagueService', () => {
       });
     });
 
+    it('retourne la dernière saison terminée si la saison courante est dans le futur', async () => {
+      apiRepoMock.fetchLeagueCurrentSeason?.mockResolvedValue({
+        data: { currentseason: { id: 9999, starting_at: '2099-01-01' } },
+      } as any);
+
+      apiRepoMock.fetchLeagueSeasons?.mockResolvedValue({
+        data: {
+          seasons: [
+            { id: 2023, ending_at: '2023-06-01' },
+            { id: 2024, ending_at: '2024-06-01' },
+            { id: 2025, ending_at: '2025-06-01' },
+          ],
+        },
+      } as any);
+
+      const result = await service.getLeagueCurrentSeason(1);
+
+      expect(result).toEqual({ success: true, league: 2025 });
+    });
+
+    it('retourne undefined si la saison courante est dans le futur et aucune saison terminée', async () => {
+      apiRepoMock.fetchLeagueCurrentSeason?.mockResolvedValue({
+        data: { currentseason: { id: 9999, starting_at: '2099-01-01' } },
+      } as any);
+
+      apiRepoMock.fetchLeagueSeasons?.mockResolvedValue({
+        data: { seasons: [] },
+      } as any);
+
+      const result = await service.getLeagueCurrentSeason(1);
+
+      expect(result).toEqual({ success: true, league: undefined });
+    });
+
     it("retourne une erreur si l'API plante", async () => {
       apiRepoMock.fetchLeagueCurrentSeason?.mockRejectedValue(
         new Error('API error')
