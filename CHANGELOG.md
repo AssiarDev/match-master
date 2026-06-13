@@ -93,6 +93,19 @@
 
 
 - - -
+## [0.2.3](https://github.com/AssiarDev/match-master/compare/5522031cf0693fc59604baf255c00cc10edc7c04..0.2.3) - 2026-06-13
+#### Bug Fixes
+- **(league)** fallback to last completed season when current is upcoming - ([3d58249](https://github.com/AssiarDev/match-master/commit/3d58249a2df3b1dd40808fbbaae0298e315fbdda)) - AssiarDev
+- **(league-api)** use correct query param include instead of includes - ([7e1e982](https://github.com/AssiarDev/match-master/commit/7e1e98238ba8a7f92ba389fdd48f1a0fcfed7059)) - AssiarDev
+- **(matches)** return empty array when league has no current season - ([0fda450](https://github.com/AssiarDev/match-master/commit/0fda45050fa10929d199cd4fe471dfd714978aab)) - AssiarDev
+#### Chores
+- **(prisma)** add engineType binary for ARM64 windows support - ([07cad3d](https://github.com/AssiarDev/match-master/commit/07cad3daa6de430c9896cc597f72bcf1662870d4)) - AssiarDev
+- add script to delete inactive Primeira Liga from db - ([f2f5353](https://github.com/AssiarDev/match-master/commit/f2f5353a7124a381448f32b19a75a03ad3527fad)) - AssiarDev
+#### Continuous Integration
+- extend pipeline to dev branches with typecheck format and typos jobs - ([5522031](https://github.com/AssiarDev/match-master/commit/5522031cf0693fc59604baf255c00cc10edc7c04)) - AssiarDev
+
+- - -
+
 ## [0.2.2](https://github.com/AssiarDev/match-master/compare/9a96bfe99bde6b5759e59ea8405b8b868117ac79..0.2.2) - 2026-05-17
 #### Bug Fixes
 - **(auth)** use SameSite strict cookie via Netlify proxy - ([9a96bfe](https://github.com/AssiarDev/match-master/commit/9a96bfe99bde6b5759e59ea8405b8b868117ac79)) - AssiarDev
