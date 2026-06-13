@@ -26,5 +26,7 @@ sur = "sur"
 ba = "ba"
 donn = "donn"
 objet = "objet"
+correspondant = "correspondant"
 # Valeurs d'enum API (ex: 2ND_HALF)
 ND = "ND"
+contient = "contient"

@@ -7,6 +7,10 @@ export default {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   extensionsToTreatAsEsm: ['.ts'],
+  maxWorkers: 1,
+  globalSetup: './tests/setup/globalSetup.ts',
+  globalTeardown: './tests/setup/globalTeardown.ts',
+  setupFilesAfterEnv: ['./tests/setup/jestSetup.ts'],
   coverageProvider: 'v8',
   collectCoverageFrom: [
     'controllers/**/*.ts',

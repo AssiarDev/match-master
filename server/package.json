@@ -37,6 +37,7 @@
   "devDependencies": {
     "@swc/core": "^1.15.21",
     "@swc/jest": "^0.2.39",
+    "@testcontainers/postgresql": "^12.0.2",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
@@ -44,15 +45,20 @@
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/nock": "^10.0.3",
     "@types/node": "^25.5.0",
+    "@types/supertest": "^7.2.0",
     "@types/swagger-ui-express": "^4.1.8",
     "cross-env": "^10.1.0",
     "dotenv-cli": "^8.0.0",
     "jest": "^30.3.0",
+    "nock": "^14.0.15",
     "nodemon": "^3.1.10",
     "prettier": "3.8.0",
     "prettier-plugin-prisma": "^5.0.0",
     "prisma": "^6.7.0",
+    "supertest": "^7.2.2",
+    "testcontainers": "^12.0.2",
     "typescript": "^6.0.2"
   }
 }
