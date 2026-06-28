@@ -93,6 +93,15 @@
 
 
 - - -
+## [0.2.4](https://github.com/AssiarDev/match-master/compare/3f162c68330b3fb97ec8684a5b25449c261593f8..0.2.4) - 2026-06-28
+#### Bug Fixes
+- **(sse)** disable proxy buffering and flush headers for real-time delivery - ([7d1f589](https://github.com/AssiarDev/match-master/commit/7d1f5896bf75b29522f6eb82047934734880b6e8)) - AssiarDev
+#### Tests
+- **(integration)** add integration tests for all routes with supertest - ([58a4be9](https://github.com/AssiarDev/match-master/commit/58a4be9d78a9138b83d3771af59ca5935dcc9dd9)) - AssiarDev
+- **(unit)** add unit tests for service layer, utils, lib and middleware - ([3f162c6](https://github.com/AssiarDev/match-master/commit/3f162c68330b3fb97ec8684a5b25449c261593f8)) - AssiarDev
+
+- - -
+
 ## [0.2.3](https://github.com/AssiarDev/match-master/compare/5522031cf0693fc59604baf255c00cc10edc7c04..0.2.3) - 2026-06-13
 #### Bug Fixes
 - **(league)** fallback to last completed season when current is upcoming - ([3d58249](https://github.com/AssiarDev/match-master/commit/3d58249a2df3b1dd40808fbbaae0298e315fbdda)) - AssiarDev
