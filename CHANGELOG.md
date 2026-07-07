@@ -93,6 +93,14 @@
 
 
 - - -
+## [0.2.5](https://github.com/AssiarDev/match-master/compare/4938a5508aba3d14d29aefcb13cbdd5f53e0a00a..0.2.5) - 2026-07-07
+#### Bug Fixes
+- **(sse)** add keepalive to prevent proxy timeout - ([22b2665](https://github.com/AssiarDev/match-master/commit/22b2665bfb1cab9c00650246aa4682689e9ea5e8)) - AssiarDev
+#### Chores
+- **(deps)** upgrade express to v5.2.1 - ([4938a55](https://github.com/AssiarDev/match-master/commit/4938a5508aba3d14d29aefcb13cbdd5f53e0a00a)) - AssiarDev
+
+- - -
+
 ## [0.2.4](https://github.com/AssiarDev/match-master/compare/3f162c68330b3fb97ec8684a5b25449c261593f8..0.2.4) - 2026-06-28
 #### Bug Fixes
 - **(sse)** disable proxy buffering and flush headers for real-time delivery - ([7d1f589](https://github.com/AssiarDev/match-master/commit/7d1f5896bf75b29522f6eb82047934734880b6e8)) - AssiarDev
