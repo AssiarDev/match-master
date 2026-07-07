@@ -54,5 +54,10 @@ export class LiveMatchesBroadcaster {
    */
   start() {
     setInterval(() => this.broadcast(), 30000);
+    setInterval(() => {
+      for (const client of this.clients) {
+        client.write(': keepalive\n\n');
+      }
+    }, 20000);
   }
 }
