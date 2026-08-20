@@ -93,6 +93,16 @@
 
 
 - - -
+## [0.2.6](https://github.com/AssiarDev/match-master/compare/80c2be14b2f0e0d0c7bc8e97e38a520e3a2b8013..0.2.6) - 2026-08-20
+#### Bug Fixes
+- **(deps)** patch high severity vulnerabilities - ([9c6f39a](https://github.com/AssiarDev/match-master/commit/9c6f39a65dbfba5701fa46ae32ebf23294d58f4c)) - AssiarDev
+#### Chores
+- add dependabot configuration - ([8698595](https://github.com/AssiarDev/match-master/commit/8698595a6b55e096989823fee24a5580ddf2da24)) - AssiarDev
+#### Continuous Integration
+- align workflow with frontend CI (#12) - ([80c2be1](https://github.com/AssiarDev/match-master/commit/80c2be14b2f0e0d0c7bc8e97e38a520e3a2b8013)) - Assiar
+
+- - -
+
 ## [0.2.5](https://github.com/AssiarDev/match-master/compare/4938a5508aba3d14d29aefcb13cbdd5f53e0a00a..0.2.5) - 2026-07-07
 #### Bug Fixes
 - **(sse)** add keepalive to prevent proxy timeout - ([22b2665](https://github.com/AssiarDev/match-master/commit/22b2665bfb1cab9c00650246aa4682689e9ea5e8)) - AssiarDev
