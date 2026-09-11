@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.7](https://github.com/AssiarDev/match-master/compare/1c460f55ea9b86df3ba04e4b465a91d36fb03ee0..0.2.7) - 2026-09-11
+#### Bug Fixes
+- **(auth)** correct typos in user error messages and align cookie maxAge with JWT expiration (#18) - ([1c460f5](https://github.com/AssiarDev/match-master/commit/1c460f55ea9b86df3ba04e4b465a91d36fb03ee0)) - Assiar
+
+- - -
+
 ## [0.2.6](https://github.com/AssiarDev/match-master/compare/80c2be14b2f0e0d0c7bc8e97e38a520e3a2b8013..0.2.6) - 2026-08-20
 #### Bug Fixes
 - **(deps)** patch high severity vulnerabilities - ([9c6f39a](https://github.com/AssiarDev/match-master/commit/9c6f39a65dbfba5701fa46ae32ebf23294d58f4c)) - AssiarDev
