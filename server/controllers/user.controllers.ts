@@ -40,12 +40,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { mail, password } = req.body;
     if (!mail || !password) {
-      res.status(400).json({ error: 'Tous les champs sont obligatoire' });
+      res.status(400).json({ error: 'Tous les champs sont obligatoires' });
       return;
     }
     const result = await userService.login(mail, password);
     if (!result.success) {
-      res.status(401).json({ error: 'Identifiants incorrects.' });
+      res.status(401).json({ error: 'Identifiant ou mot de passe incorrect.' });
       return;
     }
 
@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 36000000,
+      maxAge: 3600000,
     });
     res.status(200).json({ message: 'Connexion reussie' });
   } catch (err) {
@@ -144,14 +144,14 @@ export const updateUser = async (
 
     if (newPassword || confirmPassword) {
       if (!currentPassword) {
-        res.status(400).json({ message: 'Le mot de passe est incorrecte.' });
+        res.status(400).json({ error: 'Le mot de passe actuel est requis.' });
         return;
       }
 
       if (newPassword !== confirmPassword) {
         res
           .status(400)
-          .json({ message: 'Les mots de passe ne correspondent pas' });
+          .json({ error: 'Les mots de passe ne correspondent pas' });
         return;
       }
 
