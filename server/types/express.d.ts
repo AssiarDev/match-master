@@ -1,5 +1,3 @@
-import 'express-session';
-
 export interface UserPayload {
   id: number;
   email: string;
@@ -14,11 +12,3 @@ declare global {
     }
   }
 }
-
-declare module 'express-session' {
-  interface SessionData {
-    user?: { id: number; email: string; username: string; created: string };
-  }
-}
-
-export {};
