@@ -14,7 +14,7 @@ export const getAllTeams = async (
     res.json(result);
   } catch (err) {
     console.error('Une erreur est survenue', err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 

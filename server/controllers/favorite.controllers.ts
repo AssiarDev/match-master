@@ -73,7 +73,7 @@ export const addLeagueFavorite = async (
     const result = await favoriteService.addLeagueFavorite(userId, leagueId);
     result.success
       ? res.status(201).json({ message: result.message })
-      : res.status(500).json({ message: result.message });
+      : res.status(500).json({ error: result.message });
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur.' });
   }
@@ -95,7 +95,7 @@ export const removeLeagueFavorite = async (
     const result = await favoriteService.removeLeagueFavorite(userId, leagueId);
     result.success
       ? res.status(200).json({ message: result.message })
-      : res.status(500).json({ message: result.message });
+      : res.status(500).json({ error: result.message });
   } catch (err) {
     res.status(500).json({ error: 'Une erreur est survenue.' });
   }

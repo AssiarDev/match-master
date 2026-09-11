@@ -8,12 +8,12 @@ export const allLeagues = async (
   try {
     const result = await leagueService.getAllLeague();
     if (!result.success) {
-      res.status(404).json({ message: result.message });
+      res.status(404).json({ error: result.message });
       return;
     }
     res.status(200).json(result.leagues);
   } catch (error) {
     console.error("Erreur lors de l'exécution de la requête", error);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 };
