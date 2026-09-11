@@ -7,8 +7,7 @@ export type ServiceSuccess<T extends object = Record<never, never>> = {
 } & T;
 export type ServiceError = { success: false; message: string };
 export type ServiceResult<T extends object = Record<never, never>> =
-  | ServiceSuccess<T>
-  | ServiceError;
+  ServiceSuccess<T> | ServiceError;
 
 export interface ApiLeague {
   id: number;
