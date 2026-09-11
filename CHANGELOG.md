@@ -93,6 +93,14 @@
 
 
 - - -
+## [0.2.8](https://github.com/AssiarDev/match-master/compare/b07c406125357ebf969e49847ae7f2cee51c49a3..0.2.8) - 2026-09-11
+#### Bug Fixes
+- **(deps)** patch high severity vulnerabilities - ([286b416](https://github.com/AssiarDev/match-master/commit/286b416c8ed315b5855f2586f8822932f0815303)) - AssiarDev
+#### Chores
+- **(deps-dev)** bump dotenv-cli from 8.0.0 to 11.0.0 in /server (#17) - ([b07c406](https://github.com/AssiarDev/match-master/commit/b07c406125357ebf969e49847ae7f2cee51c49a3)) - dependabot[bot]
+
+- - -
+
 ## [0.2.7](https://github.com/AssiarDev/match-master/compare/1c460f55ea9b86df3ba04e4b465a91d36fb03ee0..0.2.7) - 2026-09-11
 #### Bug Fixes
 - **(auth)** correct typos in user error messages and align cookie maxAge with JWT expiration (#18) - ([1c460f5](https://github.com/AssiarDev/match-master/commit/1c460f55ea9b86df3ba04e4b465a91d36fb03ee0)) - Assiar
