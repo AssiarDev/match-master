@@ -93,6 +93,17 @@
 
 
 - - -
+## [0.2.9](https://github.com/AssiarDev/match-master/compare/a5c58fdb5cbeccede2635998eb629e1ca526dc54..0.2.9) - 2026-09-12
+#### Bug Fixes
+- **(favorites)** return 404 when team or league is not found (#20) - ([76d2cb5](https://github.com/AssiarDev/match-master/commit/76d2cb521e145dc89833686ef2568ba34b9bbbd2)) - Assiar
+#### Chores
+- **(deps)** bump js-yaml from 4.3.2 to 5.4.1 in /server (#16) - ([6c7f951](https://github.com/AssiarDev/match-master/commit/6c7f95138528ef031902d83a67589b089f6c7da8)) - dependabot[bot]
+- **(deps)** remove unused dependencies and type definitions (#19) - ([9be7356](https://github.com/AssiarDev/match-master/commit/9be7356849ef397ab15d15fb664e54c0c4a34a21)) - Assiar
+- **(deps)** bump the npm-minor-and-patch group across 1 directory with 18 updates (#14) - ([f673f93](https://github.com/AssiarDev/match-master/commit/f673f936f7213d2a828d0bf4bbf8abd5dfc47e8c)) - dependabot[bot]
+- **(deps)** bump dotenv from 16.6.1 to 17.4.2 in /server (#15) - ([a5c58fd](https://github.com/AssiarDev/match-master/commit/a5c58fdb5cbeccede2635998eb629e1ca526dc54)) - dependabot[bot]
+
+- - -
+
 ## [0.2.8](https://github.com/AssiarDev/match-master/compare/b07c406125357ebf969e49847ae7f2cee51c49a3..0.2.8) - 2026-09-11
 #### Bug Fixes
 - **(deps)** patch high severity vulnerabilities - ([286b416](https://github.com/AssiarDev/match-master/commit/286b416c8ed315b5855f2586f8822932f0815303)) - AssiarDev
