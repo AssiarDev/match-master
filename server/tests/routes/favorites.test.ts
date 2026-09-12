@@ -66,6 +66,24 @@ describe('Favorites routes', () => {
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({ message: 'Favori ajouté.' });
     });
+
+    it("retourne 404 si l'équipe n'existe pas", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send({ clubId: 999 });
+
+      expect(response.status).toBe(404);
+      expect(response.body).toMatchObject({ error: 'Equipe introuvable.' });
+    });
   });
 
   describe('DELETE /protected/users/favorites/:clubId', () => {
@@ -88,6 +106,25 @@ describe('Favorites routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({ message: 'Favoris supprimé.' });
+    });
+
+    it("retourne 404 si le favori n'existe pas", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .delete('/protected/users/favorites/999')
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toMatchObject({
+        error: "Ce favoris n'existe pas.",
+      });
     });
   });
 
@@ -155,6 +192,26 @@ describe('Favorites routes', () => {
         message: 'La compétition à bien été ajouté.',
       });
     });
+
+    it("retourne 404 si la compétition n'existe pas", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites-leagues')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send({ leagueId: 999 });
+
+      expect(response.status).toBe(404);
+      expect(response.body).toMatchObject({
+        error: 'Compétition introuvable.',
+      });
+    });
   });
 
   describe('DELETE /protected/users/favorites-leagues/:leagueId', () => {
@@ -180,6 +237,25 @@ describe('Favorites routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({
         message: 'La compétition à bien été supprimé de vos favoris.',
+      });
+    });
+
+    it("retourne 404 si la compétition n'est pas dans les favoris", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .delete('/protected/users/favorites-leagues/999')
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toMatchObject({
+        error: "Cette compétition n'existe pas dans les favoris.",
       });
     });
   });
