@@ -476,6 +476,8 @@ paths:
                 $ref: '#/components/schemas/MessageResponse'
         401:
           description: Unauthorized
+        404:
+          description: User or team not found
 
   /protected/users/favorites/{clubId}:
     delete:
@@ -493,6 +495,8 @@ paths:
           description: Favorite removed
         401:
           description: Unauthorized
+        404:
+          description: Favorite not found
 
   /protected/users/{usersId}/favorites:
     get:
@@ -542,6 +546,8 @@ paths:
                 $ref: '#/components/schemas/MessageResponse'
         401:
           description: Unauthorized
+        404:
+          description: User or league not found
 
   /protected/users/favorites-leagues/{leagueId}:
     delete:
@@ -559,6 +565,8 @@ paths:
           description: League favorite removed
         401:
           description: Unauthorized
+        404:
+          description: League favorite not found
 
   /protected/users/{userId}/favorites-leagues:
     get:

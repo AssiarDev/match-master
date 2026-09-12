@@ -15,20 +15,33 @@ const insertTeamLeague = async (): Promise<void> => {
     const teamsResult = await teamService.teamsForLeague(league.id);
     if (!teamsResult.success) continue;
     const teams = teamsResult.result.teams;
-    for (const team of teams) {
-      console.log('Trying to link team:', team.id, 'to league:', league.id);
-      await prisma.teamCompetition.upsert({
-        where: {
-          team_id_competition_id: {
+    if (teams.length === 0) {
+      console.warn(
+        `League ${league.id} : aucune équipe renvoyée, liens conservés`
+      );
+      continue;
+    }
+    try {
+      // Replace the links so relegated teams are detached from the league
+      await prisma.$transaction([
+        prisma.teamCompetition.deleteMany({
+          where: { competition_id: league.id },
+        }),
+        prisma.teamCompetition.createMany({
+          data: teams.map((team) => ({
             team_id: team.id,
             competition_id: league.id,
-          },
-        },
-        update: {},
-        create: { team_id: team.id, competition_id: league.id },
-      });
+          })),
+          skipDuplicates: true,
+        }),
+      ]);
+      console.log(`League ${league.id} : ${teams.length} équipes liées`);
+    } catch (error) {
+      console.error(
+        `League ${league.id} : liaison impossible`,
+        (error as Error).message
+      );
     }
-    console.log(`League ${league.id} : ${teams.length} équipes liées`);
   }
   await prisma.$disconnect();
 };

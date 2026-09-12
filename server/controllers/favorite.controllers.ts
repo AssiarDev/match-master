@@ -14,8 +14,9 @@ export const addFavorite = async (
     }
     const result = await favoriteService.addFavorite(userId, clubId);
     if (result.success) res.status(201).json({ message: result.message });
-    else res.status(500).json({ error: result.message });
+    else res.status(404).json({ error: result.message });
   } catch (err) {
+    console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Erreur serveur.' });
   }
 };
@@ -33,8 +34,9 @@ export const removeFavorite = async (
     }
     const result = await favoriteService.removeFavorite(userId, clubId);
     if (result.success) res.status(200).json({ message: result.message });
-    else res.status(500).json({ error: result.message });
+    else res.status(404).json({ error: result.message });
   } catch (err) {
+    console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Une erreur est survenue.' });
   }
 };
@@ -73,8 +75,9 @@ export const addLeagueFavorite = async (
     const result = await favoriteService.addLeagueFavorite(userId, leagueId);
     result.success
       ? res.status(201).json({ message: result.message })
-      : res.status(500).json({ error: result.message });
+      : res.status(404).json({ error: result.message });
   } catch (err) {
+    console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Erreur serveur.' });
   }
 };
@@ -95,8 +98,9 @@ export const removeLeagueFavorite = async (
     const result = await favoriteService.removeLeagueFavorite(userId, leagueId);
     result.success
       ? res.status(200).json({ message: result.message })
-      : res.status(500).json({ error: result.message });
+      : res.status(404).json({ error: result.message });
   } catch (err) {
+    console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Une erreur est survenue.' });
   }
 };
@@ -115,6 +119,7 @@ export const getLeagueFavorites = async (
     const favorites = await favoriteService.getLeagueFavorite(userId);
     res.status(200).json(favorites);
   } catch (err) {
+    console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };

@@ -21,9 +21,10 @@ export const insertAllSquads = async (): Promise<void> => {
       console.warn('No seasons found for league :', league.id);
       continue;
     }
-    const validSeasons = seasons.filter((s: ApiSeason) => s.id > 20000);
+    // Only the current season: past seasons are already imported
+    const validSeasons = seasons.filter((s: ApiSeason) => s.is_current);
     if (validSeasons.length === 0) {
-      console.warn(`No valid seasons with squads for league ${league.id}`);
+      console.warn(`No current season for league ${league.id}`);
       continue;
     }
     for (const season of validSeasons) {
@@ -35,8 +36,15 @@ export const insertAllSquads = async (): Promise<void> => {
         continue;
       }
       for (const team of teams) {
-        const squads: ApiResponse<ApiSquad[]> =
-          await teamApiRepo.fetchTeamSquad(season.id, team.id);
+        let squads: ApiResponse<ApiSquad[]>;
+        try {
+          squads = await teamApiRepo.fetchTeamSquad(season.id, team.id);
+        } catch {
+          console.warn(
+            `Squad fetch failed for team ${team.name} in season ${season.id}, skipping.`
+          );
+          continue;
+        }
         const squadList = squads.data ? squads.data : [];
         if (squadList.length === 0) {
           console.warn(
