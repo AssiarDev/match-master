@@ -1,6 +1,10 @@
+import type { User } from '@prisma/client';
+
 export interface ApiResponse<T = unknown> {
   data: T;
 }
+
+export type SafeUser = Omit<User, 'password'>;
 
 export type ServiceSuccess<T extends object = Record<never, never>> = {
   success: true;

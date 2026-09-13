@@ -104,7 +104,7 @@ describe('UserService', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.id).toBe(1);
-      expect(result.email).toBe('test@mail.com');
+      expect(result).not.toHaveProperty('email');
       expect(result.username).toBe('John');
       expect(result.createdAt).toBeDefined();
     }

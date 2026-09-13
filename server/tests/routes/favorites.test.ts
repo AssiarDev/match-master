@@ -10,7 +10,6 @@ const makeToken = (userId: number) =>
   jwt.sign(
     {
       id: userId,
-      email: 'test@test.com',
       username: 'testuser',
       createdAt: new Date(),
     },

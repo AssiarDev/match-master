@@ -325,13 +325,14 @@ paths:
           description: List of top scorers
 
   # ── Users ─────────────────────────────────────────────────
-  /users:
-    get:
-      summary: Get all users
-      tags: [Users]
-      responses:
-        200:
-          description: List of users
+  # Disabled: public route exposing every user's email (see routes/users.ts).
+  # /users:
+  #   get:
+  #     summary: Get all users
+  #     tags: [Users]
+  #     responses:
+  #       200:
+  #         description: List of users
 
   /register:
     post:

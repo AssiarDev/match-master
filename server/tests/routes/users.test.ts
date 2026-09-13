@@ -103,6 +103,27 @@ describe('Users routes', () => {
       expect(response.status).toBe(200);
       expect(response.headers['set-cookie']).toBeDefined();
     });
+
+    it("n'inclut pas l'email dans le token", async () => {
+      await request(app).post('/register').send({
+        username: 'testuser',
+        mail: 'test@test.com',
+        password: VALID_PASSWORD,
+        confirmPassword: VALID_PASSWORD,
+      });
+
+      const response = await request(app)
+        .post('/login')
+        .send({ mail: 'test@test.com', password: VALID_PASSWORD });
+
+      const cookies = response.headers['set-cookie'] as unknown as string[];
+      const tokenCookie = cookies.find((c) => c.startsWith('token='))!;
+      const token = tokenCookie.split(';')[0].slice('token='.length);
+      const decoded = jwt.decode(token) as jwt.JwtPayload;
+
+      expect(decoded).toHaveProperty('id');
+      expect(decoded).not.toHaveProperty('email');
+    });
   });
 
   describe('POST /logout', () => {
@@ -133,7 +154,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },
@@ -147,7 +167,7 @@ describe('Users routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({
         isAuthenticated: true,
-        user: { username: 'testuser' },
+        user: { username: 'testuser', mail: 'test@test.com' },
       });
     });
   });
@@ -171,7 +191,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id + 999,
-          email: 'other@test.com',
           username: 'other',
           createdAt: new Date(),
         },
@@ -197,7 +216,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },
@@ -209,6 +227,77 @@ describe('Users routes', () => {
         .set('Cookie', [`token=${token}`]);
 
       expect(response.status).toBe(200);
+    });
+  });
+
+  describe('GET /users', () => {
+    it("retourne 404 car la route n'est pas exposée", async () => {
+      const response = await request(app).get('/users');
+
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe('PUT /users/:id', () => {
+    it('ne renvoie pas le mot de passe après mise à jour', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          createdAt: user.createdAt,
+        },
+        SECRET_KEY
+      );
+
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .set('Cookie', [`token=${token}`])
+        .send({ username: 'newname' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({ username: 'newname' });
+      expect(response.body).not.toHaveProperty('password');
+    });
+
+    it('émet un nouveau token qui expire après 1h', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          createdAt: user.createdAt,
+        },
+        SECRET_KEY
+      );
+
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .set('Cookie', [`token=${token}`])
+        .send({ username: 'newname' });
+
+      const cookies = response.headers['set-cookie'] as unknown as string[];
+      const tokenCookie = cookies.find((c) => c.startsWith('token='))!;
+      const newToken = tokenCookie.split(';')[0].slice('token='.length);
+      const decoded = jwt.decode(newToken) as jwt.JwtPayload;
+
+      expect(response.status).toBe(200);
+      expect(decoded.exp! - decoded.iat!).toBe(3600);
+      expect(tokenCookie).toContain('Max-Age=3600;');
     });
   });
 });
