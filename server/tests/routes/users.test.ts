@@ -211,4 +211,43 @@ describe('Users routes', () => {
       expect(response.status).toBe(200);
     });
   });
+
+  describe('GET /users', () => {
+    it("retourne 404 car la route n'est pas exposée", async () => {
+      const response = await request(app).get('/users');
+
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe('PUT /users/:id', () => {
+    it('ne renvoie pas le mot de passe après mise à jour', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          createdAt: user.createdAt,
+        },
+        SECRET_KEY
+      );
+
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .set('Cookie', [`token=${token}`])
+        .send({ username: 'newname' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({ username: 'newname' });
+      expect(response.body).not.toHaveProperty('password');
+    });
+  });
 });

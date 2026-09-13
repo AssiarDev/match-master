@@ -1,7 +1,7 @@
 import express from 'express';
 import { loginCheck } from '../middleware/loginMiddleware';
 import {
-  getUsers,
+  // getUsers,
   deleteUser,
   updateUser,
   userProfile,
@@ -12,7 +12,8 @@ import {
 
 const router = express.Router();
 
-router.get('/users', getUsers);
+// Disabled: public route exposing every user's email. Protect it before re-enabling.
+// router.get('/users', getUsers);
 router.post('/register', register);
 router.post('/login', login);
 router.delete('/users/:id', loginCheck, deleteUser);

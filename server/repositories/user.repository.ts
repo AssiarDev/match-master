@@ -1,5 +1,6 @@
 import { Prisma, type User } from '@prisma/client';
 import prisma from '../lib/prisma';
+import type { SafeUser } from '../types/api';
 
 export interface IUserRepository {
   findById(id: number): Promise<User | null>;
@@ -9,9 +10,9 @@ export interface IUserRepository {
     User,
     'id' | 'email' | 'username' | 'password' | 'createdAt'
   > | null>;
-  findAll(): Promise<User[]>;
+  findAll(): Promise<SafeUser[]>;
   create(data: Prisma.UserCreateInput): Promise<User>;
-  update(id: number, data: Prisma.UserUpdateInput): Promise<User>;
+  update(id: number, data: Prisma.UserUpdateInput): Promise<SafeUser>;
   delete(id: number): Promise<void>;
 }
 
@@ -34,7 +35,7 @@ export class UserRepository implements IUserRepository {
   }
 
   findAll() {
-    return prisma.user.findMany();
+    return prisma.user.findMany({ omit: { password: true } });
   }
 
   create(data: Prisma.UserCreateInput) {
@@ -42,7 +43,11 @@ export class UserRepository implements IUserRepository {
   }
 
   update(id: number, data: Prisma.UserUpdateInput) {
-    return prisma.user.update({ where: { id }, data });
+    return prisma.user.update({
+      where: { id },
+      data,
+      omit: { password: true },
+    });
   }
 
   async delete(id: number): Promise<void> {

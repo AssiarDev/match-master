@@ -2,10 +2,10 @@ import argon2 from 'argon2';
 import type { User } from '@prisma/client';
 import { IUserRepository } from '../repositories/user.repository';
 import type { UserPayload } from '../types/express';
-import type { ServiceResult } from '../types/api';
+import type { SafeUser, ServiceResult } from '../types/api';
 
 type RegisterSuccess = { user: User };
-type UpdateSuccess = { user: User };
+type UpdateSuccess = { user: SafeUser };
 
 export interface IUserService {
   register(
@@ -14,7 +14,7 @@ export interface IUserService {
     password: string
   ): Promise<ServiceResult<RegisterSuccess>>;
   login(email: string, password: string): Promise<ServiceResult<UserPayload>>;
-  getAllUsers(): Promise<User[]>;
+  getAllUsers(): Promise<SafeUser[]>;
   updateUser(
     id: number,
     data: { username: string; password: string }
@@ -82,7 +82,7 @@ export class UserService implements IUserService {
    * Retrieves all users from the database.
    * @returns An array of all users
    */
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<SafeUser[]> {
     return this.userRepo.findAll();
   }
 
