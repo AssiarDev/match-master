@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.10](https://github.com/AssiarDev/match-master/compare/ee1cf4c801b0235cd8bbffc04093aab6c7b8235d..0.2.10) - 2026-09-13
+#### Bug Fixes
+- **(users)** prevent user data exposure (#21) - ([ee1cf4c](https://github.com/AssiarDev/match-master/commit/ee1cf4c801b0235cd8bbffc04093aab6c7b8235d)) - Assiar
+
+- - -
+
 ## [0.2.9](https://github.com/AssiarDev/match-master/compare/a5c58fdb5cbeccede2635998eb629e1ca526dc54..0.2.9) - 2026-09-12
 #### Bug Fixes
 - **(favorites)** return 404 when team or league is not found (#20) - ([76d2cb5](https://github.com/AssiarDev/match-master/commit/76d2cb521e145dc89833686ef2568ba34b9bbbd2)) - Assiar
