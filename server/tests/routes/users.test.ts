@@ -249,5 +249,39 @@ describe('Users routes', () => {
       expect(response.body).toMatchObject({ username: 'newname' });
       expect(response.body).not.toHaveProperty('password');
     });
+
+    it('émet un nouveau token qui expire après 1h', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          createdAt: user.createdAt,
+        },
+        SECRET_KEY
+      );
+
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .set('Cookie', [`token=${token}`])
+        .send({ username: 'newname' });
+
+      const cookies = response.headers['set-cookie'] as unknown as string[];
+      const tokenCookie = cookies.find((c) => c.startsWith('token='))!;
+      const newToken = tokenCookie.split(';')[0].slice('token='.length);
+      const decoded = jwt.decode(newToken) as jwt.JwtPayload;
+
+      expect(response.status).toBe(200);
+      expect(decoded.exp! - decoded.iat!).toBe(3600);
+      expect(tokenCookie).toContain('Max-Age=3600;');
+    });
   });
 });

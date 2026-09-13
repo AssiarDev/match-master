@@ -184,14 +184,15 @@ export const updateUser = async (
         username: result.user.username,
         createdAt: result.user.createdAt.toLocaleDateString('FR-fr'),
       },
-      process.env.SECRET_KEY as string
+      process.env.SECRET_KEY as string,
+      { expiresIn: '1h' }
     );
 
     res.cookie('token', newToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 36000000,
+      maxAge: 3600000,
     });
 
     res.json(result.user);
