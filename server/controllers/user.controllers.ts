@@ -52,7 +52,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       {
         id: result.id,
-        email: result.email,
         username: result.username,
         createdAt: result.createdAt,
       },
@@ -180,7 +179,6 @@ export const updateUser = async (
     const newToken = jwt.sign(
       {
         id: result.user.id,
-        email: result.user.email,
         username: result.user.username,
         createdAt: result.user.createdAt.toLocaleDateString('FR-fr'),
       },
@@ -202,20 +200,32 @@ export const updateUser = async (
   }
 };
 
-export const userProfile = (req: Request, res: Response): void => {
+export const userProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   if (!req.user) {
     res
       .status(401)
       .json({ isAuthenticated: false, message: 'Non authentifié' });
     return;
   }
-  res.json({
-    isAuthenticated: true,
-    user: {
-      id: req.user.id,
-      mail: req.user.email,
-      username: req.user.username,
-      createdAt: req.user.createdAt,
-    },
-  });
+  try {
+    const user = await userService.getUserById(req.user.id);
+    if (!user) {
+      res.status(404).json({ error: 'Utilisateur introuvable' });
+      return;
+    }
+    res.json({
+      isAuthenticated: true,
+      user: {
+        id: req.user.id,
+        mail: user.email,
+        username: req.user.username,
+        createdAt: req.user.createdAt,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 };

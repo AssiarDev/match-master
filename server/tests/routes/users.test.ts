@@ -103,6 +103,27 @@ describe('Users routes', () => {
       expect(response.status).toBe(200);
       expect(response.headers['set-cookie']).toBeDefined();
     });
+
+    it("n'inclut pas l'email dans le token", async () => {
+      await request(app).post('/register').send({
+        username: 'testuser',
+        mail: 'test@test.com',
+        password: VALID_PASSWORD,
+        confirmPassword: VALID_PASSWORD,
+      });
+
+      const response = await request(app)
+        .post('/login')
+        .send({ mail: 'test@test.com', password: VALID_PASSWORD });
+
+      const cookies = response.headers['set-cookie'] as unknown as string[];
+      const tokenCookie = cookies.find((c) => c.startsWith('token='))!;
+      const token = tokenCookie.split(';')[0].slice('token='.length);
+      const decoded = jwt.decode(token) as jwt.JwtPayload;
+
+      expect(decoded).toHaveProperty('id');
+      expect(decoded).not.toHaveProperty('email');
+    });
   });
 
   describe('POST /logout', () => {
@@ -133,7 +154,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },
@@ -147,7 +167,7 @@ describe('Users routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({
         isAuthenticated: true,
-        user: { username: 'testuser' },
+        user: { username: 'testuser', mail: 'test@test.com' },
       });
     });
   });
@@ -171,7 +191,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id + 999,
-          email: 'other@test.com',
           username: 'other',
           createdAt: new Date(),
         },
@@ -197,7 +216,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },
@@ -233,7 +251,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },
@@ -262,7 +279,6 @@ describe('Users routes', () => {
       const token = jwt.sign(
         {
           id: user.id,
-          email: user.email,
           username: user.username,
           createdAt: user.createdAt,
         },

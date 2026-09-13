@@ -14,6 +14,7 @@ export interface IUserService {
     password: string
   ): Promise<ServiceResult<RegisterSuccess>>;
   login(email: string, password: string): Promise<ServiceResult<UserPayload>>;
+  getUserById(id: number): Promise<User | null>;
   getAllUsers(): Promise<SafeUser[]>;
   updateUser(
     id: number,
@@ -70,7 +71,6 @@ export class UserService implements IUserService {
 
     const payload: UserPayload = {
       id: user.id,
-      email: user.email,
       username: user.username,
       createdAt: createDateAccount.toLocaleDateString('fr-FR'),
     };
@@ -84,6 +84,15 @@ export class UserService implements IUserService {
    */
   async getAllUsers(): Promise<SafeUser[]> {
     return this.userRepo.findAll();
+  }
+
+  /**
+   * Retrieves a user by its ID.
+   * @param id - The ID of the user
+   * @returns The user, or null if not found
+   */
+  async getUserById(id: number): Promise<User | null> {
+    return this.userRepo.findById(id);
   }
 
   /**

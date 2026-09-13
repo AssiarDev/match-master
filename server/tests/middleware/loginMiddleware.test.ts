@@ -75,7 +75,6 @@ describe('loginCheck', () => {
   it('appelle next() et remplie req.user si le token est valide', () => {
     const payload = {
       id: 1,
-      email: 'test@test.com',
       username: 'test',
       createdAt: '2024-01-01',
     };
