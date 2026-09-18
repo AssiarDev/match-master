@@ -1,51 +1,27 @@
 import type { Request, Response } from 'express';
 import { teamService } from '../lib/container';
+import { sendServiceError } from '../utils/sendServiceError';
 
 export const getAllTeams = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const result = await teamService.allTeams();
-    if (!result.success) {
-      res.status(400).json({ error: result.message });
-      return;
-    }
-    res.json(result.teams);
-  } catch (err) {
-    console.error('Une erreur est survenue', err);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
+  const result = await teamService.allTeams();
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.teams);
 };
 
 export const getTeamId = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const teamId = Number(req.params.id);
-    const data = await teamService.teamById(teamId);
-    res.json(data.success ? data.team : data);
-  } catch (err) {
-    console.error('error backend :', (err as Error).message);
-    res.status(500).json({ error: "Impossible de récupérer l'id de l'equipe" });
-  }
+  const result = await teamService.teamById(Number(req.params.id));
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.team);
 };
 
 export const getTeamsOfLeague = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const leagueId = Number(req.params.id);
-    const data = await teamService.teamByLeague(leagueId);
-
-    if (!data.success) {
-      res.status(500).json({ error: data.message });
-      return;
-    }
-    res.json(data.teams);
-  } catch (err) {
-    console.error('error backend :', (err as Error).message);
-    res.status(500).json({
-      error: 'Impossible de récupérer les équipes de la compétition',
-    });
-  }
+  const result = await teamService.teamByLeague(Number(req.params.id));
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.teams);
 };

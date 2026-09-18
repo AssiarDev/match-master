@@ -1,25 +1,12 @@
 import type { Request, Response } from 'express';
 import { scorersService } from '../lib/container';
+import { sendServiceError } from '../utils/sendServiceError';
 
 export const topScorers = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const leagueId = Number(req.params.id);
-    const data = await scorersService.getTopScorers(leagueId);
-    if (!data.success) {
-      res.status(500).json({ error: data.message });
-      return;
-    }
-    res.json(data.scorers);
-  } catch (err) {
-    console.error(
-      'Impossible de récupérer la liste des meilleurs buteurs',
-      (err as Error).message
-    );
-    res.status(500).json({
-      error: 'Impossible de récupérer la liste des meilleurs buteurs',
-    });
-  }
+  const result = await scorersService.getTopScorers(Number(req.params.id));
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.scorers);
 };

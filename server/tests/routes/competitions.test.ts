@@ -38,10 +38,13 @@ describe('Competitions routes', () => {
   });
 
   describe('GET /competitions/:id/teams', () => {
-    it("retourne 500 si la compétition n'existe pas", async () => {
+    it("retourne 404 si la compétition n'existe pas", async () => {
       const response = await request(app).get('/competitions/999/teams');
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        error: 'Equipe introuvable via la ligue.',
+      });
     });
 
     it('retourne les équipes de la compétition', async () => {

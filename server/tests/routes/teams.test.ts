@@ -47,11 +47,11 @@ describe('Teams routes', () => {
       expect(response.body).toMatchObject({ id: 10, name: 'AS Monaco' });
     });
 
-    it("retourne { success: false } si l'équipe n'existe pas", async () => {
+    it("retourne 404 si l'équipe n'existe pas", async () => {
       const response = await request(app).get('/teams/999');
 
-      expect(response.status).toBe(200);
-      expect(response.body).toMatchObject({ success: false });
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: "Equipe introuvable via l'id." });
     });
   });
 });
