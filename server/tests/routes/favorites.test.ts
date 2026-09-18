@@ -44,7 +44,7 @@ describe('Favorites routes', () => {
         .send({});
 
       expect(response.status).toBe(400);
-      expect(response.body).toMatchObject({ error: 'clubId est requis.' });
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
     });
 
     it('retourne 201 si le favori est ajouté', async () => {
