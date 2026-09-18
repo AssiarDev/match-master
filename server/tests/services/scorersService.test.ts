@@ -77,7 +77,7 @@ describe('ScorersService', () => {
       }
     });
 
-    it('retourne une erreur si la saison courante est introuvable', async () => {
+    it('retourne NOT_FOUND si la saison courante est introuvable', async () => {
       leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
         success: true,
         league: undefined,
@@ -85,27 +85,30 @@ describe('ScorersService', () => {
 
       const result = await service.getTopScorers(1);
 
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.message).toContain('No current season');
-      }
+      expect(result).toEqual({
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'No current season for this league',
+      });
     });
 
-    it('retourne une erreur si getLeagueCurrentSeason échoue', async () => {
+    it("renvoie telle quelle l'erreur métier de getLeagueCurrentSeason", async () => {
       leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
         success: false,
-        message: 'Erreur API',
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
       });
 
       const result = await service.getTopScorers(1);
 
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.message).toContain('Erreur API');
-      }
+      expect(result).toEqual({
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
+      });
     });
 
-    it('retourne une erreur si fetchTopScorers échoue', async () => {
+    it("laisse remonter l'erreur si fetchTopScorers plante", async () => {
       leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
         success: true,
         league: 2024,
@@ -113,15 +116,10 @@ describe('ScorersService', () => {
 
       scorersRepoMock.fetchTopScorers?.mockRejectedValue(new Error('DB error'));
 
-      const result = await service.getTopScorers(1);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.message).toContain('DB error');
-      }
+      await expect(service.getTopScorers(1)).rejects.toThrow('DB error');
     });
 
-    it('retourne une erreur si findPlayersByIds échoue', async () => {
+    it("laisse remonter l'erreur si findPlayersByIds plante", async () => {
       leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
         success: true,
         league: 2024,
@@ -135,12 +133,7 @@ describe('ScorersService', () => {
         new Error('Players error')
       );
 
-      const result = await service.getTopScorers(1);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.message).toContain('Players error');
-      }
+      await expect(service.getTopScorers(1)).rejects.toThrow('Players error');
     });
 
     it('retourne une liste vide si aucun buteur disponible', async () => {

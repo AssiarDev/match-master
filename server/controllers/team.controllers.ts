@@ -7,11 +7,11 @@ export const getAllTeams = async (
 ): Promise<void> => {
   try {
     const result = await teamService.allTeams();
-    if ('success' in result && !result.success) {
-      res.status(400).json(result);
+    if (!result.success) {
+      res.status(400).json({ error: result.message });
       return;
     }
-    res.json(result);
+    res.json(result.teams);
   } catch (err) {
     console.error('Une erreur est survenue', err);
     res.status(500).json({ error: 'Erreur serveur' });
@@ -22,7 +22,7 @@ export const getTeamId = async (req: Request, res: Response): Promise<void> => {
   try {
     const teamId = Number(req.params.id);
     const data = await teamService.teamById(teamId);
-    res.json(data);
+    res.json(data.success ? data.team : data);
   } catch (err) {
     console.error('error backend :', (err as Error).message);
     res.status(500).json({ error: "Impossible de récupérer l'id de l'equipe" });

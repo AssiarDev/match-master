@@ -71,10 +71,19 @@ export class LiveMatchesBroadcaster {
    * in the SSE format (data: {...}\n\n).
    * If the fetch fails, the error is logged and this broadcast is skipped:
    * clients keep their last data until the next one.
+   * The service throws on an API failure, and nothing above this method would
+   * catch it (it runs from a timer): an unhandled rejection would crash the
+   * process, hence the catch here.
    * @param clients - The clients to send to; all connected clients by default
    */
   async broadcast(clients: Response[] = this.clients) {
-    const result = await this.matchesService.getLiveMatches();
+    let result;
+    try {
+      result = await this.matchesService.getLiveMatches();
+    } catch (error) {
+      console.error('[SSE] Diffusion annulée :', (error as Error).message);
+      return;
+    }
 
     if (result.success === false) {
       console.error('[SSE] Diffusion annulée :', result.message);

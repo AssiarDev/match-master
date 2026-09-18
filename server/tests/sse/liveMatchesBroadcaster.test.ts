@@ -182,8 +182,9 @@ describe('LiveMatchesBroadcaster', () => {
       .mockImplementation(() => {});
     getLiveMatches.mockResolvedValue({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'API indisponible',
-    } as LiveMatchesResult);
+    });
     const client = makeClient();
 
     broadcaster.addClient(client.req, client.res);
@@ -194,6 +195,24 @@ describe('LiveMatchesBroadcaster', () => {
       'API indisponible'
     );
     expect(client.write).not.toHaveBeenCalled();
+  });
+
+  it("journalise une exception de l'API sans planter ni rien envoyer", async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    getLiveMatches.mockRejectedValue(new Error('fetch failed'));
+    const client = makeClient();
+
+    broadcaster.addClient(client.req, client.res);
+    await flush();
+
+    expect(consoleError).toHaveBeenCalledWith(
+      '[SSE] Diffusion annulée :',
+      'fetch failed'
+    );
+    expect(client.write).not.toHaveBeenCalled();
+    expect(jest.getTimerCount()).toBe(2);
   });
 
   it('closeAll termine les connexions et ne laisse aucun minuteur actif', async () => {

@@ -36,7 +36,11 @@ describe('UserService', () => {
 
     const result = await service.register('John', 'test@mail.com', 'pass');
 
-    expect(result).toEqual({ success: false, message: 'Email déja utilisé.' });
+    expect(result).toEqual({
+      success: false,
+      reason: 'CONFLICT',
+      message: 'Email déja utilisé.',
+    });
   });
 
   it('crée un utilisateur si email libre', async () => {
@@ -68,6 +72,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'INVALID_CREDENTIALS',
       message: 'Utilisateur introuvable',
     });
   });
@@ -85,6 +90,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'INVALID_CREDENTIALS',
       message: 'Mot de passe incorrect.',
     });
   });
@@ -116,7 +122,28 @@ describe('UserService', () => {
 
     const result = await service.getAllUsers();
 
-    expect(result).toEqual([{ id: 1 }]);
+    expect(result).toEqual({ success: true, users: [{ id: 1 }] });
+  });
+
+  // GET USER BY ID
+  it('retourne un utilisateur par id', async () => {
+    userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+
+    const result = await service.getUserById(1);
+
+    expect(result).toEqual({ success: true, user: { id: 1 } });
+  });
+
+  it('retourne NOT_FOUND si utilisateur introuvable (getUserById)', async () => {
+    userRepoMock.findById.mockResolvedValue(null);
+
+    const result = await service.getUserById(1);
+
+    expect(result).toEqual({
+      success: false,
+      reason: 'NOT_FOUND',
+      message: 'Utilisateur introuvable',
+    });
   });
 
   // UPDATE USER
@@ -130,6 +157,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'Utilisateur introuvable',
     });
   });
@@ -192,6 +220,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'INVALID_INPUT',
       message: 'Mot de passe actuel requis',
     });
   });
@@ -210,6 +239,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'INVALID_CREDENTIALS',
       message: 'Mot de passe actuel incorrect',
     });
   });
@@ -222,6 +252,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'Utilisateur introuvable',
     });
   });

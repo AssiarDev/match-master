@@ -18,6 +18,11 @@ export interface IMatchesService {
   getLiveMatches(): Promise<ServiceResult<{ matches: ApiLiveMatch[] }>>;
 }
 
+/**
+ * External API failures are not caught here: they are thrown to the caller,
+ * as for every service. A business failure of a called service is returned
+ * as is.
+ */
 export class MatchesService implements IMatchesService {
   constructor(
     private readonly matchesRepo: IMatchRepository,
@@ -33,21 +38,15 @@ export class MatchesService implements IMatchesService {
   async getLeagueMatches(
     leagueId: number
   ): Promise<ServiceResult<{ matches: unknown[] }>> {
-    try {
-      const seasonResult =
-        await this.leagueService.getLeagueCurrentSeason(leagueId);
-      if (!seasonResult.success) throw new Error(seasonResult.message);
-      if (seasonResult.league == null) return { success: true, matches: [] };
-      const seasonId = seasonResult.league;
-      const fixtures = await this.seasonService.getSeasonFixtures(seasonId);
-      if (!fixtures.success) throw new Error(fixtures.message);
-      return { success: true, matches: fixtures.seasonFixtures };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les matchs de la ligues : ${error}`,
-      };
-    }
+    const seasonResult =
+      await this.leagueService.getLeagueCurrentSeason(leagueId);
+    if (!seasonResult.success) return seasonResult;
+    if (seasonResult.league == null) return { success: true, matches: [] };
+    const fixtures = await this.seasonService.getSeasonFixtures(
+      seasonResult.league
+    );
+    if (!fixtures.success) return fixtures;
+    return { success: true, matches: fixtures.seasonFixtures };
   }
 
   /**
@@ -60,31 +59,24 @@ export class MatchesService implements IMatchesService {
       matches: Record<string, { flag: string; matches: ApiMatch[] }>;
     }>
   > {
-    try {
-      const result = await this.matchesRepo.fetchMatchesByDate(date);
-      const fixtures = result.data || [];
-      const grouped = fixtures.reduce(
-        (
-          acc: Record<string, { flag: string; matches: ApiMatch[] }>,
-          match: ApiMatch
-        ) => {
-          const leagueName = match.league?.name || 'unknown league';
-          const flag = match.league?.image_path || '';
-          if (!acc[leagueName]) {
-            acc[leagueName] = { flag, matches: [] };
-          }
-          acc[leagueName].matches.push(match);
-          return acc;
-        },
-        {}
-      );
-      return { success: true, matches: grouped };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les matchs groupés par date : ${error}`,
-      };
-    }
+    const result = await this.matchesRepo.fetchMatchesByDate(date);
+    const fixtures = result.data || [];
+    const grouped = fixtures.reduce(
+      (
+        acc: Record<string, { flag: string; matches: ApiMatch[] }>,
+        match: ApiMatch
+      ) => {
+        const leagueName = match.league?.name || 'unknown league';
+        const flag = match.league?.image_path || '';
+        if (!acc[leagueName]) {
+          acc[leagueName] = { flag, matches: [] };
+        }
+        acc[leagueName].matches.push(match);
+        return acc;
+      },
+      {}
+    );
+    return { success: true, matches: grouped };
   }
 
   /**
@@ -95,15 +87,8 @@ export class MatchesService implements IMatchesService {
   async getMatchesByTeam(
     teamId: number
   ): Promise<ServiceResult<{ matches: ApiMatch[] }>> {
-    try {
-      const result = await this.matchesRepo.fetchMatchesByTeam(teamId);
-      return { success: true, matches: result.data || [] };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les matchs par équipes : ${error}`,
-      };
-    }
+    const result = await this.matchesRepo.fetchMatchesByTeam(teamId);
+    return { success: true, matches: result.data || [] };
   }
 
   /**
@@ -111,14 +96,7 @@ export class MatchesService implements IMatchesService {
    * @returns A ServiceResult containing an array of live matches
    */
   async getLiveMatches(): Promise<ServiceResult<{ matches: ApiLiveMatch[] }>> {
-    try {
-      const result = await this.matchesRepo.fetchLiveMatches();
-      return { success: true, matches: result.data || [] };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les matchs en direct : ${error}`,
-      };
-    }
+    const result = await this.matchesRepo.fetchLiveMatches();
+    return { success: true, matches: result.data || [] };
   }
 }

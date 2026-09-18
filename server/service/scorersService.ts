@@ -19,38 +19,38 @@ export class ScorersService {
   /**
    * Retrieves the top scorers for the current season of a given league,
    * enriched with player name and image from the database.
+   * A business failure of a called service is returned as is; API and
+   * database failures are thrown to the caller.
    * @param id - The ID of the league
-   * @returns A ServiceResult containing an array of enriched scorers
+   * @returns A ServiceResult containing an array of enriched scorers, or NOT_FOUND if the league has no current season
    */
   async getTopScorers(
     id: number
   ): Promise<ServiceResult<{ scorers: EnrichedScorer[] }>> {
-    try {
-      const seasonResult = await this.leagueService.getLeagueCurrentSeason(id);
-      if (!seasonResult.success) throw new Error(seasonResult.message);
-      if (seasonResult.league == null)
-        throw new Error('No current season for this league');
-      const seasonId = seasonResult.league;
-      const scorersResult = await this.scorersRepo.fetchTopScorers(seasonId);
-      const scorers = scorersResult?.data || [];
-      const playerIds = scorers.map((s: ApiScorer) => s.player_id);
-      const players = await this.playersRepo.findPlayersByIds(playerIds);
-      const playersMap = Object.fromEntries(players.map((p) => [p.id, p]));
-      const enriched = scorers.map((s: ApiScorer) => {
-        const player = playersMap[s.player_id];
-        return {
-          ...s,
-          player_name: player?.display_name || `Joueur #${s.player_id}`,
-          player_image: player?.image_path || null,
-          team_id: s.participant_id,
-        };
-      });
-      return { success: true, scorers: enriched };
-    } catch (error) {
+    const seasonResult = await this.leagueService.getLeagueCurrentSeason(id);
+    if (!seasonResult.success) return seasonResult;
+    if (seasonResult.league == null)
       return {
         success: false,
-        message: `Impossible de récupérer le classement des meilleurs buteurs ${(error as Error).message}`,
+        reason: 'NOT_FOUND',
+        message: 'No current season for this league',
       };
-    }
+    const scorersResult = await this.scorersRepo.fetchTopScorers(
+      seasonResult.league
+    );
+    const scorers = scorersResult?.data || [];
+    const playerIds = scorers.map((s: ApiScorer) => s.player_id);
+    const players = await this.playersRepo.findPlayersByIds(playerIds);
+    const playersMap = Object.fromEntries(players.map((p) => [p.id, p]));
+    const enriched = scorers.map((s: ApiScorer) => {
+      const player = playersMap[s.player_id];
+      return {
+        ...s,
+        player_name: player?.display_name || `Joueur #${s.player_id}`,
+        player_image: player?.image_path || null,
+        team_id: s.participant_id,
+      };
+    });
+    return { success: true, scorers: enriched };
   }
 }

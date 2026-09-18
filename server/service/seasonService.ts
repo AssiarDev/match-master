@@ -10,6 +10,10 @@ export interface ISeasonService {
   ): Promise<ServiceResult<{ seasonFixtures: unknown[] }>>;
 }
 
+/**
+ * External API failures are not caught here: they are thrown to the caller,
+ * as for every service.
+ */
 export class SeasonService implements ISeasonService {
   constructor(private readonly seasonRepo: ISeasonRepository) {}
   /**
@@ -20,15 +24,8 @@ export class SeasonService implements ISeasonService {
   async getSeasonsTeams(
     seasonId: number
   ): Promise<ServiceResult<{ seasonsTeams: ApiSeason }>> {
-    try {
-      const result = await this.seasonRepo.fetchSeasonsTeams(seasonId);
-      return { success: true, seasonsTeams: result.data };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les saisons de l'équipe : ${error}`,
-      };
-    }
+    const result = await this.seasonRepo.fetchSeasonsTeams(seasonId);
+    return { success: true, seasonsTeams: result.data };
   }
 
   /**
@@ -39,14 +36,7 @@ export class SeasonService implements ISeasonService {
   async getSeasonFixtures(
     seasonId: number
   ): Promise<ServiceResult<{ seasonFixtures: unknown[] }>> {
-    try {
-      const result = await this.seasonRepo.fetchSeasonFixtures(seasonId);
-      return { success: true, seasonFixtures: result.data ?? [] };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les fixtures de la saison : ${error}`,
-      };
-    }
+    const result = await this.seasonRepo.fetchSeasonFixtures(seasonId);
+    return { success: true, seasonFixtures: result.data ?? [] };
   }
 }

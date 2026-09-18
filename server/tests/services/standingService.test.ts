@@ -49,13 +49,16 @@ describe('StandingService', () => {
       ],
     });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([
-      {
-        id: 10,
-        name: 'PSG',
-        image_path: 'psg.png',
-      } as any,
-    ]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [
+        {
+          id: 10,
+          name: 'PSG',
+          image_path: 'psg.png',
+        } as any,
+      ],
+    });
 
     const result = await service.getStandingFixtures(1);
 
@@ -82,28 +85,30 @@ describe('StandingService', () => {
 
     expect(result).toEqual({
       success: false,
-      message:
-        'Impossible de récupérer le classement Error: No current season for this league',
+      reason: 'NOT_FOUND',
+      message: 'No current season for this league',
     });
   });
 
-  /** league season error */
-  it('retourne une erreur si getLeagueCurrentSeason échoue', async () => {
+  /** league season business error */
+  it("renvoie telle quelle l'erreur métier de getLeagueCurrentSeason", async () => {
     leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
       success: false,
-      message: 'Erreur API',
+      reason: 'NOT_FOUND',
+      message: 'Compétition introuvable.',
     });
 
     const result = await service.getStandingFixtures(1);
 
     expect(result).toEqual({
       success: false,
-      message: 'Impossible de récupérer le classement Error: Erreur API',
+      reason: 'NOT_FOUND',
+      message: 'Compétition introuvable.',
     });
   });
 
   /** standing repo error */
-  it('retourne une erreur si fetchStandingBySeason échoue', async () => {
+  it("laisse remonter l'erreur si fetchStandingBySeason échoue", async () => {
     leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
       success: true,
       league: 2024,
@@ -113,16 +118,11 @@ describe('StandingService', () => {
       new Error('DB error')
     );
 
-    const result = await service.getStandingFixtures(1);
-
-    expect(result).toEqual({
-      success: false,
-      message: 'Impossible de récupérer le classement Error: DB error',
-    });
+    await expect(service.getStandingFixtures(1)).rejects.toThrow('DB error');
   });
 
-  /** team service error */
-  it('retourne une erreur si teamsByIds échoue', async () => {
+  /** team service business error */
+  it("renvoie telle quelle l'erreur métier de teamsByIds", async () => {
     leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
       success: true,
       league: 2024,
@@ -134,14 +134,16 @@ describe('StandingService', () => {
 
     teamServiceMock.teamsByIds?.mockResolvedValue({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'Teams error',
-    } as any);
+    });
 
     const result = await service.getStandingFixtures(1);
 
     expect(result).toEqual({
       success: false,
-      message: 'Impossible de récupérer le classement Error: Teams error',
+      reason: 'NOT_FOUND',
+      message: 'Teams error',
     });
   });
 
@@ -153,7 +155,10 @@ describe('StandingService', () => {
 
     standingRepoMock.fetchStandingBySeason?.mockResolvedValue({ data: [] });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [],
+    });
 
     const result = await service.getStandingFixtures(1);
 
@@ -170,7 +175,10 @@ describe('StandingService', () => {
       data: [{ participant_id: 99, team_id: 99, details: [] } as any],
     });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [],
+    });
 
     const result = await service.getStandingFixtures(1);
 
