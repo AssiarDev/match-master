@@ -13,7 +13,8 @@ export class LiveMatchesBroadcaster {
   constructor(private readonly matchesService: IMatchesService) {}
 
   /**
-   * Registers a new SSE client and sends an immediate broadcast.
+   * Registers a new SSE client and sends it the current data right away,
+   * without resending it to the clients already connected.
    * Automatically removes the client when the connection is closed or fails:
    * without an 'error' listener, a failed write would crash the process.
    * The loop runs on demand: it starts with the first client and stops when
@@ -30,7 +31,7 @@ export class LiveMatchesBroadcaster {
 
     this.clients.push(res);
     if (this.clients.length === 1) this.start();
-    this.broadcast();
+    this.broadcast([res]);
 
     req.on('close', () => this.removeClient(res));
     res.on('error', () => this.removeClient(res));
@@ -66,18 +67,24 @@ export class LiveMatchesBroadcaster {
   }
 
   /**
-   * Fetches live matches and pushes the data to all connected clients
+   * Fetches live matches and pushes the data to the given clients
    * in the SSE format (data: {...}\n\n).
+   * If the fetch fails, the error is logged and this broadcast is skipped:
+   * clients keep their last data until the next one.
+   * @param clients - The clients to send to; all connected clients by default
    */
-  async broadcast() {
+  async broadcast(clients: Response[] = this.clients) {
     const result = await this.matchesService.getLiveMatches();
 
-    if (result.success === false) return;
+    if (result.success === false) {
+      console.error('[SSE] Diffusion annulée :', result.message);
+      return;
+    }
 
     const data = JSON.stringify(result.matches);
     const message = `data: ${data}\n\n`;
 
-    for (const client of this.clients) {
+    for (const client of clients) {
       this.send(client, message);
     }
   }
@@ -97,6 +104,19 @@ export class LiveMatchesBroadcaster {
         this.send(client, ': keepalive\n\n');
       }
     }, 20000);
+  }
+
+  /**
+   * Ends every client connection and stops the loop, for a graceful shutdown:
+   * an open SSE connection never ends on its own and would keep the HTTP
+   * server from closing. Browsers then reconnect to the next instance.
+   */
+  closeAll() {
+    this.stop();
+    for (const client of this.clients) {
+      client.end();
+    }
+    this.clients = [];
   }
 
   /**
