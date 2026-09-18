@@ -11,7 +11,6 @@ import { scorers } from './routes/scorers';
 import { favorites } from './routes/favorites';
 import { serve, setup } from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
-import { liveMatchesBroadcaster } from './lib/container';
 
 export const app = express();
 
@@ -50,10 +49,6 @@ app.use(
     credentials: true,
   })
 );
-
-if (process.env.NODE_ENV !== 'test') {
-  liveMatchesBroadcaster.start();
-}
 
 app.use(express.json());
 app.use(cookieParser());
