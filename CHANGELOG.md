@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.11](https://github.com/AssiarDev/match-master/compare/05e936aa795977747a8a1d65d3413a03cb6081d2..0.2.11) - 2026-09-18
+#### Bug Fixes
+- **(favorites)** check ownership when reading favorites (#23) - ([05e936a](https://github.com/AssiarDev/match-master/commit/05e936aa795977747a8a1d65d3413a03cb6081d2)) - Assiar
+
+- - -
+
 ## [0.2.10](https://github.com/AssiarDev/match-master/compare/ee1cf4c801b0235cd8bbffc04093aab6c7b8235d..0.2.10) - 2026-09-13
 #### Bug Fixes
 - **(users)** prevent user data exposure (#21) - ([ee1cf4c](https://github.com/AssiarDev/match-master/commit/ee1cf4c801b0235cd8bbffc04093aab6c7b8235d)) - Assiar
