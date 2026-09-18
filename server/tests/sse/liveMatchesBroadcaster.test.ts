@@ -182,8 +182,9 @@ describe('LiveMatchesBroadcaster', () => {
       .mockImplementation(() => {});
     getLiveMatches.mockResolvedValue({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'API indisponible',
-    } as LiveMatchesResult);
+    });
     const client = makeClient();
 
     broadcaster.addClient(client.req, client.res);

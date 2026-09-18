@@ -19,13 +19,10 @@ export type ServiceSuccess<T extends object = Record<never, never>> = {
   success: true;
 } & T;
 
-/**
- * A business failure. `reason` is optional only while the services are being
- * migrated to the new contract; it becomes required once they all set it.
- */
+/** A business failure, with the reason a controller maps to an HTTP status. */
 export type ServiceError = {
   success: false;
-  reason?: ServiceErrorReason;
+  reason: ServiceErrorReason;
   message: string;
 };
 
