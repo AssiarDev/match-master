@@ -49,13 +49,16 @@ describe('StandingService', () => {
       ],
     });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([
-      {
-        id: 10,
-        name: 'PSG',
-        image_path: 'psg.png',
-      } as any,
-    ]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [
+        {
+          id: 10,
+          name: 'PSG',
+          image_path: 'psg.png',
+        } as any,
+      ],
+    });
 
     const result = await service.getStandingFixtures(1);
 
@@ -153,7 +156,10 @@ describe('StandingService', () => {
 
     standingRepoMock.fetchStandingBySeason?.mockResolvedValue({ data: [] });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [],
+    });
 
     const result = await service.getStandingFixtures(1);
 
@@ -170,7 +176,10 @@ describe('StandingService', () => {
       data: [{ participant_id: 99, team_id: 99, details: [] } as any],
     });
 
-    teamServiceMock.teamsByIds?.mockResolvedValue([]);
+    teamServiceMock.teamsByIds?.mockResolvedValue({
+      success: true,
+      teams: [],
+    });
 
     const result = await service.getStandingFixtures(1);
 

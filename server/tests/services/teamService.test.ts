@@ -41,18 +41,15 @@ describe('TeamService', () => {
 
     const result = await service.allTeams();
 
-    expect(result).toEqual([{ id: 1, name: 'LYON' }]);
+    expect(result).toEqual({ success: true, teams: [{ id: 1, name: 'LYON' }] });
   });
 
-  it('retourne une erreur si aucune équipe trouvée', async () => {
-    teamDBRepoMock.findAllTeams!.mockResolvedValue(null as any);
+  it("retourne un tableau vide si aucune équipe n'est en base", async () => {
+    teamDBRepoMock.findAllTeams!.mockResolvedValue([]);
 
     const result = await service.allTeams();
 
-    expect(result).toEqual({
-      success: false,
-      message: 'Impossible de récupérer toutes les équipes.',
-    });
+    expect(result).toEqual({ success: true, teams: [] });
   });
 
   // teamById
@@ -61,16 +58,17 @@ describe('TeamService', () => {
 
     const result = await service.teamById(1);
 
-    expect(result).toEqual({ id: 1, name: 'LYON' });
+    expect(result).toEqual({ success: true, team: { id: 1, name: 'LYON' } });
   });
 
-  it('retourne une erreur si équipe introuvable', async () => {
+  it('retourne NOT_FOUND si équipe introuvable', async () => {
     teamDBRepoMock.findById!.mockResolvedValue(null as any);
 
     const result = await service.teamById(1);
 
     expect(result).toEqual({
       success: false,
+      reason: 'NOT_FOUND',
       message: "Equipe introuvable via l'id.",
     });
   });
@@ -84,20 +82,12 @@ describe('TeamService', () => {
 
     const result = await service.teamsByIds([1, 2]);
 
-    expect(result).toEqual([
-      { id: 1, name: 'LYON' },
-      { id: 2, name: 'PSG' },
-    ]);
-  });
-
-  it('retourne une erreur si aucune équipe trouvée', async () => {
-    teamDBRepoMock.findByIds!.mockResolvedValue(null as any);
-
-    const result = await service.teamsByIds([1, 2]);
-
     expect(result).toEqual({
-      success: false,
-      message: "Equipes introuvable via l'id.",
+      success: true,
+      teams: [
+        { id: 1, name: 'LYON' },
+        { id: 2, name: 'PSG' },
+      ],
     });
   });
 
@@ -106,7 +96,7 @@ describe('TeamService', () => {
 
     const result = await service.teamsByIds([]);
 
-    expect(result).toEqual([]);
+    expect(result).toEqual({ success: true, teams: [] });
   });
 
   // teamByLeague
@@ -123,13 +113,14 @@ describe('TeamService', () => {
     });
   });
 
-  it('retourne une erreur si aucune équipe trouvée pour la ligue', async () => {
+  it('retourne NOT_FOUND si la ligue est introuvable', async () => {
     teamDBRepoMock.findByLeague!.mockResolvedValue(null as any);
 
     const result = await service.teamByLeague(1);
 
     expect(result).toEqual({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'Equipe introuvable via la ligue.',
     });
   });
@@ -160,7 +151,7 @@ describe('TeamService', () => {
     });
   });
 
-  it('retourne une erreur si aucune saison active', async () => {
+  it('retourne NOT_FOUND si aucune saison active', async () => {
     leagueApiRepoMock.fetchLeagueSeasons!.mockResolvedValue({
       data: { seasons: [] } as any,
     });
@@ -169,22 +160,17 @@ describe('TeamService', () => {
 
     expect(result).toEqual({
       success: false,
+      reason: 'NOT_FOUND',
       message: 'No active season found',
     });
   });
 
-  it('retourne une erreur si le repo plante', async () => {
+  it("laisse remonter l'erreur si l'API échoue", async () => {
     leagueApiRepoMock.fetchLeagueSeasons!.mockRejectedValue(
       new Error('API error')
     );
 
-    const result = await service.teamsForLeague(1);
-
-    expect(result).toEqual({
-      success: false,
-      message:
-        'Impossible de récupérer les équipes pour la ligue : Error: API error',
-    });
+    await expect(service.teamsForLeague(1)).rejects.toThrow('API error');
   });
 
   it('retourne un tableau vide si teamsData.data est null', async () => {

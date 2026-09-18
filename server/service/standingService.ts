@@ -52,14 +52,11 @@ export class StandingService implements IStandingService {
         await this.standingRepo.fetchStandingBySeason(seasonId);
       const seasonStanding = seasonStandingResult.data || [];
       const teamIds = seasonStanding.map((s: ApiStanding) => s.participant_id);
-      const teams = await this.teamService.teamsByIds(teamIds);
-      if ('success' in teams && !teams.success) throw new Error(teams.message);
-      const teamsArray = teams as {
-        id: number;
-        name: string;
-        image_path: string | null;
-      }[];
-      const teamsById = Object.fromEntries(teamsArray.map((s) => [s.id, s]));
+      const teamsResult = await this.teamService.teamsByIds(teamIds);
+      if (!teamsResult.success) throw new Error(teamsResult.message);
+      const teamsById = Object.fromEntries(
+        teamsResult.teams.map((s) => [s.id, s])
+      );
       const enriched = seasonStanding.map((s: ApiStanding) => {
         const standings = teamsById[s.participant_id];
         const stats = mapDetails(s.details || []);

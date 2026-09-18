@@ -12,16 +12,16 @@ const teamService = new TeamService(
 const insertTeamLeague = async (): Promise<void> => {
   const leagues = await prisma.competitions.findMany();
   for (const league of leagues) {
-    const teamsResult = await teamService.teamsForLeague(league.id);
-    if (!teamsResult.success) continue;
-    const teams = teamsResult.result.teams;
-    if (teams.length === 0) {
-      console.warn(
-        `League ${league.id} : aucune équipe renvoyée, liens conservés`
-      );
-      continue;
-    }
     try {
+      const teamsResult = await teamService.teamsForLeague(league.id);
+      if (!teamsResult.success) continue;
+      const teams = teamsResult.result.teams;
+      if (teams.length === 0) {
+        console.warn(
+          `League ${league.id} : aucune équipe renvoyée, liens conservés`
+        );
+        continue;
+      }
       // Replace the links so relegated teams are detached from the league
       await prisma.$transaction([
         prisma.teamCompetition.deleteMany({

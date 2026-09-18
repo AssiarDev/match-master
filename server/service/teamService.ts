@@ -4,31 +4,21 @@ import { ITeamDBRepository } from '../repositories/teamDB.repository';
 import type {
   ApiSeason,
   ApiTeam,
-  ServiceError,
+  LeagueTeam,
   ServiceResult,
+  TeamDetails,
+  TeamSummary,
 } from '../types/api';
 
 export interface ITeamService {
-  allTeams(): Promise<
-    Awaited<ReturnType<ITeamDBRepository['findAllTeams']>> | ServiceError
-  >;
-  teamById(
-    teamId: number
-  ): Promise<Awaited<ReturnType<ITeamDBRepository['findById']>> | ServiceError>;
+  allTeams(): Promise<ServiceResult<{ teams: TeamSummary[] }>>;
+  teamById(teamId: number): Promise<ServiceResult<{ team: TeamDetails }>>;
   teamsByIds(
     teamIds: number[]
-  ): Promise<
-    Awaited<ReturnType<ITeamDBRepository['findByIds']>> | ServiceError
-  >;
-  teamByLeague(leagueId: number): Promise<
-    | {
-        success: true;
-        teams: NonNullable<
-          Awaited<ReturnType<ITeamDBRepository['findByLeague']>>
-        >['teams'];
-      }
-    | ServiceError
-  >;
+  ): Promise<ServiceResult<{ teams: TeamDetails[] }>>;
+  teamByLeague(
+    leagueId: number
+  ): Promise<ServiceResult<{ teams: LeagueTeam[] }>>;
   teamsForLeague(
     leagueId: number
   ): Promise<
@@ -45,109 +35,86 @@ export class TeamService implements ITeamService {
 
   /**
    * Retrieves all teams from the database.
-   * @returns An array of teams or a ServiceError
+   * @returns A ServiceResult containing the teams (possibly empty)
    */
-  async allTeams(): Promise<
-    Awaited<ReturnType<ITeamDBRepository['findAllTeams']>> | ServiceError
-  > {
+  async allTeams(): Promise<ServiceResult<{ teams: TeamSummary[] }>> {
     const teams = await this.teamDBRepo.findAllTeams();
-    if (!teams)
-      return {
-        success: false,
-        message: 'Impossible de récupérer toutes les équipes.',
-      };
-    return teams;
+    return { success: true, teams };
   }
 
   /**
    * Retrieves a single team by its ID from the database.
    * @param teamId - The ID of the team
-   * @returns The team or a ServiceError if not found
+   * @returns A ServiceResult containing the team, or NOT_FOUND
    */
   async teamById(
     teamId: number
-  ): Promise<
-    Awaited<ReturnType<ITeamDBRepository['findById']>> | ServiceError
-  > {
+  ): Promise<ServiceResult<{ team: TeamDetails }>> {
     const team = await this.teamDBRepo.findById(teamId);
     if (!team)
-      return { success: false, message: "Equipe introuvable via l'id." };
-    return team;
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: "Equipe introuvable via l'id.",
+      };
+    return { success: true, team };
   }
 
   /**
    * Retrieves multiple teams by their IDs from the database.
    * @param teamIds - An array of team IDs
-   * @returns An array of teams or a ServiceError
+   * @returns A ServiceResult containing the teams found (possibly empty)
    */
   async teamsByIds(
     teamIds: number[]
-  ): Promise<
-    Awaited<ReturnType<ITeamDBRepository['findByIds']>> | ServiceError
-  > {
-    const team = await this.teamDBRepo.findByIds(teamIds);
-    if (!team)
-      return { success: false, message: "Equipes introuvable via l'id." };
-    return team;
+  ): Promise<ServiceResult<{ teams: TeamDetails[] }>> {
+    const teams = await this.teamDBRepo.findByIds(teamIds);
+    return { success: true, teams };
   }
 
   /**
    * Retrieves all teams belonging to a given league from the database.
    * @param leagueId - The ID of the league
-   * @returns An object with teams or a ServiceError if the league is not found
+   * @returns A ServiceResult containing the teams, or NOT_FOUND if the league does not exist
    */
-  async teamByLeague(leagueId: number): Promise<
-    | {
-        success: true;
-        teams: NonNullable<
-          Awaited<ReturnType<ITeamDBRepository['findByLeague']>>
-        >['teams'];
-      }
-    | ServiceError
-  > {
+  async teamByLeague(
+    leagueId: number
+  ): Promise<ServiceResult<{ teams: LeagueTeam[] }>> {
     const league = await this.teamDBRepo.findByLeague(leagueId);
     if (!league)
       return {
-        success: false as const,
+        success: false,
+        reason: 'NOT_FOUND',
         message: 'Equipe introuvable via la ligue.',
       };
-    return {
-      success: true as const,
-      teams: league.teams,
-    };
+    return { success: true, teams: league.teams };
   }
 
   /**
    * Retrieves the teams for the active season of a given league from the external API.
+   * An API failure is not caught: it is thrown to the caller.
    * @param leagueId - The ID of the league
-   * @returns A ServiceResult containing the active season and its teams
+   * @returns A ServiceResult containing the active season and its teams, or NOT_FOUND if the league has no active season
    */
   async teamsForLeague(
     leagueId: number
   ): Promise<
     ServiceResult<{ result: { season: ApiSeason; teams: ApiTeam[] } }>
   > {
-    try {
-      const seasonData = await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
-      const seasons = seasonData.data?.seasons ?? [];
-      const activeSeason = seasons.find(
-        (s: ApiSeason) => s.is_current === true
-      );
-      if (!activeSeason)
-        return { success: false, message: 'No active season found' };
-      const teamsData = await this.seasonRepo.fetchSeasonsTeams(
-        activeSeason.id
-      );
-      const result = {
-        season: activeSeason,
-        teams: teamsData.data?.teams ?? [],
-      };
-      return { success: true, result };
-    } catch (error) {
+    const seasonData = await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
+    const seasons = seasonData.data?.seasons ?? [];
+    const activeSeason = seasons.find((s: ApiSeason) => s.is_current === true);
+    if (!activeSeason)
       return {
         success: false,
-        message: `Impossible de récupérer les équipes pour la ligue : ${error}`,
+        reason: 'NOT_FOUND',
+        message: 'No active season found',
       };
-    }
+    const teamsData = await this.seasonRepo.fetchSeasonsTeams(activeSeason.id);
+    const result = {
+      season: activeSeason,
+      teams: teamsData.data?.teams ?? [],
+    };
+    return { success: true, result };
   }
 }
