@@ -93,6 +93,12 @@
 
 
 - - -
+## [0.2.12](https://github.com/AssiarDev/match-master/compare/9d0c80e64b99f77a5019e74c94872bed03cb3a1b..0.2.12) - 2026-09-18
+#### Bug Fixes
+- **(auth)** expire token blacklist entries and only revoke valid tokens (#24) - ([9d0c80e](https://github.com/AssiarDev/match-master/commit/9d0c80e64b99f77a5019e74c94872bed03cb3a1b)) - Assiar
+
+- - -
+
 ## [0.2.11](https://github.com/AssiarDev/match-master/compare/05e936aa795977747a8a1d65d3413a03cb6081d2..0.2.11) - 2026-09-18
 #### Bug Fixes
 - **(favorites)** check ownership when reading favorites (#23) - ([05e936a](https://github.com/AssiarDev/match-master/commit/05e936aa795977747a8a1d65d3413a03cb6081d2)) - Assiar
