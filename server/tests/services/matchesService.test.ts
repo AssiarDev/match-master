@@ -68,42 +68,41 @@ describe('MatchesService', () => {
       });
     });
 
-    it('retourne une erreur si getLeagueCurrentSeason échoue', async () => {
+    it("renvoie telle quelle l'erreur métier de getLeagueCurrentSeason", async () => {
       leagueServiceMock.getLeagueCurrentSeason?.mockResolvedValue({
         success: false,
-        message: 'Erreur API',
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
       });
 
       const result = await service.getLeagueMatches(1);
 
-      expect(result.success).toBe(false);
       expect(result).toEqual({
         success: false,
-        message:
-          'Impossible de récupérer les matchs de la ligues : Error: Erreur API',
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
       });
     });
 
-    it('retourne une erreur si getSeasonFixtures échoue', async () => {
+    it("laisse remonter l'erreur si getLeagueCurrentSeason plante", async () => {
+      leagueServiceMock.getLeagueCurrentSeason?.mockRejectedValue(
+        new Error('Erreur API')
+      );
+
+      await expect(service.getLeagueMatches(1)).rejects.toThrow('Erreur API');
+    });
+
+    it("laisse remonter l'erreur si getSeasonFixtures plante", async () => {
       leagueServiceMock.getLeagueCurrentSeason!.mockResolvedValue({
         success: true,
         league: 2024,
       });
 
-      seasonServiceMock.getSeasonFixtures?.mockResolvedValue({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs de la ligues : Error: Erreur API',
-      });
+      seasonServiceMock.getSeasonFixtures?.mockRejectedValue(
+        new Error('Erreur API')
+      );
 
-      const result = await service.getLeagueMatches(1);
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs de la ligues : Error: Impossible de récupérer les matchs de la ligues : Error: Erreur API',
-      });
+      await expect(service.getLeagueMatches(1)).rejects.toThrow('Erreur API');
     });
   });
 
@@ -136,19 +135,14 @@ describe('MatchesService', () => {
       }
     });
 
-    it('retourne une erreur si le repo plante', async () => {
+    it("laisse remonter l'erreur si le repo plante", async () => {
       matchesRepoMock.fetchMatchesByDate!.mockRejectedValue(
         new Error('DB error')
       );
 
-      const result = await service.getMatchesByDate('2024-01-01');
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs groupés par date : Error: DB error',
-      });
+      await expect(service.getMatchesByDate('2024-01-01')).rejects.toThrow(
+        'DB error'
+      );
     });
 
     it('retourne un objet vide si aucun match pour la date', async () => {
@@ -209,19 +203,12 @@ describe('MatchesService', () => {
       });
     });
 
-    it('retourne une erreur si le repo plante', async () => {
+    it("laisse remonter l'erreur si le repo plante", async () => {
       matchesRepoMock.fetchLiveMatches!.mockRejectedValue(
         new Error('API error')
       );
 
-      const result = await service.getLiveMatches();
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs en direct : Error: API error',
-      });
+      await expect(service.getLiveMatches()).rejects.toThrow('API error');
     });
   });
 
@@ -240,19 +227,12 @@ describe('MatchesService', () => {
       });
     });
 
-    it('retourne une erreur si le repo plante', async () => {
+    it("laisse remonter l'erreur si le repo plante", async () => {
       matchesRepoMock.fetchMatchesByTeam!.mockRejectedValue(
         new Error('API error')
       );
 
-      const result = await service.getMatchesByTeam(44);
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les matchs par équipes : Error: API error',
-      });
+      await expect(service.getMatchesByTeam(44)).rejects.toThrow('API error');
     });
   });
 });

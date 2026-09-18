@@ -32,18 +32,12 @@ describe('SeasonService', () => {
       });
     });
 
-    it('retourne une erreur si le repo plante', async () => {
+    it("laisse remonter l'erreur si le repo plante", async () => {
       seasonRepoMock.fetchSeasonsTeams?.mockRejectedValue(
         new Error('DB error')
       );
 
-      const result = await service.getSeasonsTeams(2024);
-
-      expect(result).toEqual({
-        success: false,
-        message:
-          "Impossible de récupérer les saisons de l'équipe : Error: DB error",
-      });
+      await expect(service.getSeasonsTeams(2024)).rejects.toThrow('DB error');
     });
   });
 
@@ -75,18 +69,14 @@ describe('SeasonService', () => {
       });
     });
 
-    it('retourne une erreur si le repo plante', async () => {
+    it("laisse remonter l'erreur si le repo plante", async () => {
       seasonRepoMock.fetchSeasonFixtures?.mockRejectedValue(
         new Error('API error')
       );
 
-      const result = await service.getSeasonFixtures(2024);
-
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Impossible de récupérer les fixtures de la saison : Error: API error',
-      });
+      await expect(service.getSeasonFixtures(2024)).rejects.toThrow(
+        'API error'
+      );
     });
   });
 });
