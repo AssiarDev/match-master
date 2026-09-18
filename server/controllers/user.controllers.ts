@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { userService } from '../lib/container';
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { addToBlacklist } from '../lib/tokenBlacklist';
 import { validatePassword } from '../utils/validatePassword';
 
@@ -71,9 +71,23 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+/**
+ * Logs the user out: revokes the token and clears the cookie.
+ * Only a valid token is revoked: its exp bounds how long it stays in the
+ * blacklist, and an invented cookie value never gets in. An invalid or
+ * already expired token has nothing to revoke, so the error is ignored.
+ */
 export const logout = (req: Request, res: Response): void => {
   const token = req.cookies.token;
-  if (token) addToBlacklist(token);
+  if (token) {
+    try {
+      const { exp } = jwt.verify(
+        token,
+        process.env.SECRET_KEY as string
+      ) as JwtPayload;
+      if (exp) addToBlacklist(token, exp);
+    } catch {}
+  }
 
   res.clearCookie('token', {
     httpOnly: true,

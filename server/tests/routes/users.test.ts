@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { app } from '../../app';
 import prisma from '../../lib/prisma';
 import { resetDb } from '../setup/resetDb';
+import { isBlacklisted } from '../../lib/tokenBlacklist';
 
 const VALID_PASSWORD = 'Password1!';
 const SECRET_KEY = 'test-secret-key';
@@ -132,6 +133,36 @@ describe('Users routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({ message: 'Déconnexion réussie' });
+    });
+
+    it('refuse le token sur les routes protégées après la déconnexion', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: '1h' });
+
+      await request(app)
+        .post('/logout')
+        .set('Cookie', [`token=${token}`]);
+      const response = await request(app)
+        .get('/user/profile')
+        .set('Cookie', [`token=${token}`]);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({ error: 'Token invalide' });
+    });
+
+    it("n'ajoute pas un token invalide à la blacklist", async () => {
+      const response = await request(app)
+        .post('/logout')
+        .set('Cookie', ['token=forged-token']);
+
+      expect(response.status).toBe(200);
+      expect(isBlacklisted('forged-token')).toEqual(false);
     });
   });
 
