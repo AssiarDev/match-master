@@ -53,5 +53,15 @@ describe('Teams routes', () => {
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: "Equipe introuvable via l'id." });
     });
+
+    it.each(['abc', '12abc', '0'])(
+      "retourne 400 si l'id vaut %p",
+      async (id) => {
+        const response = await request(app).get(`/teams/${id}`);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+      }
+    );
   });
 });

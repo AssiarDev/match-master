@@ -342,4 +342,62 @@ describe('Favorites routes', () => {
       });
     });
   });
+
+  describe('Validation des entrées', () => {
+    it.each<[string, unknown]>([
+      ['un clubId null', { clubId: null }],
+      ['un clubId en chaîne', { clubId: '10' }],
+    ])('POST favorites retourne 400 pour %s', async (_label, body) => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send(body as object);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+
+    it('POST favorites-leagues retourne 400 pour un leagueId null', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites-leagues')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send({ leagueId: null });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+
+    it("DELETE favorites retourne 400 si l'id n'est pas numérique", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+
+      const response = await request(app)
+        .delete('/protected/users/favorites/abc')
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+  });
 });

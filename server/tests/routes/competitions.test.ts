@@ -141,4 +141,17 @@ describe('Competitions routes', () => {
       expect(response.body).toMatchObject({ data: [] });
     });
   });
+
+  describe('Validation des identifiants', () => {
+    it.each([
+      '/competitions/abc/teams',
+      '/competitions/abc/matches',
+      '/teams/1.5/matches',
+    ])('retourne 400 pour %s', async (url) => {
+      const response = await request(app).get(url);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+  });
 });

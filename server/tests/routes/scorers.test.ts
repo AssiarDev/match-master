@@ -42,5 +42,25 @@ describe('Scorers routes', () => {
         goals: 20,
       });
     });
+
+    it("retourne 400 si l'id est invalide", async () => {
+      const response = await request(app).get('/scorers/abc');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+
+    it("retourne 404 si la compétition n'a pas de saison en cours", async () => {
+      jest
+        .spyOn(globalThis, 'fetch')
+        .mockImplementationOnce(() => mockFetch({ data: {} }));
+
+      const response = await request(app).get('/scorers/271');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        error: 'No current season for this league',
+      });
+    });
   });
 });
