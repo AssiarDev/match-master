@@ -15,7 +15,7 @@ router.use('/protected', loginCheck);
 /** équipes */
 router.post('/protected/users/favorites', addFavorite);
 router.delete('/protected/users/favorites/:clubId', removeFavorite);
-router.get('/protected/users/:usersId/favorites', getFavorites);
+router.get('/protected/users/:userId/favorites', getFavorites);
 
 /** Ligues */
 router.get('/protected/users/:userId/favorites-leagues', getLeagueFavorites);
