@@ -30,3 +30,5 @@ correspondant = "correspondant"
 # Valeurs d'enum API (ex: 2ND_HALF)
 ND = "ND"
 contient = "contient"
+initiales = "initiales"
+termine = "termine"
