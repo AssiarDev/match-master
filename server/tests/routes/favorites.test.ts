@@ -127,7 +127,7 @@ describe('Favorites routes', () => {
     });
   });
 
-  describe('GET /protected/users/:usersId/favorites', () => {
+  describe('GET /protected/users/:userId/favorites', () => {
     it('retourne un tableau vide si aucun favori', async () => {
       const user = await prisma.user.create({
         data: {
@@ -165,6 +165,90 @@ describe('Favorites routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(1);
       expect(response.body[0]).toMatchObject({ id: 1, name: 'PSG' });
+    });
+
+    it("retourne 403 si l'utilisateur lit les favoris d'un autre compte", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      const otherUser = await prisma.user.create({
+        data: {
+          username: 'otheruser',
+          email: 'other@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.team.create({ data: { id: 1, name: 'PSG' } });
+      await prisma.userFavorite.create({
+        data: { user_id: otherUser.id, team_id: 1 },
+      });
+
+      const response = await request(app)
+        .get(`/protected/users/${otherUser.id}/favorites`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({ error: 'Action non autorisée' });
+    });
+  });
+
+  describe('GET /protected/users/:userId/favorites-leagues', () => {
+    it('retourne la liste des compétitions favorites', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      await prisma.userFavorite.create({
+        data: { user_id: user.id, competition_id: 10 },
+      });
+
+      const response = await request(app)
+        .get(`/protected/users/${user.id}/favorites-leagues`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0]).toMatchObject({ id: 10, name: 'Ligue 1' });
+    });
+
+    it("retourne 403 si l'utilisateur lit les favoris d'un autre compte", async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      const otherUser = await prisma.user.create({
+        data: {
+          username: 'otheruser',
+          email: 'other@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      await prisma.userFavorite.create({
+        data: { user_id: otherUser.id, competition_id: 10 },
+      });
+
+      const response = await request(app)
+        .get(`/protected/users/${otherUser.id}/favorites-leagues`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({ error: 'Action non autorisée' });
     });
   });
 

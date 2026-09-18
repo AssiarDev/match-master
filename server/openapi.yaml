@@ -499,14 +499,14 @@ paths:
         404:
           description: Favorite not found
 
-  /protected/users/{usersId}/favorites:
+  /protected/users/{userId}/favorites:
     get:
       summary: Get favorite teams for a user
       tags: [Favorites]
       security:
         - cookieAuth: []
       parameters:
-        - name: usersId
+        - name: userId
           in: path
           required: true
           schema: { type: integer }
@@ -521,6 +521,8 @@ paths:
                   $ref: '#/components/schemas/FavoriteItem'
         401:
           description: Unauthorized
+        403:
+          description: userId does not match the authenticated user
 
   # ── Favorites (Leagues) ───────────────────────────────────
   /protected/users/favorites-leagues:
@@ -591,3 +593,5 @@ paths:
                   $ref: '#/components/schemas/LeagueFavoriteItem'
         401:
           description: Unauthorized
+        403:
+          description: userId does not match the authenticated user

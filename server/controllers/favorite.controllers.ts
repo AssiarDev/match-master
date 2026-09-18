@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { favoriteService } from '../lib/container';
+import { error } from 'node:console';
 
 export const addFavorite = async (
   req: Request,
@@ -46,11 +47,17 @@ export const getFavorites = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = parseInt(req.params.usersId, 10);
+    const userId = parseInt(req.params.userId, 10);
     if (isNaN(userId)) {
       res.status(400).json({ error: 'ID utilisateur invalide' });
       return;
     }
+
+    if (userId !== req.user!.id) {
+      res.status(403).json({ error: 'Action non autorisée' });
+      return;
+    }
+
     const favorites = await favoriteService.getFavorite(userId);
     res.status(200).json(favorites);
   } catch (err) {
@@ -116,6 +123,12 @@ export const getLeagueFavorites = async (
       res.status(400).json({ error: 'ID utilisateur invalide' });
       return;
     }
+
+    if (userId !== req.user!.id) {
+      res.status(403).json({ error: 'Action non autorisée' });
+      return;
+    }
+
     const favorites = await favoriteService.getLeagueFavorite(userId);
     res.status(200).json(favorites);
   } catch (err) {
