@@ -14,8 +14,8 @@ export interface IUserService {
     password: string
   ): Promise<ServiceResult<RegisterSuccess>>;
   login(email: string, password: string): Promise<ServiceResult<UserPayload>>;
-  getUserById(id: number): Promise<User | null>;
-  getAllUsers(): Promise<SafeUser[]>;
+  getUserById(id: number): Promise<ServiceResult<{ user: User }>>;
+  getAllUsers(): Promise<ServiceResult<{ users: SafeUser[] }>>;
   updateUser(
     id: number,
     data: { username: string; password: string }
@@ -31,7 +31,7 @@ export class UserService implements IUserService {
    * @param username - The desired username
    * @param email - The user's email address
    * @param password - The user's plain text password
-   * @returns A ServiceResult containing the created user
+   * @returns A ServiceResult containing the created user, or CONFLICT if the email is taken
    */
   async register(
     username: string,
@@ -39,7 +39,12 @@ export class UserService implements IUserService {
     password: string
   ): Promise<ServiceResult<RegisterSuccess>> {
     const existing = await this.userRepo.findByEmail(email);
-    if (existing) return { success: false, message: 'Email déja utilisé.' };
+    if (existing)
+      return {
+        success: false,
+        reason: 'CONFLICT',
+        message: 'Email déja utilisé.',
+      };
 
     const hashedPassword = await argon2.hash(password);
     const user = await this.userRepo.create({
@@ -54,18 +59,29 @@ export class UserService implements IUserService {
    * Authenticates a user by verifying their email and password.
    * @param email - The user's email address
    * @param password - The user's plain text password
-   * @returns A ServiceResult containing the user payload on success
+   * An unknown email and a wrong password share the same reason, so that a
+   * caller cannot tell which emails have an account.
+   * @returns A ServiceResult containing the user payload, or INVALID_CREDENTIALS
    */
   async login(
     email: string,
     password: string
   ): Promise<ServiceResult<UserPayload>> {
     const user = await this.userRepo.findByEmail(email);
-    if (!user) return { success: false, message: 'Utilisateur introuvable' };
+    if (!user)
+      return {
+        success: false,
+        reason: 'INVALID_CREDENTIALS',
+        message: 'Utilisateur introuvable',
+      };
 
     const isValidPassword = await argon2.verify(user.password, password);
     if (!isValidPassword)
-      return { success: false, message: 'Mot de passe incorrect.' };
+      return {
+        success: false,
+        reason: 'INVALID_CREDENTIALS',
+        message: 'Mot de passe incorrect.',
+      };
 
     const createDateAccount = user.createdAt;
 
@@ -80,19 +96,27 @@ export class UserService implements IUserService {
 
   /**
    * Retrieves all users from the database.
-   * @returns An array of all users
+   * @returns A ServiceResult containing all users
    */
-  async getAllUsers(): Promise<SafeUser[]> {
-    return this.userRepo.findAll();
+  async getAllUsers(): Promise<ServiceResult<{ users: SafeUser[] }>> {
+    const users = await this.userRepo.findAll();
+    return { success: true, users };
   }
 
   /**
    * Retrieves a user by its ID.
    * @param id - The ID of the user
-   * @returns The user, or null if not found
+   * @returns A ServiceResult containing the user, or NOT_FOUND
    */
-  async getUserById(id: number): Promise<User | null> {
-    return this.userRepo.findById(id);
+  async getUserById(id: number): Promise<ServiceResult<{ user: User }>> {
+    const user = await this.userRepo.findById(id);
+    if (!user)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable',
+      };
+    return { success: true, user };
   }
 
   /**
@@ -100,25 +124,39 @@ export class UserService implements IUserService {
    * Requires the current password to be provided when changing the password.
    * @param id - The ID of the user to update
    * @param data - The fields to update (username, password, currentPassword)
-   * @returns A ServiceResult containing the updated user
+   * @returns A ServiceResult containing the updated user, or NOT_FOUND,
+   * INVALID_INPUT (current password missing), INVALID_CREDENTIALS (current password wrong)
    */
   async updateUser(
     id: number,
     data: { username?: string; password?: string; currentPassword?: string }
   ): Promise<ServiceResult<UpdateSuccess>> {
     const user = await this.userRepo.findById(id);
-    if (!user) return { success: false, message: 'Utilisateur introuvable' };
+    if (!user)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable',
+      };
 
     const updateData: { username?: string; password?: string } = {};
     if (data.username) updateData.username = data.username;
 
     if (data.password) {
       if (!data.currentPassword) {
-        return { success: false, message: 'Mot de passe actuel requis' };
+        return {
+          success: false,
+          reason: 'INVALID_INPUT',
+          message: 'Mot de passe actuel requis',
+        };
       }
       const isValid = await argon2.verify(user.password, data.currentPassword);
       if (!isValid) {
-        return { success: false, message: 'Mot de passe actuel incorrect' };
+        return {
+          success: false,
+          reason: 'INVALID_CREDENTIALS',
+          message: 'Mot de passe actuel incorrect',
+        };
       }
       const newPassword = data.password;
       updateData.password = await argon2.hash(newPassword);
@@ -131,11 +169,16 @@ export class UserService implements IUserService {
   /**
    * Deletes a user account by its ID.
    * @param id - The ID of the user to delete
-   * @returns A ServiceResult with a confirmation message
+   * @returns A ServiceResult with a confirmation message, or NOT_FOUND
    */
   async deleteUser(id: number): Promise<ServiceResult<{ message: string }>> {
     const user = await this.userRepo.findById(id);
-    if (!user) return { success: false, message: 'Utilisateur introuvable' };
+    if (!user)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable',
+      };
 
     await this.userRepo.delete(id);
     return { success: true, message: 'Votre compte à bien été supprimé' };

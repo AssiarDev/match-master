@@ -58,8 +58,12 @@ export const getFavorites = async (
       return;
     }
 
-    const favorites = await favoriteService.getFavorite(userId);
-    res.status(200).json(favorites);
+    const result = await favoriteService.getFavorite(userId);
+    if (!result.success) {
+      res.status(404).json({ error: result.message });
+      return;
+    }
+    res.status(200).json(result.favorites);
   } catch (err) {
     console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Erreur serveur' });
@@ -129,8 +133,12 @@ export const getLeagueFavorites = async (
       return;
     }
 
-    const favorites = await favoriteService.getLeagueFavorite(userId);
-    res.status(200).json(favorites);
+    const result = await favoriteService.getLeagueFavorite(userId);
+    if (!result.success) {
+      res.status(404).json({ error: result.message });
+      return;
+    }
+    res.status(200).json(result.favorites);
   } catch (err) {
     console.error('Une erreur est survenue', (err as Error).message);
     res.status(500).json({ error: 'Erreur serveur' });

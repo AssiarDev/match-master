@@ -100,14 +100,14 @@ export const logout = (req: Request, res: Response): void => {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await userService.getAllUsers();
-    if (!users) {
+    const result = await userService.getAllUsers();
+    if (!result.success) {
       res
         .status(500)
         .json({ error: 'Impossible de récupérer tous les utilisateurs' });
       return;
     }
-    res.json(users);
+    res.json(result.users);
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' });
   }
@@ -225,8 +225,8 @@ export const userProfile = async (
     return;
   }
   try {
-    const user = await userService.getUserById(req.user.id);
-    if (!user) {
+    const result = await userService.getUserById(req.user.id);
+    if (!result.success) {
       res.status(404).json({ error: 'Utilisateur introuvable' });
       return;
     }
@@ -234,7 +234,7 @@ export const userProfile = async (
       isAuthenticated: true,
       user: {
         id: req.user.id,
-        mail: user.email,
+        mail: result.user.email,
         username: req.user.username,
         createdAt: req.user.createdAt,
       },

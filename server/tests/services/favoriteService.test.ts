@@ -61,6 +61,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: 'Utilisateur introuvable.',
       });
     });
@@ -73,6 +74,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: 'Equipe introuvable.',
       });
     });
@@ -114,6 +116,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: "Ce favoris n'existe pas.",
       });
     });
@@ -138,7 +141,7 @@ describe('FavoriteService', () => {
 
       const result = await service.getFavorite(1);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({ success: true, favorites: [] });
     });
 
     it('retourne la liste des favoris formatée', async () => {
@@ -161,15 +164,18 @@ describe('FavoriteService', () => {
 
       const result = await service.getFavorite(1);
 
-      expect(result).toEqual([
-        {
-          id: 44,
-          name: 'OM',
-          emblem: 'om.png',
-          leagueId: 301,
-          leagueName: 'Ligue 1',
-        },
-      ]);
+      expect(result).toEqual({
+        success: true,
+        favorites: [
+          {
+            id: 44,
+            name: 'OM',
+            emblem: 'om.png',
+            leagueId: 301,
+            leagueName: 'Ligue 1',
+          },
+        ],
+      });
     });
   });
 
@@ -182,6 +188,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: 'Utilisateur introuvable.',
       });
     });
@@ -194,6 +201,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: 'Compétition introuvable.',
       });
     });
@@ -235,6 +243,7 @@ describe('FavoriteService', () => {
 
       expect(result).toEqual({
         success: false,
+        reason: 'NOT_FOUND',
         message: "Cette compétition n'existe pas dans les favoris.",
       });
     });
@@ -259,7 +268,7 @@ describe('FavoriteService', () => {
 
       const result = await service.getLeagueFavorite(1);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({ success: true, favorites: [] });
     });
 
     it('retourne la liste des compétitions favorites formatée', async () => {
@@ -277,13 +286,16 @@ describe('FavoriteService', () => {
 
       const result = await service.getLeagueFavorite(1);
 
-      expect(result).toEqual([
-        {
-          id: 301,
-          name: 'Ligue 1',
-          emblem: 'ligue1.png',
-        },
-      ]);
+      expect(result).toEqual({
+        success: true,
+        favorites: [
+          {
+            id: 301,
+            name: 'Ligue 1',
+            emblem: 'ligue1.png',
+          },
+        ],
+      });
     });
   });
 });
