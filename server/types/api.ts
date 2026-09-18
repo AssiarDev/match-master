@@ -1,4 +1,5 @@
 import type { User } from '@prisma/client';
+import type { Stats } from '../utils/mapDetails';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -6,12 +7,76 @@ export interface ApiResponse<T = unknown> {
 
 export type SafeUser = Omit<User, 'password'>;
 
+/**
+ * Business failures a service can report, so that a controller can pick the
+ * matching HTTP status. Technical failures (database, external API) are not
+ * part of the contract: services let them throw, up to the controller's catch.
+ */
+export type ServiceErrorReason =
+  'NOT_FOUND' | 'CONFLICT' | 'INVALID_CREDENTIALS' | 'INVALID_INPUT';
+
 export type ServiceSuccess<T extends object = Record<never, never>> = {
   success: true;
 } & T;
-export type ServiceError = { success: false; message: string };
+
+/**
+ * A business failure. `reason` is optional only while the services are being
+ * migrated to the new contract; it becomes required once they all set it.
+ */
+export type ServiceError = {
+  success: false;
+  reason?: ServiceErrorReason;
+  message: string;
+};
+
+/** Return contract shared by every service. */
 export type ServiceResult<T extends object = Record<never, never>> =
   ServiceSuccess<T> | ServiceError;
+
+/**
+ * Data shapes returned by the services, declared explicitly so that a change
+ * in a repository query does not silently change a service's public contract.
+ */
+export interface TeamSummary {
+  id: number;
+  name: string;
+  image_path: string | null;
+}
+
+export interface TeamDetails extends TeamSummary {
+  country_id: number | null;
+  venue_id: number | null;
+  gender: string | null;
+  short_code: string | null;
+  founded: number | null;
+  type: string | null;
+  placeholder: boolean;
+  last_played_at: Date | null;
+}
+
+export interface LeagueTeam {
+  team: TeamDetails;
+}
+
+export interface League {
+  id: number;
+  country_id: number | null;
+  name: string;
+  active: boolean;
+  short_code: string | null;
+  image_path: string | null;
+  type: string;
+  sub_type: string | null;
+  category: number;
+  has_jerseys: boolean;
+}
+
+export type EnrichedStanding = ApiStanding &
+  Stats & {
+    team_name: string;
+    team_image: string | null;
+    team_id: number;
+  };
 
 export interface ApiLeague {
   id: number;
