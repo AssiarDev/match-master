@@ -41,16 +41,10 @@ describe('LeagueService', () => {
       });
     });
 
-    it('retourne une erreur si la DB plante', async () => {
+    it("laisse remonter l'erreur si la DB plante", async () => {
       dbRepoMock.findAllLeague.mockRejectedValue(new Error('DB error'));
 
-      const result = await service.getAllLeague();
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message: 'Impossible de récupérer les ligues : Error: DB error',
-      });
+      await expect(service.getAllLeague()).rejects.toThrow('DB error');
     });
   });
 
@@ -71,16 +65,10 @@ describe('LeagueService', () => {
       });
     });
 
-    it("retourne une erreur si l'API plante", async () => {
+    it("laisse remonter l'erreur si l'API plante", async () => {
       apiRepoMock.fetchLeagueSeasons?.mockRejectedValue(new Error('API error'));
 
-      const result = await service.getLeagueSeasons(1);
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message: 'Impossible de récupérer les saisons : Error: API error',
-      });
+      await expect(service.getLeagueSeasons(1)).rejects.toThrow('API error');
     });
   });
 
@@ -100,16 +88,22 @@ describe('LeagueService', () => {
       });
     });
 
-    it('retourne une erreur si la DB plante', async () => {
-      dbRepoMock.findLeague.mockRejectedValue(new Error('DB error'));
+    it('retourne NOT_FOUND si la ligue est introuvable', async () => {
+      dbRepoMock.findLeague.mockResolvedValue(null);
 
       const result = await service.getLeague(1);
 
-      expect(result.success).toBe(false);
       expect(result).toEqual({
         success: false,
-        message: 'Erreur lors de la récupération de la ligue : Error: DB error',
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
       });
+    });
+
+    it("laisse remonter l'erreur si la DB plante", async () => {
+      dbRepoMock.findLeague.mockRejectedValue(new Error('DB error'));
+
+      await expect(service.getLeague(1)).rejects.toThrow('DB error');
     });
   });
 
@@ -162,19 +156,14 @@ describe('LeagueService', () => {
       expect(result).toEqual({ success: true, league: undefined });
     });
 
-    it("retourne une erreur si l'API plante", async () => {
+    it("laisse remonter l'erreur si l'API plante", async () => {
       apiRepoMock.fetchLeagueCurrentSeason?.mockRejectedValue(
         new Error('API error')
       );
 
-      const result = await service.getLeagueCurrentSeason(1);
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Erreur lors de la récupération de la saison courrante de la ligue : Error: API error',
-      });
+      await expect(service.getLeagueCurrentSeason(1)).rejects.toThrow(
+        'API error'
+      );
     });
   });
 
@@ -193,19 +182,14 @@ describe('LeagueService', () => {
       });
     });
 
-    it("retourne une erreur si l'API plante", async () => {
+    it("laisse remonter l'erreur si l'API plante", async () => {
       apiRepoMock.fetchLeagueWithSeasons?.mockRejectedValue(
         new Error('API error')
       );
 
-      const result = await service.getLeagueWithSeasons(1);
-
-      expect(result.success).toBe(false);
-      expect(result).toEqual({
-        success: false,
-        message:
-          'Erreur lors de la récupération de la ligue avec ses saisons : Error: API error',
-      });
+      await expect(service.getLeagueWithSeasons(1)).rejects.toThrow(
+        'API error'
+      );
     });
   });
 });

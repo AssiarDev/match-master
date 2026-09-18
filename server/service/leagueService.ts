@@ -1,21 +1,13 @@
 import { ILeagueApiRepository } from '../repositories/leagueApi.repository';
 import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
-import type { ServiceResult, ApiSeason, ApiLeague } from '../types/api';
-
-type LeagueRow = Awaited<
-  ReturnType<ILeagueDBRepository['findAllLeague']>
->[number];
+import type { ServiceResult, ApiSeason, ApiLeague, League } from '../types/api';
 
 export interface ILeagueService {
-  getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>>;
+  getAllLeague(): Promise<ServiceResult<{ leagues: League[] }>>;
   getLeagueSeasons(
     leagueId: number
   ): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>>;
-  getLeague(leagueId: number): Promise<
-    ServiceResult<{
-      league: Awaited<ReturnType<ILeagueDBRepository['findLeague']>>;
-    }>
-  >;
+  getLeague(leagueId: number): Promise<ServiceResult<{ league: League }>>;
   getLeagueCurrentSeason(
     leagueId: number
   ): Promise<ServiceResult<{ league: number | undefined }>>;
@@ -24,6 +16,10 @@ export interface ILeagueService {
   ): Promise<ServiceResult<{ league: ApiLeague }>>;
 }
 
+/**
+ * Database and external API failures are not caught here: they are thrown
+ * to the caller, as for every service.
+ */
 export class LeagueService implements ILeagueService {
   constructor(
     private readonly leagueApiRepo: ILeagueApiRepository,
@@ -34,16 +30,9 @@ export class LeagueService implements ILeagueService {
    * Retrieves all leagues from the database.
    * @returns A ServiceResult containing an array of leagues
    */
-  async getAllLeague(): Promise<ServiceResult<{ leagues: LeagueRow[] }>> {
-    try {
-      const result = await this.leagueDBRepo.findAllLeague();
-      return { success: true, leagues: result };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les ligues : ${error}`,
-      };
-    }
+  async getAllLeague(): Promise<ServiceResult<{ leagues: League[] }>> {
+    const leagues = await this.leagueDBRepo.findAllLeague();
+    return { success: true, leagues };
   }
 
   /**
@@ -54,36 +43,26 @@ export class LeagueService implements ILeagueService {
   async getLeagueSeasons(
     leagueId: number
   ): Promise<ServiceResult<{ seasons: ApiSeason[] | undefined }>> {
-    try {
-      const result = await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
-      return { success: true, seasons: result.data?.seasons };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Impossible de récupérer les saisons : ${error}`,
-      };
-    }
+    const result = await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
+    return { success: true, seasons: result.data?.seasons };
   }
 
   /**
    * Retrieves a single league by its ID from the database.
    * @param leagueId - The ID of the league
-   * @returns A ServiceResult containing the league or null if not found
+   * @returns A ServiceResult containing the league, or NOT_FOUND
    */
-  async getLeague(leagueId: number): Promise<
-    ServiceResult<{
-      league: Awaited<ReturnType<ILeagueDBRepository['findLeague']>>;
-    }>
-  > {
-    try {
-      const result = await this.leagueDBRepo.findLeague(leagueId);
-      return { success: true, league: result };
-    } catch (error) {
+  async getLeague(
+    leagueId: number
+  ): Promise<ServiceResult<{ league: League }>> {
+    const league = await this.leagueDBRepo.findLeague(leagueId);
+    if (!league)
       return {
         success: false,
-        message: `Erreur lors de la récupération de la ligue : ${error}`,
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
       };
-    }
+    return { success: true, league };
   }
 
   /**
@@ -95,34 +74,26 @@ export class LeagueService implements ILeagueService {
   async getLeagueCurrentSeason(
     leagueId: number
   ): Promise<ServiceResult<{ league: number | undefined }>> {
-    try {
-      const result =
-        await this.leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
-      const currentSeason = result.data?.currentseason;
+    const result = await this.leagueApiRepo.fetchLeagueCurrentSeason(leagueId);
+    const currentSeason = result.data?.currentseason;
 
-      if (
-        currentSeason?.starting_at &&
-        new Date(currentSeason.starting_at) > new Date()
-      ) {
-        const seasonsResult =
-          await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
-        const pastSeasons = (seasonsResult.data?.seasons ?? []).filter(
-          (s) => s.ending_at !== null && new Date(s.ending_at!) < new Date()
-        );
-        pastSeasons.sort(
-          (a, b) =>
-            new Date(b.ending_at!).getTime() - new Date(a.ending_at!).getTime()
-        );
-        return { success: true, league: pastSeasons[0]?.id };
-      }
-
-      return { success: true, league: currentSeason?.id };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Erreur lors de la récupération de la saison courrante de la ligue : ${error}`,
-      };
+    if (
+      currentSeason?.starting_at &&
+      new Date(currentSeason.starting_at) > new Date()
+    ) {
+      const seasonsResult =
+        await this.leagueApiRepo.fetchLeagueSeasons(leagueId);
+      const pastSeasons = (seasonsResult.data?.seasons ?? []).filter(
+        (s) => s.ending_at !== null && new Date(s.ending_at!) < new Date()
+      );
+      pastSeasons.sort(
+        (a, b) =>
+          new Date(b.ending_at!).getTime() - new Date(a.ending_at!).getTime()
+      );
+      return { success: true, league: pastSeasons[0]?.id };
     }
+
+    return { success: true, league: currentSeason?.id };
   }
 
   /**
@@ -133,14 +104,7 @@ export class LeagueService implements ILeagueService {
   async getLeagueWithSeasons(
     leagueId: number
   ): Promise<ServiceResult<{ league: ApiLeague }>> {
-    try {
-      const result = await this.leagueApiRepo.fetchLeagueWithSeasons(leagueId);
-      return { success: true, league: result.data };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Erreur lors de la récupération de la ligue avec ses saisons : ${error}`,
-      };
-    }
+    const result = await this.leagueApiRepo.fetchLeagueWithSeasons(leagueId);
+    return { success: true, league: result.data };
   }
 }
