@@ -2,7 +2,14 @@ openapi: 3.0.3
 info:
   title: Match Master API
   version: 1.0.0
-  description: API REST de l'application Match Master
+  description: |
+    API REST de l'application Match Master.
+
+    Every error response has the same shape: `{ "error": string }`.
+    - An unknown route answers 404.
+    - An unexpected error answers 500 with `{ "error": "Erreur serveur" }`;
+      no technical detail is ever returned.
+    - A malformed JSON body answers 400.
 
 components:
   securitySchemes:
@@ -10,6 +17,28 @@ components:
       type: apiKey
       in: cookie
       name: token
+
+  responses:
+    InvalidId:
+      description: An id (in the path or the body) is not a strictly positive integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example: { error: 'Identifiant invalide.' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ServerError:
+      description: Unexpected error, without technical detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example: { error: 'Erreur serveur' }
 
   schemas:
     League:
@@ -156,11 +185,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/LiveMatch'
         500:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/ServerError'
 
   /matches/live/stream:
     get:
@@ -168,7 +193,7 @@ paths:
       tags: [Live]
       description: |
         Opens a persistent Server-Sent Events connection.
-        The server pushes live match data every 30 seconds.
+        The server pushes live match data every 15 seconds.
         Connect using the browser's native `EventSource` API.
       responses:
         200:
@@ -212,6 +237,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/InvalidId'
+        404:
+          $ref: '#/components/responses/NotFound'
 
   /competitions/matches:
     get:
@@ -237,6 +266,12 @@ paths:
                       type: array
                       items:
                         $ref: '#/components/schemas/Match'
+        400:
+          description: Missing date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /competitions/{id}/matches:
     get:
@@ -250,6 +285,8 @@ paths:
       responses:
         200:
           description: List of matches
+        400:
+          $ref: '#/components/responses/InvalidId'
 
   # ── Teams ─────────────────────────────────────────────────
   /teams:
@@ -282,6 +319,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
+        400:
+          $ref: '#/components/responses/InvalidId'
+        404:
+          $ref: '#/components/responses/NotFound'
 
   /teams/{teamId}/matches:
     get:
@@ -295,6 +336,8 @@ paths:
       responses:
         200:
           description: List of matches for the team
+        400:
+          $ref: '#/components/responses/InvalidId'
 
   # ── Standings ─────────────────────────────────────────────
   /standings/{id}:
@@ -309,6 +352,14 @@ paths:
       responses:
         200:
           description: League standings table
+        400:
+          $ref: '#/components/responses/InvalidId'
+        404:
+          description: League has no current season
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ── Scorers ───────────────────────────────────────────────
   /scorers/{id}:
@@ -323,6 +374,14 @@ paths:
       responses:
         200:
           description: List of top scorers
+        400:
+          $ref: '#/components/responses/InvalidId'
+        404:
+          description: League has no current season
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ── Users ─────────────────────────────────────────────────
   # Disabled: public route exposing every user's email (see routes/users.ts).
@@ -344,11 +403,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [username, email, password]
+              required: [username, mail, password, confirmPassword]
               properties:
                 username: { type: string }
-                email: { type: string }
+                mail: { type: string }
                 password: { type: string }
+                confirmPassword: { type: string }
       responses:
         201:
           description: User created
@@ -356,12 +416,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
-        500:
-          description: Error
+        400:
+          description: Missing field, passwords do not match, or password too weak
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        409:
+          description: Email already used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          $ref: '#/components/responses/ServerError'
 
   /login:
     post:
@@ -373,9 +441,9 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, password]
+              required: [mail, password]
               properties:
-                email: { type: string }
+                mail: { type: string }
                 password: { type: string }
       responses:
         200:
@@ -384,8 +452,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserProfile'
+        400:
+          description: Missing field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         401:
-          description: Invalid credentials
+          description: |
+            Invalid credentials. The same message is returned for an unknown
+            email and a wrong password, so that accounts cannot be enumerated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /logout:
     post:
@@ -429,13 +509,28 @@ paths:
               type: object
               properties:
                 username: { type: string }
-                password: { type: string }
                 currentPassword: { type: string }
+                newPassword: { type: string }
+                confirmPassword: { type: string }
       responses:
         200:
           description: User updated
+        400:
+          description: Invalid id, nothing to update, current password missing, or new passwords do not match
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         401:
-          description: Unauthorized
+          description: Not authenticated, or current password incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        403:
+          description: id does not match the authenticated user
+        404:
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Delete a user
       tags: [Users]
@@ -449,8 +544,14 @@ paths:
       responses:
         200:
           description: User deleted
+        400:
+          $ref: '#/components/responses/InvalidId'
         401:
           description: Unauthorized
+        403:
+          description: id does not match the authenticated user
+        404:
+          $ref: '#/components/responses/NotFound'
 
   # ── Favorites (Teams) ─────────────────────────────────────
   /protected/users/favorites:
@@ -475,6 +576,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        400:
+          $ref: '#/components/responses/InvalidId'
         401:
           description: Unauthorized
         404:
@@ -494,6 +597,8 @@ paths:
       responses:
         200:
           description: Favorite removed
+        400:
+          $ref: '#/components/responses/InvalidId'
         401:
           description: Unauthorized
         404:
@@ -521,6 +626,8 @@ paths:
                   $ref: '#/components/schemas/FavoriteItem'
         401:
           description: Unauthorized
+        400:
+          $ref: '#/components/responses/InvalidId'
         403:
           description: userId does not match the authenticated user
 
@@ -547,6 +654,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        400:
+          $ref: '#/components/responses/InvalidId'
         401:
           description: Unauthorized
         404:
@@ -566,6 +675,8 @@ paths:
       responses:
         200:
           description: League favorite removed
+        400:
+          $ref: '#/components/responses/InvalidId'
         401:
           description: Unauthorized
         404:
@@ -593,5 +704,7 @@ paths:
                   $ref: '#/components/schemas/LeagueFavoriteItem'
         401:
           description: Unauthorized
+        400:
+          $ref: '#/components/responses/InvalidId'
         403:
           description: userId does not match the authenticated user

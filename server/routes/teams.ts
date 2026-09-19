@@ -1,9 +1,10 @@
 import express from 'express';
 import { getAllTeams, getTeamId } from '../controllers/team.controllers';
+import { validateIdParams } from '../middleware/validateIds';
 
 const router = express.Router();
 
 router.get('/teams', getAllTeams);
-router.get('/teams/:id', getTeamId);
+router.get('/teams/:id', validateIdParams('id'), getTeamId);
 
 export { router as teams };

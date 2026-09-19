@@ -331,4 +331,82 @@ describe('Users routes', () => {
       expect(tokenCookie).toContain('Max-Age=3600;');
     });
   });
+
+  describe('Codes HTTP des erreurs métier', () => {
+    /** Registers a user through the route, so the password is really hashed. */
+    const registerUser = async () => {
+      await request(app).post('/register').send({
+        username: 'testuser',
+        mail: 'test@test.com',
+        password: VALID_PASSWORD,
+        confirmPassword: VALID_PASSWORD,
+      });
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: 'test@test.com' },
+      });
+      const token = jwt.sign(
+        { id: user.id, username: user.username, createdAt: user.createdAt },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+      return { user, token };
+    };
+
+    it("POST /register retourne 409 si l'email est déjà utilisé", async () => {
+      await registerUser();
+
+      const response = await request(app).post('/register').send({
+        username: 'other',
+        mail: 'test@test.com',
+        password: VALID_PASSWORD,
+        confirmPassword: VALID_PASSWORD,
+      });
+
+      expect(response.status).toBe(409);
+      expect(response.body).toEqual({ error: 'Email déja utilisé.' });
+    });
+
+    it('POST /login répond pareil pour un email inconnu et un mauvais mot de passe', async () => {
+      await registerUser();
+
+      const unknownEmail = await request(app)
+        .post('/login')
+        .send({ mail: 'inconnu@test.com', password: VALID_PASSWORD });
+      const wrongPassword = await request(app)
+        .post('/login')
+        .send({ mail: 'test@test.com', password: 'WrongPassword1!' });
+
+      expect(unknownEmail.status).toBe(401);
+      expect(wrongPassword.status).toBe(401);
+      expect(unknownEmail.body).toEqual(wrongPassword.body);
+    });
+
+    it('PUT /users/:id retourne 401 si le mot de passe actuel est incorrect', async () => {
+      const { user, token } = await registerUser();
+
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .set('Cookie', [`token=${token}`])
+        .send({
+          currentPassword: 'WrongPassword1!',
+          newPassword: 'NewPassword1!',
+          confirmPassword: 'NewPassword1!',
+        });
+
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual({ error: 'Mot de passe actuel incorrect' });
+    });
+
+    it("PUT /users/:id retourne 400 si l'id n'est pas numérique", async () => {
+      const { token } = await registerUser();
+
+      const response = await request(app)
+        .put('/users/abc')
+        .set('Cookie', [`token=${token}`])
+        .send({ username: 'newname' });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Identifiant invalide.' });
+    });
+  });
 });

@@ -11,6 +11,7 @@ import { scorers } from './routes/scorers';
 import { favorites } from './routes/favorites';
 import { serve, setup } from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
 export const app = express();
 
@@ -64,3 +65,6 @@ app.use(favorites);
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Express');
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);

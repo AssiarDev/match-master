@@ -1,107 +1,49 @@
 import type { Request, Response } from 'express';
 import { matchesService } from '../lib/container';
 import { liveMatchesBroadcaster } from '../lib/container';
+import { sendServiceError } from '../utils/sendServiceError';
 
 export const matchByDate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const date = req.query.date as string | undefined;
-    if (!date) {
-      res.status(400).json({ error: 'La date est obligatoire' });
-      return;
-    }
-    const result = await matchesService.getMatchesByDate(date);
-    if (!result.success) {
-      res.status(500).json({ error: result.message });
-      return;
-    }
-    res.json({ data: result.matches });
-  } catch (error) {
-    console.error(
-      "Une error est survenue lors de l'execution de matchByDate :",
-      error
-    );
-    res.status(500).json({
-      error: "Une error est survenue lors de l'execution de matchByDate",
-    });
+  const date = req.query.date as string | undefined;
+  if (!date) {
+    res.status(400).json({ error: 'La date est obligatoire' });
+    return;
   }
+  const result = await matchesService.getMatchesByDate(date);
+  if (!result.success) return sendServiceError(res, result);
+  res.json({ data: result.matches });
 };
 
 export const leaguesMatches = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const leagueId = parseInt(req.params.id, 10);
-    if (isNaN(leagueId) || leagueId <= 0) {
-      res.status(400).json({ error: 'ID invalide' });
-      return;
-    }
-    const data = await matchesService.getLeagueMatches(leagueId);
-    if (!data.success) {
-      res.status(500).json({ error: data.message });
-      return;
-    }
-    res.json(data.matches);
-  } catch (error) {
-    console.error(
-      "Une erreur est survenue lors de l'execution de leaguesMatches",
-      error
-    );
-    res.status(500).json({
-      error: "Une erreur est survenue lors de l'execution de leaguesMatches",
-    });
-  }
+  const result = await matchesService.getLeagueMatches(Number(req.params.id));
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.matches);
 };
 
 export const matchesByTeam = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const teamId = parseInt(req.params.teamId, 10);
-    if (isNaN(teamId) || teamId <= 0) {
-      res.status(400).json({ error: 'ID invalide' });
-      return;
-    }
-    const result = await matchesService.getMatchesByTeam(teamId);
-    if (!result.success) {
-      res.status(500).json({ error: result.message });
-      return;
-    }
-    res.json({ data: result.matches });
-  } catch (error) {
-    console.error(
-      "Une erreur est survenu lors de l'éxecution de matchesByTeam"
-    );
-    res.status(500).json({
-      error: "Une erreur est survenu lors de l'éxecution de matchesByTeam",
-    });
-  }
+  const result = await matchesService.getMatchesByTeam(
+    Number(req.params.teamId)
+  );
+  if (!result.success) return sendServiceError(res, result);
+  res.json({ data: result.matches });
 };
 
 export const liveMatches = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const result = await matchesService.getLiveMatches();
-    if (!result.success) {
-      res.status(500).json({ error: result.message });
-      return;
-    }
-    res.json({ data: result.matches });
-  } catch (error) {
-    console.error(
-      "Une erreur est survenue lors de l'éxecution de liveMatches",
-      error
-    );
-    res.status(500).json({
-      error: "Une erreur est survenue lors de l'éxecution de liveMatches",
-    });
-  }
+  const result = await matchesService.getLiveMatches();
+  if (!result.success) return sendServiceError(res, result);
+  res.json({ data: result.matches });
 };
 
 export const liveMatchesUpdate = (req: Request, res: Response) => {

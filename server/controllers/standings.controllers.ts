@@ -1,29 +1,14 @@
 import type { Request, Response } from 'express';
 import { standingService } from '../lib/container';
+import { sendServiceError } from '../utils/sendServiceError';
 
 export const standingsFixtures = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try {
-    const leagueId = parseInt(req.params.id, 10);
-    if (isNaN(leagueId) || leagueId <= 0) {
-      res.status(400).json({ error: 'ID invalide' });
-      return;
-    }
-    const data = await standingService.getStandingFixtures(leagueId);
-    if (!data.success) {
-      res.status(500).json({ error: data.message });
-      return;
-    }
-    res.json(data.standing);
-  } catch (error) {
-    console.error(
-      "Une erreur est survenue lors de l'execution getStandingsFixtures:",
-      (error as Error).message
-    );
-    res.status(500).json({
-      error: "Une erreur est survenue lors de l'execution getStandingsFixtures",
-    });
-  }
+  const result = await standingService.getStandingFixtures(
+    Number(req.params.id)
+  );
+  if (!result.success) return sendServiceError(res, result);
+  res.json(result.standing);
 };
