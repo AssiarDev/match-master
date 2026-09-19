@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import { userService } from '../lib/container';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { addToBlacklist } from '../lib/tokenBlacklist';
-import { validatePassword } from '../utils/validatePassword';
 import { sendServiceError } from '../utils/sendServiceError';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -15,12 +14,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
   if (password !== confirmPassword) {
     res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
-    return;
-  }
-
-  const validPassword = validatePassword(password);
-  if (validPassword) {
-    res.status(400).json({ error: validPassword });
     return;
   }
 
@@ -106,10 +99,6 @@ export const deleteUser = async (
   res: Response
 ): Promise<void> => {
   const id = Number(req.params.id);
-  if (req.user!.id !== id) {
-    res.status(403).json({ error: 'Action non autorisée' });
-    return;
-  }
   const result = await userService.deleteUser(id);
   if (!result.success) return sendServiceError(res, result);
   res.json({ message: result.message });
@@ -120,28 +109,11 @@ export const updateUser = async (
   res: Response
 ): Promise<void> => {
   const id = Number(req.params.id);
-  if (req.user!.id !== id) {
-    res.status(403).json({ error: 'Action non autorisée' });
-    return;
-  }
   const { username, confirmPassword, newPassword, currentPassword } = req.body;
 
-  if (newPassword || confirmPassword) {
-    if (!currentPassword) {
-      res.status(400).json({ error: 'Le mot de passe actuel est requis.' });
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
-      return;
-    }
-
-    const validPassword = validatePassword(newPassword);
-    if (validPassword) {
-      res.status(400).json({ error: validPassword });
-      return;
-    }
+  if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
+    res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
+    return;
   }
 
   if (!username && !newPassword) {
