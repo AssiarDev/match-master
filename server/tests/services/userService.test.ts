@@ -10,6 +10,8 @@ jest.unstable_mockModule('argon2', () => ({
 
 const { UserService } = await import('../../service/userService');
 
+const VALID_PASSWORD = 'Password1!';
+
 describe('UserService', () => {
   let userRepoMock: jest.Mocked<IUserRepository>;
   let service: InstanceType<typeof UserService>;
@@ -34,7 +36,11 @@ describe('UserService', () => {
   it("retourne une erreur si l'email est déjà utilisé", async () => {
     userRepoMock.findByEmail.mockResolvedValue({ id: 1 } as any);
 
-    const result = await service.register('John', 'test@mail.com', 'pass');
+    const result = await service.register(
+      'John',
+      'test@mail.com',
+      VALID_PASSWORD
+    );
 
     expect(result).toEqual({
       success: false,
@@ -55,13 +61,28 @@ describe('UserService', () => {
       updatedAt: new Date(),
     } as any);
 
-    const result = await service.register('John', 'test@mail.com', 'pass');
+    const result = await service.register(
+      'John',
+      'test@mail.com',
+      VALID_PASSWORD
+    );
 
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.user.username).toBe('John');
       expect(mockHash).toHaveBeenCalled();
     }
+  });
+
+  it("refuse l'inscription si le mot de passe est trop faible", async () => {
+    const result = await service.register('John', 'test@mail.com', 'faible');
+
+    expect(result).toEqual({
+      success: false,
+      reason: 'INVALID_INPUT',
+      message: 'Minimum 8 caractères',
+    });
+    expect(userRepoMock.create).not.toHaveBeenCalled();
   });
 
   // LOGIN
@@ -177,7 +198,7 @@ describe('UserService', () => {
 
     const result = await service.updateUser(1, {
       username: 'New',
-      password: 'newPass123',
+      password: VALID_PASSWORD,
       currentPassword: 'oldPass',
     });
 
@@ -216,13 +237,33 @@ describe('UserService', () => {
       password: 'oldHashedPassword',
     } as any);
 
-    const result = await service.updateUser(1, { password: 'newPass123' });
+    const result = await service.updateUser(1, { password: VALID_PASSWORD });
 
     expect(result).toEqual({
       success: false,
       reason: 'INVALID_INPUT',
       message: 'Mot de passe actuel requis',
     });
+  });
+
+  it('refuse un nouveau mot de passe trop faible', async () => {
+    userRepoMock.findById.mockResolvedValue({
+      id: 1,
+      password: 'oldHashedPassword',
+    } as any);
+
+    const result = await service.updateUser(1, {
+      password: 'faible',
+      currentPassword: 'oldPass',
+    });
+
+    expect(result).toEqual({
+      success: false,
+      reason: 'INVALID_INPUT',
+      message: 'Minimum 8 caractères',
+    });
+    expect(mockVerify).not.toHaveBeenCalled();
+    expect(userRepoMock.update).not.toHaveBeenCalled();
   });
 
   it('retourne une erreur si le mot de passe actuel est incorrect', async () => {
@@ -233,7 +274,7 @@ describe('UserService', () => {
     mockVerify.mockResolvedValue(false);
 
     const result = await service.updateUser(1, {
-      password: 'newPass123',
+      password: VALID_PASSWORD,
       currentPassword: 'wrongPass',
     });
 
