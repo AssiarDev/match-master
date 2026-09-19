@@ -93,6 +93,14 @@
 
 
 - - -
+## [0.2.14](https://github.com/AssiarDev/match-master/compare/5ec0a0812613460f9a180dbe28bd457ac6557807..0.2.14) - 2026-09-19
+#### Bug Fixes
+- **(api)** return consistent HTTP status codes and validate input ids (#27) - ([dc7d05f](https://github.com/AssiarDev/match-master/commit/dc7d05ffe572d4c8afaaabf850e7692fb1cc860c)) - Assiar
+#### Refactoring
+- **(services)** unify service results and separate business from technical errors (#26) - ([5ec0a08](https://github.com/AssiarDev/match-master/commit/5ec0a0812613460f9a180dbe28bd457ac6557807)) - Assiar
+
+- - -
+
 ## [0.2.13](https://github.com/AssiarDev/match-master/compare/04992d239a03643f9cb6559a82c0361f8e2485b3..0.2.13) - 2026-09-18
 #### Bug Fixes
 - **(sse)** run broadcast loop on demand (#25) - ([04992d2](https://github.com/AssiarDev/match-master/commit/04992d239a03643f9cb6559a82c0361f8e2485b3)) - Assiar
