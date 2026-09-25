@@ -70,6 +70,12 @@ export const logout = (req: Request, res: Response): void => {
   res.status(200).json({ message: MESSAGES.auth.loggedOut });
 };
 
+/**
+ * Lists every user. Not routed: its public route `GET /users` exposed every
+ * user's email and was disabled by fix #21 (see routes/users.ts).
+ * Kept on purpose (decision traced in ADR-16) for a future admin view; it
+ * must only be routed again behind authentication and an admin check.
+ */
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   const result = await userService.getAllUsers();
   if (!result.success) return sendServiceError(res, result);

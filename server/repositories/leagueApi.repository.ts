@@ -14,6 +14,13 @@ export class LeagueApiRepository implements ILeagueApiRepository {
     return sportmonksGet('/leagues');
   }
 
+  /**
+   * Fetches a single league, without any include.
+   * Not called in production: kept on purpose as a tested building block for
+   * upcoming features (decision traced in ADR-16).
+   * @param leagueId - The ID of the league
+   * @returns The league
+   */
   fetchLeague(leagueId: number): Promise<ApiResponse<ApiLeague>> {
     return sportmonksGet(`/leagues/${leagueId}`);
   }
@@ -28,8 +35,9 @@ export class LeagueApiRepository implements ILeagueApiRepository {
 
   /**
    * Alias of fetchLeagueSeasons: both need the league with all its seasons,
-   * so they share a single request. Kept so that its callers (getLeagueWithSeasons
-   * and the import scripts) do not change.
+   * so they share a single request. Kept so that its callers (the import
+   * scripts, and LeagueService.getLeagueWithSeasons, itself not called in
+   * production) do not change.
    * @param leagueId - The ID of the league
    * @returns The league with its seasons
    */

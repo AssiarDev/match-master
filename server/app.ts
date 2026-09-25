@@ -6,7 +6,6 @@ import { teams } from './routes/teams';
 import { competitions } from './routes/competitions';
 import { standings } from './routes/standings';
 import { users } from './routes/users';
-import { protectedRoutes } from './routes/protected';
 import { scorers } from './routes/scorers';
 import { favorites } from './routes/favorites';
 import { serve, setup } from 'swagger-ui-express';
@@ -54,7 +53,6 @@ app.use(teams);
 app.use(competitions);
 app.use(standings);
 app.use(users);
-app.use(protectedRoutes);
 app.use(scorers);
 app.use(favorites);
 
