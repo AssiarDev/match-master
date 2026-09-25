@@ -4,6 +4,7 @@ import { IUserRepository } from '../repositories/user.repository';
 import type { UserPayload } from '../types/express';
 import type { SafeUser, ServiceResult } from '../types/api';
 import { validatePassword } from '../utils/validatePassword';
+import { MESSAGES } from '../constants/messages';
 
 type RegisterSuccess = { user: User };
 type UpdateSuccess = { user: SafeUser };
@@ -54,7 +55,7 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'CONFLICT',
-        message: 'Email déja utilisé.',
+        message: MESSAGES.user.emailTaken,
       };
 
     const hashedPassword = await argon2.hash(password);
@@ -83,7 +84,7 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'INVALID_CREDENTIALS',
-        message: 'Utilisateur introuvable',
+        message: MESSAGES.user.notFound,
       };
 
     const isValidPassword = await argon2.verify(user.password, password);
@@ -91,7 +92,7 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'INVALID_CREDENTIALS',
-        message: 'Mot de passe incorrect.',
+        message: MESSAGES.user.wrongPassword,
       };
 
     const createDateAccount = user.createdAt;
@@ -125,7 +126,7 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable',
+        message: MESSAGES.user.notFound,
       };
     return { success: true, user };
   }
@@ -149,7 +150,7 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable',
+        message: MESSAGES.user.notFound,
       };
 
     const updateData: { username?: string; password?: string } = {};
@@ -160,7 +161,7 @@ export class UserService implements IUserService {
         return {
           success: false,
           reason: 'INVALID_INPUT',
-          message: 'Mot de passe actuel requis',
+          message: MESSAGES.user.currentPasswordRequired,
         };
       }
       const passwordError = validatePassword(data.password);
@@ -175,7 +176,7 @@ export class UserService implements IUserService {
         return {
           success: false,
           reason: 'INVALID_CREDENTIALS',
-          message: 'Mot de passe actuel incorrect',
+          message: MESSAGES.user.currentPasswordWrong,
         };
       }
       const newPassword = data.password;
@@ -197,10 +198,10 @@ export class UserService implements IUserService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable',
+        message: MESSAGES.user.notFound,
       };
 
     await this.userRepo.delete(id);
-    return { success: true, message: 'Votre compte à bien été supprimé' };
+    return { success: true, message: MESSAGES.user.deleted };
   }
 }

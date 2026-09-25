@@ -176,7 +176,7 @@ describe('LiveMatchesBroadcaster', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
-  it('journalise un échec de récupération sans rien envoyer', async () => {
+  it('logs a fetch failure without sending anything', async () => {
     const consoleError = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -191,13 +191,13 @@ describe('LiveMatchesBroadcaster', () => {
     await flush();
 
     expect(consoleError).toHaveBeenCalledWith(
-      '[SSE] Diffusion annulée :',
+      expect.stringContaining('ERROR [SSE] Diffusion annulée'),
       'API indisponible'
     );
     expect(client.write).not.toHaveBeenCalled();
   });
 
-  it("journalise une exception de l'API sans planter ni rien envoyer", async () => {
+  it('logs an API exception without crashing or sending anything', async () => {
     const consoleError = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -208,7 +208,7 @@ describe('LiveMatchesBroadcaster', () => {
     await flush();
 
     expect(consoleError).toHaveBeenCalledWith(
-      '[SSE] Diffusion annulée :',
+      expect.stringContaining('ERROR [SSE] Diffusion annulée'),
       'fetch failed'
     );
     expect(client.write).not.toHaveBeenCalled();

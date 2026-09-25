@@ -88,7 +88,7 @@ describe('ScorersService', () => {
       expect(result).toEqual({
         success: false,
         reason: 'NOT_FOUND',
-        message: 'No current season for this league',
+        message: 'Aucune saison en cours pour cette compétition.',
       });
     });
 

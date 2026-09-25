@@ -69,7 +69,7 @@ describe('TeamService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: "Equipe introuvable via l'id.",
+      message: 'Équipe introuvable.',
     });
   });
 
@@ -121,7 +121,7 @@ describe('TeamService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: 'Equipe introuvable via la ligue.',
+      message: 'Compétition introuvable.',
     });
   });
 
@@ -161,7 +161,7 @@ describe('TeamService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: 'No active season found',
+      message: 'Aucune saison en cours pour cette compétition.',
     });
   });
 

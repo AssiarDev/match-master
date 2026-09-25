@@ -2,6 +2,8 @@ import { IScorersRepository } from '../repositories/scorers.repository';
 import { ILeagueService } from './leagueService';
 import { IPlayersRepository } from '../repositories/players.repository';
 import type { ApiScorer, ServiceResult } from '../types/api';
+import { MESSAGES } from '../constants/messages';
+import { indexById } from '../utils/indexById';
 
 interface EnrichedScorer extends ApiScorer {
   player_name: string;
@@ -33,7 +35,7 @@ export class ScorersService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'No current season for this league',
+        message: MESSAGES.league.noCurrentSeason,
       };
     const scorersResult = await this.scorersRepo.fetchTopScorers(
       seasonResult.league
@@ -41,9 +43,9 @@ export class ScorersService {
     const scorers = scorersResult?.data || [];
     const playerIds = scorers.map((s: ApiScorer) => s.player_id);
     const players = await this.playersRepo.findPlayersByIds(playerIds);
-    const playersMap = Object.fromEntries(players.map((p) => [p.id, p]));
+    const playersById = indexById(players);
     const enriched = scorers.map((s: ApiScorer) => {
-      const player = playersMap[s.player_id];
+      const player = playersById.get(s.player_id);
       return {
         ...s,
         player_name: player?.display_name || `Joueur #${s.player_id}`,

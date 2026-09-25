@@ -86,7 +86,7 @@ describe('Favorites routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        message: 'Equipe déjà dans les favoris.',
+        message: 'Équipe déjà dans les favoris.',
       });
       expect(
         await prisma.userFavorite.count({ where: { user_id: user.id } })
@@ -108,7 +108,7 @@ describe('Favorites routes', () => {
         .send({ clubId: 999 });
 
       expect(response.status).toBe(404);
-      expect(response.body).toMatchObject({ error: 'Equipe introuvable.' });
+      expect(response.body).toMatchObject({ error: 'Équipe introuvable.' });
     });
   });
 
@@ -131,7 +131,7 @@ describe('Favorites routes', () => {
         .set('Cookie', [`token=${makeToken(user.id)}`]);
 
       expect(response.status).toBe(200);
-      expect(response.body).toMatchObject({ message: 'Favoris supprimé.' });
+      expect(response.body).toMatchObject({ message: 'Favori supprimé.' });
     });
 
     it("retourne 404 si le favori n'existe pas", async () => {
@@ -149,7 +149,7 @@ describe('Favorites routes', () => {
 
       expect(response.status).toBe(404);
       expect(response.body).toMatchObject({
-        error: "Ce favoris n'existe pas.",
+        error: "Ce favori n'existe pas.",
       });
     });
   });
@@ -347,7 +347,7 @@ describe('Favorites routes', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
-        message: 'La compétition à bien été ajouté.',
+        message: 'La compétition a bien été ajoutée.',
       });
     });
 
@@ -420,7 +420,7 @@ describe('Favorites routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({
-        message: 'La compétition à bien été supprimé de vos favoris.',
+        message: 'La compétition a bien été supprimée de vos favoris.',
       });
     });
 

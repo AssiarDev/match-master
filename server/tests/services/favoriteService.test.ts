@@ -72,7 +72,7 @@ describe('FavoriteService', () => {
       expect(result).toEqual({
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Equipe introuvable.',
+        message: 'Équipe introuvable.',
       });
     });
 
@@ -101,7 +101,7 @@ describe('FavoriteService', () => {
       expect(result).toEqual({
         success: true,
         created: false,
-        message: 'Equipe déjà dans les favoris.',
+        message: 'Équipe déjà dans les favoris.',
       });
     });
 
@@ -131,7 +131,7 @@ describe('FavoriteService', () => {
       expect(result).toEqual({
         success: true,
         created: true,
-        message: 'La compétition à bien été ajouté.',
+        message: 'La compétition a bien été ajoutée.',
       });
     });
   });
@@ -146,7 +146,7 @@ describe('FavoriteService', () => {
       expect(result).toEqual({
         success: false,
         reason: 'NOT_FOUND',
-        message: "Ce favoris n'existe pas.",
+        message: "Ce favori n'existe pas.",
       });
     });
 
@@ -156,7 +156,7 @@ describe('FavoriteService', () => {
       const result = await service.remove(1, 'team', 10);
 
       expect(favRepoMock.delete).toHaveBeenCalledWith(1, 'team', 10);
-      expect(result).toEqual({ success: true, message: 'Favoris supprimé.' });
+      expect(result).toEqual({ success: true, message: 'Favori supprimé.' });
     });
 
     it('removes an existing competition favorite', async () => {
@@ -167,7 +167,7 @@ describe('FavoriteService', () => {
       expect(favRepoMock.delete).toHaveBeenCalledWith(1, 'competition', 10);
       expect(result).toEqual({
         success: true,
-        message: 'La compétition à bien été supprimé de vos favoris.',
+        message: 'La compétition a bien été supprimée de vos favoris.',
       });
     });
   });

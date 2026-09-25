@@ -1,6 +1,7 @@
 import { ILeagueApiRepository } from '../repositories/leagueApi.repository';
 import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
 import type { ServiceResult, ApiSeason, ApiLeague, League } from '../types/api';
+import { MESSAGES } from '../constants/messages';
 
 export interface ILeagueService {
   getAllLeague(): Promise<ServiceResult<{ leagues: League[] }>>;
@@ -37,6 +38,8 @@ export class LeagueService implements ILeagueService {
 
   /**
    * Retrieves all seasons for a given league from the external API.
+   * Not called in production: kept on purpose as a tested building block for
+   * upcoming features (decision traced in ADR-16).
    * @param leagueId - The ID of the league
    * @returns A ServiceResult containing an array of seasons
    */
@@ -49,6 +52,8 @@ export class LeagueService implements ILeagueService {
 
   /**
    * Retrieves a single league by its ID from the database.
+   * Not called in production: kept on purpose as a tested building block for
+   * upcoming features (decision traced in ADR-16).
    * @param leagueId - The ID of the league
    * @returns A ServiceResult containing the league, or NOT_FOUND
    */
@@ -60,7 +65,7 @@ export class LeagueService implements ILeagueService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Compétition introuvable.',
+        message: MESSAGES.league.notFound,
       };
     return { success: true, league };
   }
@@ -98,6 +103,8 @@ export class LeagueService implements ILeagueService {
 
   /**
    * Retrieves a league along with all its seasons from the external API.
+   * Not called in production: kept on purpose as a tested building block for
+   * upcoming features (decision traced in ADR-16).
    * @param leagueId - The ID of the league
    * @returns A ServiceResult containing the league with its seasons
    */

@@ -2,6 +2,8 @@ import { IStandingRepository } from '../repositories/standings.repository';
 import { ITeamService } from './teamService';
 import { ILeagueService } from './leagueService';
 import { mapDetails } from '../utils/mapDetails';
+import { indexById } from '../utils/indexById';
+import { MESSAGES } from '../constants/messages';
 import type {
   ApiStanding,
   EnrichedStanding,
@@ -39,7 +41,7 @@ export class StandingService implements IStandingService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'No current season for this league',
+        message: MESSAGES.league.noCurrentSeason,
       };
 
     const seasonStandingResult = await this.standingRepo.fetchStandingBySeason(
@@ -50,12 +52,10 @@ export class StandingService implements IStandingService {
 
     const teamsResult = await this.teamService.teamsByIds(teamIds);
     if (!teamsResult.success) return teamsResult;
-    const teamsById = Object.fromEntries(
-      teamsResult.teams.map((s) => [s.id, s])
-    );
+    const teamsById = indexById(teamsResult.teams);
 
     const enriched = seasonStanding.map((s: ApiStanding) => {
-      const standings = teamsById[s.participant_id];
+      const standings = teamsById.get(s.participant_id);
       const stats = mapDetails(s.details || []);
       return {
         ...s,

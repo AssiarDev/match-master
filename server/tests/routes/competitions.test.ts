@@ -43,7 +43,7 @@ describe('Competitions routes', () => {
 
       expect(response.status).toBe(404);
       expect(response.body).toEqual({
-        error: 'Equipe introuvable via la ligue.',
+        error: 'Compétition introuvable.',
       });
     });
 

@@ -45,7 +45,7 @@ describe('UserService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'CONFLICT',
-      message: 'Email déja utilisé.',
+      message: 'Email déjà utilisé.',
     });
   });
 
@@ -94,7 +94,7 @@ describe('UserService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'INVALID_CREDENTIALS',
-      message: 'Utilisateur introuvable',
+      message: 'Utilisateur introuvable.',
     });
   });
 
@@ -163,7 +163,7 @@ describe('UserService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: 'Utilisateur introuvable',
+      message: 'Utilisateur introuvable.',
     });
   });
 
@@ -179,7 +179,7 @@ describe('UserService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: 'Utilisateur introuvable',
+      message: 'Utilisateur introuvable.',
     });
   });
 
@@ -294,7 +294,7 @@ describe('UserService', () => {
     expect(result).toEqual({
       success: false,
       reason: 'NOT_FOUND',
-      message: 'Utilisateur introuvable',
+      message: 'Utilisateur introuvable.',
     });
   });
 
@@ -306,7 +306,7 @@ describe('UserService', () => {
 
     expect(result).toEqual({
       success: true,
-      message: 'Votre compte à bien été supprimé',
+      message: 'Votre compte a bien été supprimé',
     });
   });
 });

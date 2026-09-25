@@ -1,7 +1,7 @@
 import { mapDetails } from '../../utils/mapDetails';
 
 describe('mapDetails', () => {
-  it('retourne toutes les stats quand les 6 codes sont présents', () => {
+  it('returns every stat when the 6 codes are present', () => {
     const result = mapDetails([
       { type: { code: 'overall-matches-played' }, value: 10 },
       { type: { code: 'overall-won' }, value: 6 },
@@ -22,15 +22,23 @@ describe('mapDetails', () => {
     });
   });
 
-  it('retourne un objet vide avec goal_diff à 0 si le tableau est vide', () => {
+  it('returns only goal_diff at 0 for an empty list', () => {
     const result = mapDetails([]);
 
     expect(result).toEqual({ goal_diff: 0 });
   });
 
-  it('ignore les codes inconnus et ne les ajoute pas aux stats', () => {
+  it('ignores unknown codes', () => {
     const result = mapDetails([{ type: { code: 'unknown-code' }, value: 99 }]);
 
     expect(result).toEqual({ goal_diff: 0 });
+  });
+
+  it('counts a missing goal total as 0 in goal_diff', () => {
+    const result = mapDetails([
+      { type: { code: 'overall-goals-for' }, value: 4 },
+    ]);
+
+    expect(result).toEqual({ goals_for: 4, goal_diff: 4 });
   });
 });

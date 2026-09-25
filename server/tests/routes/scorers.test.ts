@@ -59,7 +59,7 @@ describe('Scorers routes', () => {
 
       expect(response.status).toBe(404);
       expect(response.body).toEqual({
-        error: 'No current season for this league',
+        error: 'Aucune saison en cours pour cette compétition.',
       });
     });
   });

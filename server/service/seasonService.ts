@@ -18,6 +18,8 @@ export class SeasonService implements ISeasonService {
   constructor(private readonly seasonRepo: ISeasonRepository) {}
   /**
    * Retrieves all teams for a given season from the external API.
+   * Not called in production: kept on purpose as a tested building block for
+   * upcoming features (decision traced in ADR-16).
    * @param seasonId - The ID of the season
    * @returns A ServiceResult containing the season data with its teams
    */
