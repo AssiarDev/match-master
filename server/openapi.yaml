@@ -570,6 +570,12 @@ paths:
               properties:
                 clubId: { type: integer }
       responses:
+        200:
+          description: Team already in favorites, nothing created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
         201:
           description: Favorite added
           content:
@@ -630,6 +636,8 @@ paths:
           $ref: '#/components/responses/InvalidId'
         403:
           description: userId does not match the authenticated user
+        404:
+          description: User not found
 
   # ── Favorites (Leagues) ───────────────────────────────────
   /protected/users/favorites-leagues:
@@ -648,6 +656,12 @@ paths:
               properties:
                 leagueId: { type: integer }
       responses:
+        200:
+          description: League already in favorites, nothing created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
         201:
           description: League favorite added
           content:
@@ -708,3 +722,5 @@ paths:
           $ref: '#/components/responses/InvalidId'
         403:
           description: userId does not match the authenticated user
+        404:
+          description: User not found

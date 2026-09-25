@@ -1,6 +1,9 @@
 import { IUserRepository } from '../repositories/user.repository';
 import { ITeamDBRepository } from '../repositories/teamDB.repository';
-import { IUserFavoritesRepository } from '../repositories/userFavorites.repository';
+import {
+  IUserFavoritesRepository,
+  type FavoriteKind,
+} from '../repositories/userFavorites.repository';
 import type { ServiceResult } from '../types/api';
 import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
 
@@ -18,207 +21,188 @@ export interface LeagueFavoriteItem {
   emblem: string | null;
 }
 
+/** The item returned when listing each kind of favorite. */
+export type FavoriteItemByKind = {
+  team: FavoriteItem;
+  competition: LeagueFavoriteItem;
+};
+
+/** What differs between the kinds of favorite; everything else is shared. */
+type KindConfig<K extends FavoriteKind> = {
+  targetExists(targetId: number): Promise<boolean>;
+  list(userId: number): Promise<FavoriteItemByKind[K][]>;
+  messages: {
+    targetNotFound: string;
+    alreadyAdded: string;
+    added: string;
+    notInFavorites: string;
+    removed: string;
+  };
+};
+
 export interface IFavoriteService {
-  addFavorite(
+  add(
     userId: number,
-    teamId: number
-  ): Promise<ServiceResult<{ message: string }>>;
-  removeFavorite(
+    kind: FavoriteKind,
+    targetId: number
+  ): Promise<ServiceResult<{ created: boolean; message: string }>>;
+  remove(
     userId: number,
-    teamId: number
+    kind: FavoriteKind,
+    targetId: number
   ): Promise<ServiceResult<{ message: string }>>;
-  getFavorite(
-    userId: number
-  ): Promise<ServiceResult<{ favorites: FavoriteItem[] }>>;
-  addLeagueFavorite(
+  list<K extends FavoriteKind>(
     userId: number,
-    leagueId: number
-  ): Promise<ServiceResult<{ message: string }>>;
-  removeLeagueFavorite(
-    userId: number,
-    leagueId: number
-  ): Promise<ServiceResult<{ message: string }>>;
-  getLeagueFavorite(
-    userId: number
-  ): Promise<ServiceResult<{ favorites: LeagueFavoriteItem[] }>>;
+    kind: K
+  ): Promise<ServiceResult<{ favorites: FavoriteItemByKind[K][] }>>;
 }
 
 export class FavoriteService implements IFavoriteService {
+  private readonly kinds: { [K in FavoriteKind]: KindConfig<K> };
+
   constructor(
     private readonly userRepo: IUserRepository,
     private readonly teamRepo: ITeamDBRepository,
     private readonly favRepo: IUserFavoritesRepository,
     private readonly leagueRepo: ILeagueDBRepository
-  ) {}
-
-  /**
-   * Adds a team to a user's favorites.
-   * @param userId - The ID of the user
-   * @param teamId - The ID of the team to add
-   * @returns A ServiceResult with a success message or an error message
-   */
-  async addFavorite(
-    userId: number,
-    teamId: number
-  ): Promise<ServiceResult<{ message: string }>> {
-    const user = await this.userRepo.findById(userId);
-    if (!user)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable.',
-      };
-
-    const team = await this.teamRepo.findById(teamId);
-    if (!team)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Equipe introuvable.',
-      };
-
-    const existing = await this.favRepo.find(userId, teamId);
-    if (existing)
-      return { success: true, message: 'Equipe déjà dans les favoris.' };
-
-    await this.favRepo.create(userId, teamId);
-    return { success: true, message: 'Favori ajouté.' };
-  }
-
-  /**
-   * Removes a team from a user's favorites.
-   * @param userId - The ID of the user
-   * @param teamId - The ID of the team to remove
-   * @returns A ServiceResult with a success message or an error message
-   */
-  async removeFavorite(
-    userId: number,
-    teamId: number
-  ): Promise<ServiceResult<{ message: string }>> {
-    const existing = await this.favRepo.find(userId, teamId);
-    if (!existing)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: "Ce favoris n'existe pas.",
-      };
-
-    await this.favRepo.delete(userId, teamId);
-    return { success: true, message: 'Favoris supprimé.' };
-  }
-
-  /**
-   * Retrieves all favorite teams for a given user.
-   * @param userId - The ID of the user
-   * @returns A ServiceResult containing the FavoriteItem list, empty if the user does not exist
-   */
-  async getFavorite(
-    userId: number
-  ): Promise<ServiceResult<{ favorites: FavoriteItem[] }>> {
-    const user = await this.userRepo.findById(userId);
-    if (!user) return { success: true, favorites: [] };
-
-    const rows = await this.favRepo.findAllByUser(userId);
-    const favorites = rows
-      .filter((fav) => fav.team != null)
-      .map((fav) => {
-        const team = fav.team!;
-        return {
-          id: team.id,
-          name: team.name,
-          emblem: team.image_path,
-          leagueId: team.competitions?.[0]?.competition?.id || null,
-          leagueName:
-            team.competitions?.[0]?.competition?.name || 'Compétition inconnue',
-        };
-      });
-    return { success: true, favorites };
-  }
-
-  /**
-   * Adds a league to a user's favorites.
-   * @param userId - The ID of the user
-   * @param leagueId - The ID of the league to add
-   * @returns A ServiceResult with a success message or an error message
-   */
-  async addLeagueFavorite(
-    userId: number,
-    leagueId: number
-  ): Promise<ServiceResult<{ message: string }>> {
-    const user = await this.userRepo.findById(userId);
-    if (!user)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable.',
-      };
-
-    const league = await this.leagueRepo.findLeague(leagueId);
-    if (!league)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Compétition introuvable.',
-      };
-
-    const existing = await this.favRepo.findLeague(userId, leagueId);
-    if (existing)
-      return {
-        success: true,
-        message: 'La compétition est déjà dans les favoris.',
-      };
-
-    await this.favRepo.createLeague(userId, leagueId);
-    return { success: true, message: 'La compétition à bien été ajouté.' };
-  }
-
-  /**
-   * Removes a league from a user's favorites.
-   * @param userId - The ID of the user
-   * @param leagueId - The ID of the league to remove
-   * @returns A ServiceResult with a success message or an error message
-   */
-  async removeLeagueFavorite(
-    userId: number,
-    leagueId: number
-  ): Promise<ServiceResult<{ message: string }>> {
-    const existing = await this.favRepo.findLeague(userId, leagueId);
-    if (!existing)
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: "Cette compétition n'existe pas dans les favoris.",
-      };
-
-    await this.favRepo.deleteLeague(userId, leagueId);
-    return {
-      success: true,
-      message: 'La compétition à bien été supprimé de vos favoris.',
+  ) {
+    this.kinds = {
+      team: {
+        targetExists: async (id) => !!(await this.teamRepo.findById(id)),
+        list: async (userId) =>
+          (await this.favRepo.findTeamsByUser(userId))
+            .filter((fav) => fav.team != null)
+            .map((fav) => {
+              const team = fav.team!;
+              return {
+                id: team.id,
+                name: team.name,
+                emblem: team.image_path,
+                leagueId: team.competitions?.[0]?.competition?.id || null,
+                leagueName:
+                  team.competitions?.[0]?.competition?.name ||
+                  'Compétition inconnue',
+              };
+            }),
+        messages: {
+          targetNotFound: 'Equipe introuvable.',
+          alreadyAdded: 'Equipe déjà dans les favoris.',
+          added: 'Favori ajouté.',
+          notInFavorites: "Ce favoris n'existe pas.",
+          removed: 'Favoris supprimé.',
+        },
+      },
+      competition: {
+        targetExists: async (id) => !!(await this.leagueRepo.findLeague(id)),
+        list: async (userId) =>
+          (await this.favRepo.findCompetitionsByUser(userId))
+            .filter((fav) => fav.competition != null)
+            .map((fav) => {
+              const league = fav.competition!;
+              return {
+                id: league.id,
+                name: league.name,
+                emblem: league.image_path,
+              };
+            }),
+        messages: {
+          targetNotFound: 'Compétition introuvable.',
+          alreadyAdded: 'La compétition est déjà dans les favoris.',
+          added: 'La compétition à bien été ajouté.',
+          notInFavorites: "Cette compétition n'existe pas dans les favoris.",
+          removed: 'La compétition à bien été supprimé de vos favoris.',
+        },
+      },
     };
   }
 
   /**
-   * Retrieves all favorite leagues for a given user.
+   * Adds a team or a competition to a user's favorites.
+   * Adding a favorite that is already there is not an error: the result says
+   * so through `created: false`, so that the caller can tell it apart from a
+   * real creation.
    * @param userId - The ID of the user
-   * @returns A ServiceResult containing the LeagueFavoriteItem list, empty if the user does not exist
+   * @param kind - The kind of favorite
+   * @param targetId - The ID of the team or competition to add
+   * @returns A ServiceResult with `created` and a message, or NOT_FOUND (user
+   * or target unknown)
    */
-  async getLeagueFavorite(
-    userId: number
-  ): Promise<ServiceResult<{ favorites: LeagueFavoriteItem[] }>> {
-    const user = await this.userRepo.findById(userId);
-    if (!user) return { success: true, favorites: [] };
+  async add(
+    userId: number,
+    kind: FavoriteKind,
+    targetId: number
+  ): Promise<ServiceResult<{ created: boolean; message: string }>> {
+    const { targetExists, messages } = this.kinds[kind];
 
-    const rows = await this.favRepo.findAllByUser(userId);
-    const favorites = rows
-      .filter((fav) => fav.competition != null)
-      .map((fav) => {
-        const league = fav.competition!;
-        return {
-          id: league.id,
-          name: league.name,
-          emblem: league.image_path,
-        };
-      });
+    const user = await this.userRepo.findById(userId);
+    if (!user)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable.',
+      };
+
+    if (!(await targetExists(targetId)))
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: messages.targetNotFound,
+      };
+
+    const existing = await this.favRepo.find(userId, kind, targetId);
+    if (existing)
+      return { success: true, created: false, message: messages.alreadyAdded };
+
+    await this.favRepo.create(userId, kind, targetId);
+    return { success: true, created: true, message: messages.added };
+  }
+
+  /**
+   * Removes a team or a competition from a user's favorites.
+   * @param userId - The ID of the user
+   * @param kind - The kind of favorite
+   * @param targetId - The ID of the team or competition to remove
+   * @returns A ServiceResult with a message, or NOT_FOUND (not in favorites)
+   */
+  async remove(
+    userId: number,
+    kind: FavoriteKind,
+    targetId: number
+  ): Promise<ServiceResult<{ message: string }>> {
+    const { messages } = this.kinds[kind];
+
+    const existing = await this.favRepo.find(userId, kind, targetId);
+    if (!existing)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: messages.notInFavorites,
+      };
+
+    await this.favRepo.delete(userId, kind, targetId);
+    return { success: true, message: messages.removed };
+  }
+
+  /**
+   * Lists a user's favorites of one kind. Only that kind is loaded.
+   * @param userId - The ID of the user
+   * @param kind - The kind of favorite
+   * @returns A ServiceResult with the favorites (possibly empty), or NOT_FOUND
+   * if the user does not exist
+   */
+  async list<K extends FavoriteKind>(
+    userId: number,
+    kind: K
+  ): Promise<ServiceResult<{ favorites: FavoriteItemByKind[K][] }>> {
+    const user = await this.userRepo.findById(userId);
+    if (!user)
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable.',
+      };
+
+    const favorites = await this.kinds[kind].list(userId);
     return { success: true, favorites };
   }
 }
