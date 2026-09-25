@@ -1,6 +1,7 @@
 import { ILeagueApiRepository } from '../repositories/leagueApi.repository';
 import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
 import type { ServiceResult, ApiSeason, ApiLeague, League } from '../types/api';
+import { MESSAGES } from '../constants/messages';
 
 export interface ILeagueService {
   getAllLeague(): Promise<ServiceResult<{ leagues: League[] }>>;
@@ -60,7 +61,7 @@ export class LeagueService implements ILeagueService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Compétition introuvable.',
+        message: MESSAGES.league.notFound,
       };
     return { success: true, league };
   }

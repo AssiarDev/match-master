@@ -4,6 +4,7 @@ import type {
   Request,
   Response,
 } from 'express';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Answers every request that matched no route, in the same `{ error }` format
@@ -11,7 +12,7 @@ import type {
  * Must be registered after all the routes.
  */
 export const notFoundHandler = (req: Request, res: Response): void => {
-  res.status(404).json({ error: 'Route introuvable.' });
+  res.status(404).json({ error: MESSAGES.common.routeNotFound });
 };
 
 /**
@@ -38,10 +39,10 @@ export const errorHandler: ErrorRequestHandler = (
 
   const status = err.status ?? err.statusCode;
   if (typeof status === 'number' && status >= 400 && status < 500) {
-    res.status(status).json({ error: 'Requête invalide.' });
+    res.status(status).json({ error: MESSAGES.common.invalidRequest });
     return;
   }
 
   console.error(`[${req.method} ${req.originalUrl}]`, err);
-  res.status(500).json({ error: 'Erreur serveur' });
+  res.status(500).json({ error: MESSAGES.common.serverError });
 };

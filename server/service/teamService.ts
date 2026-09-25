@@ -9,6 +9,7 @@ import type {
   TeamDetails,
   TeamSummary,
 } from '../types/api';
+import { MESSAGES } from '../constants/messages';
 
 export interface ITeamService {
   allTeams(): Promise<ServiceResult<{ teams: TeamSummary[] }>>;
@@ -55,7 +56,7 @@ export class TeamService implements ITeamService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: "Equipe introuvable via l'id.",
+        message: MESSAGES.team.notFound,
       };
     return { success: true, team };
   }
@@ -85,7 +86,7 @@ export class TeamService implements ITeamService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Equipe introuvable via la ligue.',
+        message: MESSAGES.league.notFound,
       };
     return { success: true, teams: league.teams };
   }
@@ -108,7 +109,7 @@ export class TeamService implements ITeamService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'No active season found',
+        message: MESSAGES.league.noCurrentSeason,
       };
     const teamsData = await this.seasonRepo.fetchSeasonsTeams(activeSeason.id);
     const result = {

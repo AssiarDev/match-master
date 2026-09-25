@@ -5,6 +5,7 @@ import {
   type FavoriteKind,
 } from '../repositories/userFavorites.repository';
 import type { ServiceResult } from '../types/api';
+import { MESSAGES } from '../constants/messages';
 import { ILeagueDBRepository } from '../repositories/leagueDB.repository';
 
 export interface FavoriteItem {
@@ -85,11 +86,8 @@ export class FavoriteService implements IFavoriteService {
               };
             }),
         messages: {
-          targetNotFound: 'Equipe introuvable.',
-          alreadyAdded: 'Equipe déjà dans les favoris.',
-          added: 'Favori ajouté.',
-          notInFavorites: "Ce favoris n'existe pas.",
-          removed: 'Favoris supprimé.',
+          targetNotFound: MESSAGES.team.notFound,
+          ...MESSAGES.favorites.team,
         },
       },
       competition: {
@@ -106,11 +104,8 @@ export class FavoriteService implements IFavoriteService {
               };
             }),
         messages: {
-          targetNotFound: 'Compétition introuvable.',
-          alreadyAdded: 'La compétition est déjà dans les favoris.',
-          added: 'La compétition à bien été ajouté.',
-          notInFavorites: "Cette compétition n'existe pas dans les favoris.",
-          removed: 'La compétition à bien été supprimé de vos favoris.',
+          targetNotFound: MESSAGES.league.notFound,
+          ...MESSAGES.favorites.competition,
         },
       },
     };
@@ -139,7 +134,7 @@ export class FavoriteService implements IFavoriteService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable.',
+        message: MESSAGES.user.notFound,
       };
 
     if (!(await targetExists(targetId)))
@@ -199,7 +194,7 @@ export class FavoriteService implements IFavoriteService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable.',
+        message: MESSAGES.user.notFound,
       };
 
     const favorites = await this.kinds[kind].list(userId);

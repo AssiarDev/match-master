@@ -22,7 +22,7 @@ describe('validatePassword', () => {
   it('Retourne une erreur si le mot de passe ne contient pas de caractère spécial', () => {
     const result = validatePassword('Psgenforce1234');
 
-    expect(result).toEqual('Minimum un caractère spéciale requis');
+    expect(result).toEqual('Minimum un caractère spécial requis');
   });
 
   it('Le mot de passe est valide', () => {

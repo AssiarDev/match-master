@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { isBlacklisted } from '../lib/tokenBlacklist';
 import { verifyToken } from '../lib/session';
+import { MESSAGES } from '../constants/messages';
 
 export const loginCheck = (
   req: Request,
@@ -12,12 +13,12 @@ export const loginCheck = (
   if (!token) {
     res
       .status(401)
-      .json({ redirect: '/login', message: 'Accès refusé. Token absent.' });
+      .json({ redirect: '/login', message: MESSAGES.auth.tokenMissing });
     return;
   }
 
   if (isBlacklisted(token)) {
-    res.status(401).json({ error: 'Token invalide' });
+    res.status(401).json({ error: MESSAGES.auth.tokenRevoked });
     return;
   }
 
@@ -25,7 +26,7 @@ export const loginCheck = (
     req.user = verifyToken(token);
     next();
   } catch (error) {
-    res.status(403).json({ message: 'Token invalide ou expiré.' });
+    res.status(403).json({ message: MESSAGES.auth.tokenInvalid });
     return;
   }
 };

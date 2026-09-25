@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Rejects the request with a 403 unless the authenticated user is the one
@@ -11,7 +12,7 @@ export const requireSelf =
   (param: string) =>
   (req: Request, res: Response, next: NextFunction): void => {
     if (req.user?.id !== Number(req.params[param])) {
-      res.status(403).json({ error: 'Action non autorisée' });
+      res.status(403).json({ error: MESSAGES.common.forbidden });
       return;
     }
     next();

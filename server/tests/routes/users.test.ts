@@ -363,7 +363,7 @@ describe('Users routes', () => {
       });
 
       expect(response.status).toBe(409);
-      expect(response.body).toEqual({ error: 'Email déja utilisé.' });
+      expect(response.body).toEqual({ error: 'Email déjà utilisé.' });
     });
 
     it('POST /login répond pareil pour un email inconnu et un mauvais mot de passe', async () => {

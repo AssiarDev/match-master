@@ -51,7 +51,7 @@ describe('Teams routes', () => {
       const response = await request(app).get('/teams/999');
 
       expect(response.status).toBe(404);
-      expect(response.body).toEqual({ error: "Equipe introuvable via l'id." });
+      expect(response.body).toEqual({ error: 'Équipe introuvable.' });
     });
 
     it.each(['abc', '12abc', '0'])(

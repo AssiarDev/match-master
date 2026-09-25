@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { matchesService } from '../lib/container';
 import { liveMatchesBroadcaster } from '../lib/container';
 import { sendServiceError } from '../utils/sendServiceError';
+import { MESSAGES } from '../constants/messages';
 
 export const matchByDate = async (
   req: Request,
@@ -9,7 +10,7 @@ export const matchByDate = async (
 ): Promise<void> => {
   const date = req.query.date as string | undefined;
   if (!date) {
-    res.status(400).json({ error: 'La date est obligatoire' });
+    res.status(400).json({ error: MESSAGES.matches.dateRequired });
     return;
   }
   const result = await matchesService.getMatchesByDate(date);

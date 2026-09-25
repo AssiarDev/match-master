@@ -3,24 +3,25 @@ import { userService } from '../lib/container';
 import { addToBlacklist } from '../lib/tokenBlacklist';
 import { endSession, startSession, verifyToken } from '../lib/session';
 import { sendServiceError } from '../utils/sendServiceError';
+import { MESSAGES } from '../constants/messages';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, mail, password, confirmPassword } = req.body;
 
   if (!username || !mail || !password || !confirmPassword) {
-    res.status(400).json({ error: 'Tous les champs sont obligatoires' });
+    res.status(400).json({ error: MESSAGES.common.missingFields });
     return;
   }
 
   if (password !== confirmPassword) {
-    res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
+    res.status(400).json({ error: MESSAGES.user.passwordsMismatch });
     return;
   }
 
   const result = await userService.register(username, mail, password);
   if (!result.success) return sendServiceError(res, result);
 
-  res.status(201).json({ message: 'Inscription réussie.' });
+  res.status(201).json({ message: MESSAGES.auth.registered });
 };
 
 /**
@@ -33,12 +34,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { mail, password } = req.body;
   if (!mail || !password) {
-    res.status(400).json({ error: 'Tous les champs sont obligatoires' });
+    res.status(400).json({ error: MESSAGES.common.missingFields });
     return;
   }
   const result = await userService.login(mail, password);
   if (!result.success) {
-    res.status(401).json({ error: 'Identifiant ou mot de passe incorrect.' });
+    res.status(401).json({ error: MESSAGES.auth.invalidCredentials });
     return;
   }
 
@@ -47,7 +48,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     username: result.username,
     createdAt: result.createdAt,
   });
-  res.status(200).json({ message: 'Connexion reussie' });
+  res.status(200).json({ message: MESSAGES.auth.loggedIn });
 };
 
 /**
@@ -66,7 +67,7 @@ export const logout = (req: Request, res: Response): void => {
   }
 
   endSession(res);
-  res.status(200).json({ message: 'Déconnexion réussie' });
+  res.status(200).json({ message: MESSAGES.auth.loggedOut });
 };
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
@@ -93,12 +94,12 @@ export const updateUser = async (
   const { username, confirmPassword, newPassword, currentPassword } = req.body;
 
   if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
-    res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
+    res.status(400).json({ error: MESSAGES.user.passwordsMismatch });
     return;
   }
 
   if (!username && !newPassword) {
-    res.status(400).json({ error: 'Aucun champ à mettre à jour' });
+    res.status(400).json({ error: MESSAGES.user.nothingToUpdate });
     return;
   }
 
@@ -122,9 +123,10 @@ export const userProfile = async (
   res: Response
 ): Promise<void> => {
   if (!req.user) {
-    res
-      .status(401)
-      .json({ isAuthenticated: false, message: 'Non authentifié' });
+    res.status(401).json({
+      isAuthenticated: false,
+      message: MESSAGES.auth.notAuthenticated,
+    });
     return;
   }
   const result = await userService.getUserById(req.user.id);

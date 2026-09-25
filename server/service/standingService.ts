@@ -2,6 +2,7 @@ import { IStandingRepository } from '../repositories/standings.repository';
 import { ITeamService } from './teamService';
 import { ILeagueService } from './leagueService';
 import { mapDetails } from '../utils/mapDetails';
+import { MESSAGES } from '../constants/messages';
 import type {
   ApiStanding,
   EnrichedStanding,
@@ -39,7 +40,7 @@ export class StandingService implements IStandingService {
       return {
         success: false,
         reason: 'NOT_FOUND',
-        message: 'No current season for this league',
+        message: MESSAGES.league.noCurrentSeason,
       };
 
     const seasonStandingResult = await this.standingRepo.fetchStandingBySeason(

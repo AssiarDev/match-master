@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Largest value of a PostgreSQL INTEGER column: a bigger id would make the
@@ -29,7 +30,7 @@ export const validateIdParams =
       return !/^\d+$/.test(raw) || !isValidId(Number(raw));
     });
     if (invalid) {
-      res.status(400).json({ error: 'Identifiant invalide.' });
+      res.status(400).json({ error: MESSAGES.common.invalidId });
       return;
     }
     next();
@@ -49,7 +50,7 @@ export const validateIdBody =
       return typeof value !== 'number' || !isValidId(value);
     });
     if (invalid) {
-      res.status(400).json({ error: 'Identifiant invalide.' });
+      res.status(400).json({ error: MESSAGES.common.invalidId });
       return;
     }
     next();
