@@ -93,6 +93,18 @@
 
 
 - - -
+## [0.3.0](https://github.com/AssiarDev/match-master/compare/3e263aaca69541406e9e259fef74e65f9621f7ac..0.3.0) - 2026-09-25
+#### Features
+- **(import)** schedule the weekly data import with GitHub Actions (#34) - ([ad301c6](https://github.com/AssiarDev/match-master/commit/ad301c69880d3399792dd8c23884a17f8015acac)) - Assiar
+#### Refactoring
+- **(api)** route SportMonks calls through a single HTTP client (#30) - ([ce263b8](https://github.com/AssiarDev/match-master/commit/ce263b8d3ef5ffb113d1cd72ad1b755c946eaf16)) - Assiar
+- **(cleanup)** centralize client messages, add a leveled logger and remove dead code (#33) - ([98f72fe](https://github.com/AssiarDev/match-master/commit/98f72fed88ba3fedba49908d1b3040d2ba7c4e25)) - Assiar
+- **(config)** centralize env validation (#28) - ([3e263aa](https://github.com/AssiarDev/match-master/commit/3e263aaca69541406e9e259fef74e65f9621f7ac)) - Assiar
+- **(favorites)** parameterize favorites by kind instead of duplicating (#31) - ([f488ffc](https://github.com/AssiarDev/match-master/commit/f488ffc42f4635bea72b4f0f1df8ad253c9adbb0)) - Assiar
+- **(import)** make import scripts replayable and runnable from one entry point (#32) - ([f256ff2](https://github.com/AssiarDev/match-master/commit/f256ff2e117b369f9335b0da9b4f4b50fc2fc34b)) - Assiar
+
+- - -
+
 ## [0.2.14](https://github.com/AssiarDev/match-master/compare/5ec0a0812613460f9a180dbe28bd457ac6557807..0.2.14) - 2026-09-19
 #### Bug Fixes
 - **(api)** return consistent HTTP status codes and validate input ids (#27) - ([dc7d05f](https://github.com/AssiarDev/match-master/commit/dc7d05ffe572d4c8afaaabf850e7692fb1cc860c)) - Assiar
