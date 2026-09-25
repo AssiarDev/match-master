@@ -12,24 +12,20 @@ import { favorites } from './routes/favorites';
 import { serve, setup } from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { env } from './config';
 
 export const app = express();
 
-const siteName = process.env.NETLIFY_SITE_NAME;
+const siteName = env.netlifySiteName;
 const previewRegex = siteName
   ? new RegExp(`^https:\\/\\/deploy-preview-\\d+--${siteName}\\.netlify\\.app$`)
   : null;
 
-const allowedOrigins = [
-  process.env.URL_SERVER_CLIENT,
-  process.env.URL_SERVER_CLIENT_DEV,
-  process.env.URL_PROD_CLIENT,
-  process.env.URL_SWAGGER_CLIENT,
-].filter((o): o is string => !!o);
+const allowedOrigins = env.allowedOrigins;
 
 app.set('trust proxy', 1);
 
-if (process.env.NODE_ENV === 'development') {
+if (env.nodeEnv === 'development') {
   app.use('/api-docs', serve, setup(swaggerSpec));
 }
 

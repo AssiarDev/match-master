@@ -1,12 +1,8 @@
 import { app } from './app';
 import { liveMatchesBroadcaster } from './lib/container';
+import { env } from './config';
 
-const requiredEnv = ['PORT', 'SECRET_KEY', 'URL_API', 'API_TOKEN'] as const;
-for (const key of requiredEnv) {
-  if (!process.env[key]) throw new Error(`Missing required env var: ${key}`);
-}
-
-const port = process.env.PORT;
+const port = env.port;
 
 const server = app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

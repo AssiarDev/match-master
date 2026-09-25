@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express';
 import { userService } from '../lib/container';
-import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { addToBlacklist } from '../lib/tokenBlacklist';
-import { validatePassword } from '../utils/validatePassword';
+import { endSession, startSession, verifyToken } from '../lib/session';
 import { sendServiceError } from '../utils/sendServiceError';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -15,12 +14,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
   if (password !== confirmPassword) {
     res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
-    return;
-  }
-
-  const validPassword = validatePassword(password);
-  if (validPassword) {
-    res.status(400).json({ error: validPassword });
     return;
   }
 
@@ -49,21 +42,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const token = jwt.sign(
-    {
-      id: result.id,
-      username: result.username,
-      createdAt: result.createdAt,
-    },
-    process.env.SECRET_KEY!,
-    { expiresIn: '1h' }
-  );
-
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    maxAge: 3600000,
+  startSession(res, {
+    id: result.id,
+    username: result.username,
+    createdAt: result.createdAt,
   });
   res.status(200).json({ message: 'Connexion reussie' });
 };
@@ -78,20 +60,12 @@ export const logout = (req: Request, res: Response): void => {
   const token = req.cookies.token;
   if (token) {
     try {
-      const { exp } = jwt.verify(
-        token,
-        process.env.SECRET_KEY as string
-      ) as JwtPayload;
+      const { exp } = verifyToken(token);
       if (exp) addToBlacklist(token, exp);
     } catch {}
   }
 
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    path: '/',
-  });
+  endSession(res);
   res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
@@ -106,10 +80,6 @@ export const deleteUser = async (
   res: Response
 ): Promise<void> => {
   const id = Number(req.params.id);
-  if (req.user!.id !== id) {
-    res.status(403).json({ error: 'Action non autorisée' });
-    return;
-  }
   const result = await userService.deleteUser(id);
   if (!result.success) return sendServiceError(res, result);
   res.json({ message: result.message });
@@ -120,28 +90,11 @@ export const updateUser = async (
   res: Response
 ): Promise<void> => {
   const id = Number(req.params.id);
-  if (req.user!.id !== id) {
-    res.status(403).json({ error: 'Action non autorisée' });
-    return;
-  }
   const { username, confirmPassword, newPassword, currentPassword } = req.body;
 
-  if (newPassword || confirmPassword) {
-    if (!currentPassword) {
-      res.status(400).json({ error: 'Le mot de passe actuel est requis.' });
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
-      return;
-    }
-
-    const validPassword = validatePassword(newPassword);
-    if (validPassword) {
-      res.status(400).json({ error: validPassword });
-      return;
-    }
+  if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
+    res.status(400).json({ error: 'Les mots de passe ne correspondent pas' });
+    return;
   }
 
   if (!username && !newPassword) {
@@ -156,23 +109,11 @@ export const updateUser = async (
   });
   if (!result.success) return sendServiceError(res, result);
 
-  const newToken = jwt.sign(
-    {
-      id: result.user.id,
-      username: result.user.username,
-      createdAt: result.user.createdAt.toLocaleDateString('FR-fr'),
-    },
-    process.env.SECRET_KEY as string,
-    { expiresIn: '1h' }
-  );
-
-  res.cookie('token', newToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    maxAge: 3600000,
+  startSession(res, {
+    id: result.user.id,
+    username: result.user.username,
+    createdAt: result.user.createdAt.toLocaleDateString('FR-fr'),
   });
-
   res.json(result.user);
 };
 

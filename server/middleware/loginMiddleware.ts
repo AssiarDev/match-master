@@ -1,7 +1,6 @@
-import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
-import type { UserPayload } from '../types/express';
 import { isBlacklisted } from '../lib/tokenBlacklist';
+import { verifyToken } from '../lib/session';
 
 export const loginCheck = (
   req: Request,
@@ -23,11 +22,7 @@ export const loginCheck = (
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.SECRET_KEY as string
-    ) as UserPayload;
-    req.user = decoded;
+    req.user = verifyToken(token);
     next();
   } catch (error) {
     res.status(403).json({ message: 'Token invalide ou expiré.' });

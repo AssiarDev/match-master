@@ -3,6 +3,7 @@ import type { User } from '@prisma/client';
 import { IUserRepository } from '../repositories/user.repository';
 import type { UserPayload } from '../types/express';
 import type { SafeUser, ServiceResult } from '../types/api';
+import { validatePassword } from '../utils/validatePassword';
 
 type RegisterSuccess = { user: User };
 type UpdateSuccess = { user: SafeUser };
@@ -18,7 +19,7 @@ export interface IUserService {
   getAllUsers(): Promise<ServiceResult<{ users: SafeUser[] }>>;
   updateUser(
     id: number,
-    data: { username: string; password: string }
+    data: { username?: string; password?: string; currentPassword?: string }
   ): Promise<ServiceResult<UpdateSuccess>>;
   deleteUser(id: number): Promise<ServiceResult<{ message: string }>>;
 }
@@ -27,17 +28,27 @@ export class UserService implements IUserService {
   constructor(private readonly userRepo: IUserRepository) {}
 
   /**
-   * Registers a new user after checking email availability and hashing the password.
+   * Registers a new user after checking the password strength and email
+   * availability, then hashing the password.
    * @param username - The desired username
    * @param email - The user's email address
    * @param password - The user's plain text password
-   * @returns A ServiceResult containing the created user, or CONFLICT if the email is taken
+   * @returns A ServiceResult containing the created user, or INVALID_INPUT
+   * (password too weak), CONFLICT (email taken)
    */
   async register(
     username: string,
     email: string,
     password: string
   ): Promise<ServiceResult<RegisterSuccess>> {
+    const passwordError = validatePassword(password);
+    if (passwordError)
+      return {
+        success: false,
+        reason: 'INVALID_INPUT',
+        message: passwordError,
+      };
+
     const existing = await this.userRepo.findByEmail(email);
     if (existing)
       return {
@@ -121,11 +132,13 @@ export class UserService implements IUserService {
 
   /**
    * Updates a user's username and/or password.
-   * Requires the current password to be provided when changing the password.
+   * Changing the password requires the current password and a new password
+   * strong enough.
    * @param id - The ID of the user to update
    * @param data - The fields to update (username, password, currentPassword)
    * @returns A ServiceResult containing the updated user, or NOT_FOUND,
-   * INVALID_INPUT (current password missing), INVALID_CREDENTIALS (current password wrong)
+   * INVALID_INPUT (current password missing, new password too weak),
+   * INVALID_CREDENTIALS (current password wrong)
    */
   async updateUser(
     id: number,
@@ -150,6 +163,13 @@ export class UserService implements IUserService {
           message: 'Mot de passe actuel requis',
         };
       }
+      const passwordError = validatePassword(data.password);
+      if (passwordError)
+        return {
+          success: false,
+          reason: 'INVALID_INPUT',
+          message: passwordError,
+        };
       const isValid = await argon2.verify(user.password, data.currentPassword);
       if (!isValid) {
         return {

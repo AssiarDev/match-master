@@ -10,6 +10,7 @@ export default async function globalSetup() {
   const databaseUrl = container.getConnectionUri();
 
   process.env.DATABASE_URL = databaseUrl;
+  process.env.PORT = '3000';
   process.env.SECRET_KEY = 'test-secret-key';
   process.env.URL_API = 'http://test-api.example.com';
   process.env.API_TOKEN = 'test-token';
