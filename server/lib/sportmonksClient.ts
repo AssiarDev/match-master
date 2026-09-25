@@ -1,4 +1,7 @@
 import { env } from '../config';
+import { createLogger } from './logger';
+
+const log = createLogger('SportMonks');
 
 /**
  * Failure of a call to the SportMonks API: an error status from the API, a
@@ -47,13 +50,13 @@ export const sportmonksGet = async <T>(path: string): Promise<T> => {
     });
   } catch (cause) {
     const error = new SportmonksError(path, undefined, { cause });
-    console.error(error.message);
+    log.error(error.message, cause);
     throw error;
   }
 
   if (!response.ok) {
     const error = new SportmonksError(path, response.status);
-    console.error(error.message);
+    log.error(error.message);
     throw error;
   }
 

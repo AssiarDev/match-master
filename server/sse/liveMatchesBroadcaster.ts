@@ -1,5 +1,8 @@
 import { IMatchesService } from '../service/matchesService';
 import { Request, Response } from 'express';
+import { createLogger } from '../lib/logger';
+
+const log = createLogger('SSE');
 
 /**
  * Manages Server-Sent Events connections and broadcasts live match data.
@@ -81,12 +84,12 @@ export class LiveMatchesBroadcaster {
     try {
       result = await this.matchesService.getLiveMatches();
     } catch (error) {
-      console.error('[SSE] Diffusion annulée :', (error as Error).message);
+      log.error('Diffusion annulée', (error as Error).message);
       return;
     }
 
     if (result.success === false) {
-      console.error('[SSE] Diffusion annulée :', result.message);
+      log.error('Diffusion annulée', result.message);
       return;
     }
 

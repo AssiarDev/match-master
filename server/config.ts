@@ -20,6 +20,25 @@ const required = (name: string): string => {
   return value;
 };
 
+/** The log levels, from the most to the least verbose. */
+export const LOG_LEVELS = ['debug', 'info', 'warn', 'error', 'silent'] as const;
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
+/**
+ * Reads the optional LOG_LEVEL variable. Throws at startup on an unknown
+ * value, so that a typo does not silently change what is logged.
+ * @returns The configured level, 'info' when the variable is not set
+ */
+const logLevel = (): LogLevel => {
+  const value = process.env.LOG_LEVEL;
+  if (!value) return 'info';
+  if (!(LOG_LEVELS as readonly string[]).includes(value))
+    throw new Error(
+      `Invalid LOG_LEVEL: ${value} (expected one of ${LOG_LEVELS.join(', ')})`
+    );
+  return value as LogLevel;
+};
+
 /**
  * Every environment variable read by the application, declared and checked
  * here only. The required ones are validated when this module is loaded;
@@ -32,6 +51,7 @@ export const env = {
   urlApi: required('URL_API'),
   apiToken: required('API_TOKEN'),
   netlifySiteName: process.env.NETLIFY_SITE_NAME,
+  logLevel: logLevel(),
   allowedOrigins: [
     process.env.URL_SERVER_CLIENT,
     process.env.URL_SERVER_CLIENT_DEV,

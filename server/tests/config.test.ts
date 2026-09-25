@@ -63,4 +63,28 @@ describe('config', () => {
       'https://client-prod.test',
     ]);
   });
+
+  describe('LOG_LEVEL', () => {
+    it("defaults to 'info' when the variable is not set", async () => {
+      delete process.env.LOG_LEVEL;
+
+      const { env } = await loadConfig();
+
+      expect(env.logLevel).toBe('info');
+    });
+
+    it('uses a valid level', async () => {
+      process.env.LOG_LEVEL = 'warn';
+
+      const { env } = await loadConfig();
+
+      expect(env.logLevel).toBe('warn');
+    });
+
+    it('refuses to load with an unknown level, naming it', async () => {
+      process.env.LOG_LEVEL = 'verbose';
+
+      await expect(loadConfig()).rejects.toThrow('Invalid LOG_LEVEL: verbose');
+    });
+  });
 });

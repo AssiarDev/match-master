@@ -5,6 +5,9 @@ import type {
   Response,
 } from 'express';
 import { MESSAGES } from '../constants/messages';
+import { createLogger } from '../lib/logger';
+
+const log = createLogger('HTTP');
 
 /**
  * Answers every request that matched no route, in the same `{ error }` format
@@ -43,6 +46,6 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  console.error(`[${req.method} ${req.originalUrl}]`, err);
+  log.error(`${req.method} ${req.originalUrl}`, err);
   res.status(500).json({ error: MESSAGES.common.serverError });
 };

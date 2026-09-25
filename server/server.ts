@@ -1,11 +1,13 @@
 import { app } from './app';
 import { liveMatchesBroadcaster } from './lib/container';
 import { env } from './config';
+import { createLogger } from './lib/logger';
 
+const log = createLogger('Server');
 const port = env.port;
 
 const server = app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  log.info(`Server running on http://localhost:${port}`);
 });
 
 /**
@@ -17,7 +19,7 @@ const server = app.listen(port, () => {
  * @param signal - The name of the received signal, for the log
  */
 const shutdown = (signal: string) => {
-  console.log(`${signal} reçu, arrêt du serveur`);
+  log.info(`${signal} reçu, arrêt du serveur`);
   liveMatchesBroadcaster.closeAll();
   server.close(() => process.exit(0));
 };
