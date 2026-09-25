@@ -33,10 +33,8 @@ describe('FavoriteService', () => {
       find: jest.fn(),
       create: jest.fn(),
       delete: jest.fn(),
-      findAllByUser: jest.fn(),
-      findLeague: jest.fn(),
-      createLeague: jest.fn(),
-      deleteLeague: jest.fn(),
+      findTeamsByUser: jest.fn(),
+      findCompetitionsByUser: jest.fn(),
     };
 
     leagueRepoMock = {
@@ -52,12 +50,11 @@ describe('FavoriteService', () => {
     );
   });
 
-  /**Add Favorite */
-  describe('addFavorite', () => {
-    it("retourne une erreur si l'utilisateur n'existe pas", async () => {
+  describe('add', () => {
+    it('returns NOT_FOUND when the user does not exist', async () => {
       userRepoMock.findById.mockResolvedValue(null);
 
-      const result = await service.addFavorite(1, 10);
+      const result = await service.add(1, 'team', 10);
 
       expect(result).toEqual({
         success: false,
@@ -66,11 +63,11 @@ describe('FavoriteService', () => {
       });
     });
 
-    it("retourne une erreur si l'équipe n'existe pas", async () => {
+    it('returns NOT_FOUND when the team does not exist', async () => {
       userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
       teamRepoMock.findById.mockResolvedValue(null);
 
-      const result = await service.addFavorite(1, 10);
+      const result = await service.add(1, 'team', 10);
 
       expect(result).toEqual({
         success: false,
@@ -79,41 +76,73 @@ describe('FavoriteService', () => {
       });
     });
 
-    it('retourne un message si le favori existe déjà', async () => {
+    it('returns NOT_FOUND when the competition does not exist', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      leagueRepoMock.findLeague.mockResolvedValue(null);
+
+      const result = await service.add(1, 'competition', 10);
+
+      expect(result).toEqual({
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Compétition introuvable.',
+      });
+      expect(teamRepoMock.findById).not.toHaveBeenCalled();
+    });
+
+    it('returns created: false without creating when the favorite already exists', async () => {
       userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
       teamRepoMock.findById.mockResolvedValue({ id: 10 } as any);
       favRepoMock.find.mockResolvedValue({ id: 99 } as any);
 
-      const result = await service.addFavorite(1, 10);
+      const result = await service.add(1, 'team', 10);
 
+      expect(favRepoMock.create).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: true,
+        created: false,
         message: 'Equipe déjà dans les favoris.',
       });
     });
 
-    it('ajoute un favori si tout est valide', async () => {
+    it('creates a team favorite and returns created: true', async () => {
       userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
       teamRepoMock.findById.mockResolvedValue({ id: 10 } as any);
       favRepoMock.find.mockResolvedValue(null);
 
-      const result = await service.addFavorite(1, 10);
+      const result = await service.add(1, 'team', 10);
 
-      expect(favRepoMock.create).toHaveBeenCalledWith(1, 10);
+      expect(favRepoMock.create).toHaveBeenCalledWith(1, 'team', 10);
       expect(result).toEqual({
         success: true,
+        created: true,
         message: 'Favori ajouté.',
+      });
+    });
+
+    it('creates a competition favorite and returns created: true', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      leagueRepoMock.findLeague.mockResolvedValue({ id: 10 } as any);
+      favRepoMock.find.mockResolvedValue(null);
+
+      const result = await service.add(1, 'competition', 10);
+
+      expect(favRepoMock.create).toHaveBeenCalledWith(1, 'competition', 10);
+      expect(result).toEqual({
+        success: true,
+        created: true,
+        message: 'La compétition à bien été ajouté.',
       });
     });
   });
 
-  /** Remove favorite */
-  describe('removeFavorite', () => {
-    it("retourne une erreur si le favori n'existe pas", async () => {
+  describe('remove', () => {
+    it('returns NOT_FOUND when the team is not in favorites', async () => {
       favRepoMock.find.mockResolvedValue(null);
 
-      const result = await service.removeFavorite(1, 10);
+      const result = await service.remove(1, 'team', 10);
 
+      expect(favRepoMock.delete).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: false,
         reason: 'NOT_FOUND',
@@ -121,49 +150,66 @@ describe('FavoriteService', () => {
       });
     });
 
-    it('supprime un favori existant', async () => {
+    it('removes an existing team favorite', async () => {
       favRepoMock.find.mockResolvedValue({ id: 99 } as any);
 
-      const result = await service.removeFavorite(1, 10);
+      const result = await service.remove(1, 'team', 10);
 
-      expect(favRepoMock.delete).toHaveBeenCalledWith(1, 10);
+      expect(favRepoMock.delete).toHaveBeenCalledWith(1, 'team', 10);
+      expect(result).toEqual({ success: true, message: 'Favoris supprimé.' });
+    });
+
+    it('removes an existing competition favorite', async () => {
+      favRepoMock.find.mockResolvedValue({ id: 99 } as any);
+
+      const result = await service.remove(1, 'competition', 10);
+
+      expect(favRepoMock.delete).toHaveBeenCalledWith(1, 'competition', 10);
       expect(result).toEqual({
         success: true,
-        message: 'Favoris supprimé.',
+        message: 'La compétition à bien été supprimé de vos favoris.',
       });
     });
   });
 
-  /**Get favorite */
-  describe('getFavorite', () => {
-    it("retourne un tableau vide si l'utilisateur n'existe pas", async () => {
+  describe('list', () => {
+    it('returns NOT_FOUND when the user does not exist', async () => {
       userRepoMock.findById.mockResolvedValue(null);
 
-      const result = await service.getFavorite(1);
+      const result = await service.list(1, 'team');
+
+      expect(result).toEqual({
+        success: false,
+        reason: 'NOT_FOUND',
+        message: 'Utilisateur introuvable.',
+      });
+    });
+
+    it('returns an empty list when the user has no favorite', async () => {
+      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
+      favRepoMock.findTeamsByUser.mockResolvedValue([]);
+
+      const result = await service.list(1, 'team');
 
       expect(result).toEqual({ success: true, favorites: [] });
     });
 
-    it('retourne la liste des favoris formatée', async () => {
+    it('lists the formatted teams without loading competitions', async () => {
       userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
-
-      favRepoMock.findAllByUser.mockResolvedValue([
+      favRepoMock.findTeamsByUser.mockResolvedValue([
         {
           team: {
             id: 44,
             name: 'OM',
             image_path: 'om.png',
-            competitions: [
-              {
-                competition: { id: 301, name: 'Ligue 1' },
-              },
-            ],
+            competitions: [{ competition: { id: 301, name: 'Ligue 1' } }],
           },
         },
-      ] as any);
+      ]);
 
-      const result = await service.getFavorite(1);
+      const result = await service.list(1, 'team');
 
+      expect(favRepoMock.findCompetitionsByUser).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: true,
         favorites: [
@@ -177,124 +223,21 @@ describe('FavoriteService', () => {
         ],
       });
     });
-  });
 
-  /** Add League Favorite */
-  describe('addLeagueFavorite', () => {
-    it("retourne une erreur si l'utilisateur n'existe pas", async () => {
-      userRepoMock.findById.mockResolvedValue(null);
-
-      const result = await service.addLeagueFavorite(1, 10);
-
-      expect(result).toEqual({
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Utilisateur introuvable.',
-      });
-    });
-
-    it("retourne une erreur si la compétition n'existe pas", async () => {
+    it('lists the formatted competitions without loading teams', async () => {
       userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
-      leagueRepoMock.findLeague.mockResolvedValue(null);
-
-      const result = await service.addLeagueFavorite(1, 10);
-
-      expect(result).toEqual({
-        success: false,
-        reason: 'NOT_FOUND',
-        message: 'Compétition introuvable.',
-      });
-    });
-
-    it('retourne un message si la compétition est déjà en favoris', async () => {
-      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
-      leagueRepoMock.findLeague.mockResolvedValue({ id: 10 } as any);
-      favRepoMock.findLeague.mockResolvedValue({ id: 99 } as any);
-
-      const result = await service.addLeagueFavorite(1, 10);
-
-      expect(result).toEqual({
-        success: true,
-        message: 'La compétition est déjà dans les favoris.',
-      });
-    });
-
-    it('ajoute la compétition en favoris si tout est valide', async () => {
-      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
-      leagueRepoMock.findLeague.mockResolvedValue({ id: 10 } as any);
-      favRepoMock.findLeague.mockResolvedValue(null);
-
-      const result = await service.addLeagueFavorite(1, 10);
-
-      expect(favRepoMock.createLeague).toHaveBeenCalledWith(1, 10);
-      expect(result).toEqual({
-        success: true,
-        message: 'La compétition à bien été ajouté.',
-      });
-    });
-  });
-
-  /** Remove League Favorite */
-  describe('removeLeagueFavorite', () => {
-    it("retourne une erreur si la compétition n'est pas dans les favoris", async () => {
-      favRepoMock.findLeague.mockResolvedValue(null);
-
-      const result = await service.removeLeagueFavorite(1, 10);
-
-      expect(result).toEqual({
-        success: false,
-        reason: 'NOT_FOUND',
-        message: "Cette compétition n'existe pas dans les favoris.",
-      });
-    });
-
-    it('supprime la compétition des favoris si elle existe', async () => {
-      favRepoMock.findLeague.mockResolvedValue({ id: 99 } as any);
-
-      const result = await service.removeLeagueFavorite(1, 10);
-
-      expect(favRepoMock.deleteLeague).toHaveBeenCalledWith(1, 10);
-      expect(result).toEqual({
-        success: true,
-        message: 'La compétition à bien été supprimé de vos favoris.',
-      });
-    });
-  });
-
-  /** Get League Favorite */
-  describe('getLeagueFavorite', () => {
-    it("retourne un tableau vide si l'utilisateur n'existe pas", async () => {
-      userRepoMock.findById.mockResolvedValue(null);
-
-      const result = await service.getLeagueFavorite(1);
-
-      expect(result).toEqual({ success: true, favorites: [] });
-    });
-
-    it('retourne la liste des compétitions favorites formatée', async () => {
-      userRepoMock.findById.mockResolvedValue({ id: 1 } as any);
-
-      favRepoMock.findAllByUser.mockResolvedValue([
+      favRepoMock.findCompetitionsByUser.mockResolvedValue([
         {
-          competition: {
-            id: 301,
-            name: 'Ligue 1',
-            image_path: 'ligue1.png',
-          },
+          competition: { id: 301, name: 'Ligue 1', image_path: 'ligue1.png' },
         },
-      ] as any);
+      ]);
 
-      const result = await service.getLeagueFavorite(1);
+      const result = await service.list(1, 'competition');
 
+      expect(favRepoMock.findTeamsByUser).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: true,
-        favorites: [
-          {
-            id: 301,
-            name: 'Ligue 1',
-            emblem: 'ligue1.png',
-          },
-        ],
+        favorites: [{ id: 301, name: 'Ligue 1', emblem: 'ligue1.png' }],
       });
     });
   });

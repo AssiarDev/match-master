@@ -66,6 +66,33 @@ describe('Favorites routes', () => {
       expect(response.body).toMatchObject({ message: 'Favori ajouté.' });
     });
 
+    it('returns 200 without duplicating when the team is already a favorite', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.team.create({ data: { id: 1, name: 'PSG' } });
+      await prisma.userFavorite.create({
+        data: { user_id: user.id, team_id: 1 },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send({ clubId: 1 });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message: 'Equipe déjà dans les favoris.',
+      });
+      expect(
+        await prisma.userFavorite.count({ where: { user_id: user.id } })
+      ).toBe(1);
+    });
+
     it("retourne 404 si l'équipe n'existe pas", async () => {
       const user = await prisma.user.create({
         data: {
@@ -165,6 +192,54 @@ describe('Favorites routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(1);
       expect(response.body[0]).toMatchObject({ id: 1, name: 'PSG' });
+    });
+
+    it('returns only teams when the user also has favorite competitions', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.team.create({ data: { id: 1, name: 'PSG' } });
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      await prisma.userFavorite.createMany({
+        data: [
+          { user_id: user.id, team_id: 1 },
+          { user_id: user.id, competition_id: 10 },
+        ],
+      });
+
+      const teams = await request(app)
+        .get(`/protected/users/${user.id}/favorites`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+      const competitions = await request(app)
+        .get(`/protected/users/${user.id}/favorites-leagues`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(teams.body).toEqual([expect.objectContaining({ id: 1 })]);
+      expect(competitions.body).toEqual([expect.objectContaining({ id: 10 })]);
+    });
+
+    it('returns 404 when the user no longer exists', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.user.delete({ where: { id: user.id } });
+
+      const response = await request(app)
+        .get(`/protected/users/${user.id}/favorites`)
+        .set('Cookie', [`token=${makeToken(user.id)}`]);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'Utilisateur introuvable.' });
     });
 
     it("retourne 403 si l'utilisateur lit les favoris d'un autre compte", async () => {
@@ -273,6 +348,32 @@ describe('Favorites routes', () => {
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         message: 'La compétition à bien été ajouté.',
+      });
+    });
+
+    it('returns 200 when the competition is already a favorite', async () => {
+      const user = await prisma.user.create({
+        data: {
+          username: 'testuser',
+          email: 'test@test.com',
+          password: 'hashed',
+        },
+      });
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      await prisma.userFavorite.create({
+        data: { user_id: user.id, competition_id: 10 },
+      });
+
+      const response = await request(app)
+        .post('/protected/users/favorites-leagues')
+        .set('Cookie', [`token=${makeToken(user.id)}`])
+        .send({ leagueId: 10 });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message: 'La compétition est déjà dans les favoris.',
       });
     });
 
