@@ -104,6 +104,12 @@ Supprime une compétition, ses favoris et ses liens avec les équipes :
 docker-compose exec backend npx dotenv -e .env.development -- tsx scripts/delete-league.ts <leagueId>
 ```
 
+Pour qu'elle ne soit pas recréée au prochain import, ajoutez aussi son identifiant à `EXCLUDED_LEAGUE_IDS` dans `server/insert-db/insertLeagues.ts`.
+
+#### Import automatique en production
+
+En production, l'import de toutes les données tourne automatiquement **chaque lundi à 03:00 UTC**, avec le workflow GitHub Actions « Import SportMonks data » (`.github/workflows/import-db.yml`). Il peut aussi être lancé à la main depuis l'onglet _Actions_ du dépôt (« Run workflow »). Les secrets `DATABASE_URL`, `URL_API` et `API_TOKEN` sont définis dans les paramètres du dépôt.
+
 ## 🧪 Tests
 
 ```sh

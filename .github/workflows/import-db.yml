@@ -1,0 +1,54 @@
+name: Import SportMonks data
+
+# Full import (leagues, seasons, teams, links, current squads) into the
+# database targeted by the DATABASE_URL secret. Documented in Notion
+# (Documentation > Import planifié) and in ADR-17.
+on:
+  schedule:
+    # Every Monday at 03:00 UTC, after the weekend matches.
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+# Two imports never write to the database at the same time: a run triggered
+# while another one is in progress waits for it.
+concurrency:
+  group: import-db
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    # A normal run takes about 20 minutes; a stuck one is stopped.
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run the full import
+        run: npx tsx insert-db/importAll.ts
+        env:
+          NODE_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          URL_API: ${{ secrets.URL_API }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          # Required by config.ts at startup but unused by the import: dummy
+          # values, so that the real JWT secret is never given to GitHub.
+          PORT: "3000"
+          SECRET_KEY: not-used-by-the-import

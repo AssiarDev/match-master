@@ -4,6 +4,23 @@ import { resetDb } from '../setup/resetDb';
 import { parseLeagueId } from '../../scripts/delete-league';
 import { findImportedLeagues } from '../../insert-db/importHelpers';
 import { insertAllSquads } from '../../insert-db/insertAllSquads';
+import {
+  EXCLUDED_LEAGUE_IDS,
+  insertLeagues,
+} from '../../insert-db/insertLeagues';
+
+/** A league as returned by SportMonks, with only the fields the import reads. */
+const apiLeague = (id: number, name: string) => ({
+  id,
+  name,
+  country_id: null,
+  short_code: null,
+  image_path: null,
+  type: 'league',
+  sub_type: null,
+  last_played_at: null,
+  category: 1,
+});
 
 describe('import scripts', () => {
   beforeEach(async () => {
@@ -38,6 +55,26 @@ describe('import scripts', () => {
       const leagues = await findImportedLeagues();
 
       expect(leagues).toEqual([expect.objectContaining({ id: 10 })]);
+    });
+  });
+
+  describe('insertLeagues', () => {
+    it('does not import the excluded leagues', async () => {
+      jest.spyOn(console, 'log').mockImplementation(() => {});
+      const [excludedId] = EXCLUDED_LEAGUE_IDS;
+      jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            data: [apiLeague(8, 'Premier League'), apiLeague(excludedId, 'X')],
+          }),
+      } as Response);
+
+      await insertLeagues();
+
+      const ids = (await prisma.competitions.findMany()).map((c) => c.id);
+      expect(ids).toEqual([8]);
     });
   });
 
