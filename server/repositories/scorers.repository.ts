@@ -1,35 +1,14 @@
-import { urlAPI, token } from '../config';
+import { sportmonksGet } from '../lib/sportmonksClient';
 import { ApiResponse, ApiScorer } from '../types/api';
 
 export interface IScorersRepository {
-  fetchTopScorers(
-    seasonId: number
-  ): Promise<ApiResponse<ApiScorer[]> | undefined>;
+  fetchTopScorers(seasonId: number): Promise<ApiResponse<ApiScorer[]>>;
 }
 
 export class ScorersRepository implements IScorersRepository {
-  private readonly baseUrl: string;
-  private readonly token: string;
-
-  constructor() {
-    this.baseUrl = urlAPI;
-    this.token = token;
-  }
-
-  async fetchTopScorers(
-    seasonId: number
-  ): Promise<ApiResponse<ApiScorer[]> | undefined> {
-    try {
-      const url = `${this.baseUrl}/topscorers/seasons/${seasonId}?api_token=${this.token}&filters=seasonTopscorerTypes:208`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(` API Error fetchTopScorers : ${response.status}`);
-      return await response.json();
-    } catch (error: unknown) {
-      console.error(
-        'Erreur impossible de r\u00e9cup\u00e9rer les donn\u00e9es :',
-        (error as Error).message
-      );
-    }
+  fetchTopScorers(seasonId: number): Promise<ApiResponse<ApiScorer[]>> {
+    return sportmonksGet(
+      `/topscorers/seasons/${seasonId}?filters=seasonTopscorerTypes:208`
+    );
   }
 }
