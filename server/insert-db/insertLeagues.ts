@@ -1,37 +1,38 @@
 import prisma from '../lib/prisma';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
-import type { ApiResponse, ApiLeague } from '../types/api';
+import { runScript } from '../scripts/runScript';
+import type { ApiLeague } from '../types/api';
 const leagueApiRepo = new LeagueApiRepository();
 
+/**
+ * Imports or updates every league returned by SportMonks.
+ * `active` and `has_jerseys` are only set when the league is created, so that
+ * a value changed in the database is not overwritten by an update.
+ * @throws If SportMonks returns no league
+ */
 export const insertLeagues = async (): Promise<void> => {
-  try {
-    const leaguesData: ApiResponse<ApiLeague[]> =
-      await leagueApiRepo.fetchAllLeague();
-    if (!leaguesData || !Array.isArray(leaguesData.data)) {
-      console.error('No leagues found');
-      return;
-    }
-    const leagues = leaguesData.data.map((c: ApiLeague) => ({
-      id: c.id,
+  const leaguesData = await leagueApiRepo.fetchAllLeague();
+  if (!Array.isArray(leaguesData?.data) || leaguesData.data.length === 0)
+    throw new Error('SportMonks returned no league');
+
+  for (const c of leaguesData.data as ApiLeague[]) {
+    const data = {
       country_id: c.country_id,
       name: c.name,
-      active: true,
       short_code: c.short_code,
       image_path: c.image_path,
       type: c.type,
       sub_type: c.sub_type,
       last_played_at: c.last_played_at ? new Date(c.last_played_at) : null,
       category: c.category ?? 0,
-      has_jerseys: false,
-    }));
-    await prisma.competitions.createMany({
-      data: leagues,
-      skipDuplicates: true,
+    };
+    await prisma.competitions.upsert({
+      where: { id: c.id },
+      update: data,
+      create: { id: c.id, active: true, has_jerseys: false, ...data },
     });
-    console.log('Leagues successfully entered into the database');
-  } catch (e) {
-    console.error(`Error inserting leagues :`, (e as Error).message);
   }
+  console.log(`${leaguesData.data.length} leagues upserted`);
 };
 
-insertLeagues();
+runScript(import.meta.url, insertLeagues);
