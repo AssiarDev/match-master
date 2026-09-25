@@ -4,10 +4,33 @@ import { resetDb } from '../setup/resetDb';
 import { parseLeagueId } from '../../scripts/delete-league';
 import { findImportedLeagues } from '../../insert-db/importHelpers';
 import { insertAllSquads } from '../../insert-db/insertAllSquads';
+import { insertTeamsFromSeasons } from '../../insert-db/insertTeamsFromSeasons';
 import {
   EXCLUDED_LEAGUE_IDS,
   insertLeagues,
 } from '../../insert-db/insertLeagues';
+
+/**
+ * A successful SportMonks response.
+ * @param body - The parsed JSON body
+ */
+const apiResponse = (body: unknown) =>
+  ({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve(body),
+  }) as Response;
+
+/** A squad entry as returned by SportMonks, with its player included. */
+const apiSquadEntry = (id: number, playerId: number, teamId: number) => ({
+  id,
+  player_id: playerId,
+  team_id: teamId,
+  position_id: null,
+  has_values: false,
+  jersey_number: null,
+  player: { id: playerId, name: `Player ${playerId}` },
+});
 
 /** A league as returned by SportMonks, with only the fields the import reads. */
 const apiLeague = (id: number, name: string) => ({
@@ -90,6 +113,63 @@ describe('import scripts', () => {
       );
       expect(fetchSpy).not.toHaveBeenCalled();
     });
+
+    it('writes every player and squad entry of a team', async () => {
+      jest.spyOn(console, 'log').mockImplementation(() => {});
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      await prisma.team.create({ data: { id: 100, name: 'Team A' } });
+      await prisma.season.create({ data: { id: 500, is_current: true } });
+      jest
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(
+          apiResponse({ data: { seasons: [{ id: 500, is_current: true }] } })
+        )
+        .mockResolvedValueOnce(
+          apiResponse({ data: { teams: [{ id: 100, name: 'Team A' }] } })
+        )
+        .mockResolvedValueOnce(
+          apiResponse({
+            data: [apiSquadEntry(1, 1000, 100), apiSquadEntry(2, 1001, 100)],
+          })
+        );
+
+      await insertAllSquads();
+
+      const squads = await prisma.squad.findMany({ orderBy: { id: 'asc' } });
+      expect(squads).toEqual([
+        expect.objectContaining({ id: 1, player_id: 1000, season_id: 500 }),
+        expect.objectContaining({ id: 2, player_id: 1001, season_id: 500 }),
+      ]);
+      expect(await prisma.player.count()).toBe(2);
+    }, 10_000);
+  });
+
+  describe('insertTeamsFromSeasons', () => {
+    it('writes a team met in several seasons only once', async () => {
+      jest.spyOn(console, 'log').mockImplementation(() => {});
+      await prisma.competitions.create({
+        data: { id: 10, name: 'Ligue 1', type: 'league', category: 1 },
+      });
+      jest
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(
+          apiResponse({ data: { seasons: [{ id: 20001 }, { id: 20002 }] } })
+        )
+        .mockResolvedValueOnce(
+          apiResponse({ data: { teams: [{ id: 100, name: 'First name' }] } })
+        )
+        .mockResolvedValueOnce(
+          apiResponse({ data: { teams: [{ id: 100, name: 'Second name' }] } })
+        );
+
+      await insertTeamsFromSeasons();
+
+      expect(await prisma.team.findMany()).toEqual([
+        expect.objectContaining({ id: 100, name: 'First name' }),
+      ]);
+    }, 10_000);
   });
 
   describe('delete-league parseLeagueId', () => {
