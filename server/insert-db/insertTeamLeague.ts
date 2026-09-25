@@ -1,19 +1,23 @@
 import prisma from '../lib/prisma';
-import { TeamService } from '../service/teamService';
-import { TeamDBRepository } from '../repositories/teamDB.repository';
-import { LeagueApiRepository } from '../repositories/leagueApi.repository';
-import { SeasonRepository } from '../repositories/season.repository';
-const teamService = new TeamService(
-  new TeamDBRepository(),
-  new LeagueApiRepository(),
-  new SeasonRepository()
-);
+import { teamService } from '../lib/container';
+import { runScript } from '../scripts/runScript';
+import { findImportedLeagues, pauseBetweenApiCalls } from './importHelpers';
 
-const insertTeamLeague = async (): Promise<void> => {
-  const leagues = await prisma.competitions.findMany();
+/**
+ * Links every league already in the database to the teams of its current
+ * season, replacing the previous links so that relegated teams are detached.
+ * A failing league does not stop the others; the failures are counted and
+ * reported at the end.
+ * @throws If there is no league in the database, or if at least one league
+ * could not be linked
+ */
+export const insertTeamLeague = async (): Promise<void> => {
+  const leagues = await findImportedLeagues();
+  let failures = 0;
   for (const league of leagues) {
     try {
       const teamsResult = await teamService.teamsForLeague(league.id);
+      await pauseBetweenApiCalls();
       if (!teamsResult.success) continue;
       const teams = teamsResult.result.teams;
       if (teams.length === 0) {
@@ -22,7 +26,6 @@ const insertTeamLeague = async (): Promise<void> => {
         );
         continue;
       }
-      // Replace the links so relegated teams are detached from the league
       await prisma.$transaction([
         prisma.teamCompetition.deleteMany({
           where: { competition_id: league.id },
@@ -37,13 +40,12 @@ const insertTeamLeague = async (): Promise<void> => {
       ]);
       console.log(`League ${league.id} : ${teams.length} équipes liées`);
     } catch (error) {
-      console.error(
-        `League ${league.id} : liaison impossible`,
-        (error as Error).message
-      );
+      failures++;
+      console.error(`League ${league.id} : liaison impossible`, error);
     }
   }
-  await prisma.$disconnect();
+  if (failures > 0)
+    throw new Error(`${failures} league(s) could not be linked to their teams`);
 };
 
-insertTeamLeague();
+runScript(import.meta.url, insertTeamLeague);

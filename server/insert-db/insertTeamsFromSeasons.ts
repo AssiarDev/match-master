@@ -1,28 +1,43 @@
 import prisma from '../lib/prisma';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
 import { SeasonRepository } from '../repositories/season.repository';
-import type { ApiResponse, ApiLeague, ApiSeason, ApiTeam } from '../types/api';
+import { runScript } from '../scripts/runScript';
+import type { ApiSeason, ApiTeam } from '../types/api';
+import { findImportedLeagues, pauseBetweenApiCalls } from './importHelpers';
 const leagueApiRepo = new LeagueApiRepository();
 const seasonRepo = new SeasonRepository();
 
+/**
+ * Seasons whose SportMonks ID is at or below this value are skipped.
+ * Its origin is not documented. It is not a date cutoff: SportMonks IDs do
+ * not follow the calendar (2003/2004 is 24256, 2022/2023 is 19734), so the
+ * filter keeps a mix of old and recent seasons. Kept as is so that the import
+ * result does not change (open question, see ADR-15).
+ */
+const MIN_SEASON_ID = 20000;
+
+/**
+ * Imports or updates the teams of every kept season of the leagues already
+ * in the database.
+ * @throws If there is no league in the database
+ */
 export const insertTeamsFromSeasons = async (): Promise<void> => {
-  try {
-    const leagues = await prisma.competitions.findMany();
-    for (const league of leagues) {
-      const leagueData: ApiResponse<ApiLeague> =
-        await leagueApiRepo.fetchLeagueWithSeasons(league.id);
-      const seasons = leagueData.data?.seasons ?? [];
-      const validSeasons = seasons.filter((s: ApiSeason) => s.id > 20000);
-      for (const season of validSeasons) {
-        const teamsData: ApiResponse<ApiSeason> =
-          await seasonRepo.fetchSeasonsTeams(season.id);
-        const teams = teamsData.data?.teams ?? [];
-        if (!teams.length) {
-          console.warn(`No teams found for season ${season.id}`);
-          continue;
-        }
-        const formattedTeams = teams.map((t: ApiTeam) => ({
-          id: t.id,
+  const leagues = await findImportedLeagues();
+  for (const league of leagues) {
+    const leagueData = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    await pauseBetweenApiCalls();
+    const seasons = leagueData.data?.seasons ?? [];
+    const validSeasons = seasons.filter((s: ApiSeason) => s.id > MIN_SEASON_ID);
+    for (const season of validSeasons) {
+      const teamsData = await seasonRepo.fetchSeasonsTeams(season.id);
+      await pauseBetweenApiCalls();
+      const teams = teamsData.data?.teams ?? [];
+      if (!teams.length) {
+        console.warn(`No teams found for season ${season.id}`);
+        continue;
+      }
+      for (const t of teams as ApiTeam[]) {
+        const data = {
           country_id: t.country_id ?? null,
           venue_id: t.venue_id ?? null,
           gender: t.gender ?? null,
@@ -33,22 +48,17 @@ export const insertTeamsFromSeasons = async (): Promise<void> => {
           type: t.type ?? null,
           placeholder: t.placeholder ?? false,
           last_played_at: t.last_played_at ? new Date(t.last_played_at) : null,
-        }));
-        await prisma.team.createMany({
-          data: formattedTeams,
-          skipDuplicates: true,
+        };
+        await prisma.team.upsert({
+          where: { id: t.id },
+          update: data,
+          create: { id: t.id, ...data },
         });
-        console.log(
-          `${formattedTeams.length} teams inserted for season ${season.id}`
-        );
       }
+      console.log(`${teams.length} teams upserted for season ${season.id}`);
     }
-    console.log('Teams successfully inserted from seasons');
-  } catch (error) {
-    console.error('Team insertion error :', (error as Error).message);
-  } finally {
-    await prisma.$disconnect();
   }
+  console.log('Teams successfully inserted from seasons');
 };
 
-insertTeamsFromSeasons();
+runScript(import.meta.url, insertTeamsFromSeasons);

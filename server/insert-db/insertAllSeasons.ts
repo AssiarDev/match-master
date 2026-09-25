@@ -1,20 +1,21 @@
 import prisma from '../lib/prisma';
 import { LeagueApiRepository } from '../repositories/leagueApi.repository';
-import type { ApiResponse, ApiLeague } from '../types/api';
+import { runScript } from '../scripts/runScript';
+import { findImportedLeagues, pauseBetweenApiCalls } from './importHelpers';
 const leagueApiRepo = new LeagueApiRepository();
 
+/**
+ * Imports or updates every season of the leagues already in the database.
+ * @throws If there is no league in the database
+ */
 export const insertAllSeasons = async (): Promise<void> => {
-  const leagues = await prisma.competitions.findMany();
-  if (leagues.length === 0) {
-    console.error('No leagues found in database');
-    return;
-  }
+  const leagues = await findImportedLeagues();
   for (const league of leagues) {
-    const leagueData: ApiResponse<ApiLeague> =
-      await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    const leagueData = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
+    await pauseBetweenApiCalls();
     const seasons = leagueData.data?.seasons ?? [];
     if (seasons.length === 0) {
-      console.error('No season found for the league :', league.id);
+      console.warn('No season found for the league :', league.id);
     }
     for (const season of seasons) {
       const data = {
@@ -38,7 +39,6 @@ export const insertAllSeasons = async (): Promise<void> => {
     }
   }
   console.log('All seasons insert !');
-  await prisma.$disconnect();
 };
 
-insertAllSeasons();
+runScript(import.meta.url, insertAllSeasons);

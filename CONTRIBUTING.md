@@ -21,12 +21,14 @@ cd match-master
 Ce projet utilise [Cocogitto](https://docs.cocogitto.io/) pour enforcer les [Conventional Commits](https://www.conventionalcommits.org/).
 
 **macOS / Linux**
+
 ```sh
 brew install cocogitto
 cog install-hook --all
 ```
 
 **Windows**
+
 ```sh
 cargo install cocogitto
 cog install-hook --all
@@ -65,7 +67,26 @@ docker-compose exec backend npm run migrate:dev
 
 ### 6. Alimenter la base de données
 
-Les scripts suivants importent les données depuis l'API Sportmonks. Ils doivent être exécutés **dans l'ordre** :
+**Prérequis** :
+
+- un `API_TOKEN` Sportmonks valide dans `.env.development` ;
+- les containers démarrés (étape 4) et les migrations appliquées (étape 5).
+
+Une seule commande importe toutes les données depuis l'API Sportmonks, dans le bon ordre (ligues → saisons → équipes → liens équipes/compétitions → effectifs de la saison en cours) :
+
+```sh
+docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/importAll.ts
+```
+
+Comptez une vingtaine de minutes (19 min mesurées le 25/09/2026) : les scripts marquent une pause de 1,2 s entre deux appels à l'API pour ne pas dépasser le quota Sportmonks.
+
+La même commande sert à **mettre à jour** une base déjà remplie : chaque étape met à jour les données déjà présentes et ajoute les nouvelles. Elle peut être relancée sans risque.
+
+En cas d'échec, le script s'arrête avec un code de sortie non nul et affiche l'erreur complète.
+
+#### Lancer une étape seule
+
+Chaque étape peut aussi être lancée seule, notamment pour mettre à jour uniquement les effectifs. Elles dépendent de l'étape précédente : une étape lancée sur une base sans ligues s'arrête avec un message qui l'indique.
 
 ```sh
 docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertLeagues.ts
@@ -75,7 +96,13 @@ docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/inse
 docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertAllSquads.ts
 ```
 
-> ⚠️ Chaque script dépend du précédent. Ne pas sauter d'étape.
+#### Supprimer une compétition
+
+Supprime une compétition, ses favoris et ses liens avec les équipes :
+
+```sh
+docker-compose exec backend npx dotenv -e .env.development -- tsx scripts/delete-league.ts <leagueId>
+```
 
 ## 🧪 Tests
 
