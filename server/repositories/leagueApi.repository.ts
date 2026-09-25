@@ -1,4 +1,4 @@
-import { urlAPI, token } from '../config';
+import { sportmonksGet } from '../lib/sportmonksClient';
 import type { ApiResponse, ApiLeague } from '../types/api';
 
 export interface ILeagueApiRepository {
@@ -10,85 +10,30 @@ export interface ILeagueApiRepository {
 }
 
 export class LeagueApiRepository implements ILeagueApiRepository {
-  private readonly baseUrl: string;
-  private readonly token: string;
-
-  constructor() {
-    this.baseUrl = urlAPI;
-    this.token = token;
+  fetchAllLeague(): Promise<ApiResponse<ApiLeague[]>> {
+    return sportmonksGet('/leagues');
   }
 
-  async fetchAllLeague(): Promise<ApiResponse<ApiLeague[]>> {
-    try {
-      const url = `${this.baseUrl}/leagues?api_token=${this.token}`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(`API Error fetchAllLeague : ${response.status}`);
-      return await response.json();
-    } catch (error: unknown) {
-      console.error('Erreur fetchAllLeague :', (error as Error).message);
-      throw error;
-    }
+  fetchLeague(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+    return sportmonksGet(`/leagues/${leagueId}`);
   }
 
-  async fetchLeague(leagueId: number): Promise<ApiResponse<ApiLeague>> {
-    try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(`API Error fetchLeague : ${response.status}`);
-      return await response.json();
-    } catch (error: unknown) {
-      console.error('Erreur fetchLeague :', (error as Error).message);
-      throw error;
-    }
+  fetchLeagueSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+    return sportmonksGet(`/leagues/${leagueId}?include=seasons`);
   }
 
-  async fetchLeagueSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>> {
-    try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=seasons`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(`API Error fetchLeagueSeasons : ${response.status}`);
-      return await response.json();
-    } catch (error: unknown) {
-      console.error('Erreur fetchLeagueSeasons :', (error as Error).message);
-      throw error;
-    }
+  fetchLeagueCurrentSeason(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+    return sportmonksGet(`/leagues/${leagueId}?include=currentSeason.stages`);
   }
 
-  async fetchLeagueCurrentSeason(
-    leagueId: number
-  ): Promise<ApiResponse<ApiLeague>> {
-    try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=currentSeason.stages`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(
-          `API Error fetchLeagueCurrentSeason : ${response.status}`
-        );
-      return await response.json();
-    } catch (error: unknown) {
-      console.error(
-        'Erreur fetchLeagueCurrentSeason :',
-        (error as Error).message
-      );
-      throw error;
-    }
-  }
-
-  async fetchLeagueWithSeasons(
-    leagueId: number
-  ): Promise<ApiResponse<ApiLeague>> {
-    try {
-      const url = `${this.baseUrl}/leagues/${leagueId}?api_token=${this.token}&include=seasons`;
-      const response = await fetch(url);
-      if (!response.ok)
-        throw new Error(`API Error fetchLeagueWithSeason : ${response.status}`);
-      return await response.json();
-    } catch (error: unknown) {
-      console.error('Erreur fetchLeagueWithSeason :', (error as Error).message);
-      throw error;
-    }
+  /**
+   * Alias of fetchLeagueSeasons: both need the league with all its seasons,
+   * so they share a single request. Kept so that its callers (getLeagueWithSeasons
+   * and the import scripts) do not change.
+   * @param leagueId - The ID of the league
+   * @returns The league with its seasons
+   */
+  fetchLeagueWithSeasons(leagueId: number): Promise<ApiResponse<ApiLeague>> {
+    return this.fetchLeagueSeasons(leagueId);
   }
 }
