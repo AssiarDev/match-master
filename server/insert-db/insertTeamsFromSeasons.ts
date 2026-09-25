@@ -19,10 +19,13 @@ const MIN_SEASON_ID = 20000;
 /**
  * Imports or updates the teams of every kept season of the leagues already
  * in the database.
+ * A team plays in many seasons, but its data does not depend on the season:
+ * it is written only the first time it is met during the run (ADR-18).
  * @throws If there is no league in the database
  */
 export const insertTeamsFromSeasons = async (): Promise<void> => {
   const leagues = await findImportedLeagues();
+  const upsertedTeamIds = new Set<number>();
   for (const league of leagues) {
     const leagueData = await leagueApiRepo.fetchLeagueWithSeasons(league.id);
     await pauseBetweenApiCalls();
@@ -36,7 +39,10 @@ export const insertTeamsFromSeasons = async (): Promise<void> => {
         console.warn(`No teams found for season ${season.id}`);
         continue;
       }
-      for (const t of teams as ApiTeam[]) {
+      const newTeams = (teams as ApiTeam[]).filter(
+        (t) => !upsertedTeamIds.has(t.id)
+      );
+      for (const t of newTeams) {
         const data = {
           country_id: t.country_id ?? null,
           venue_id: t.venue_id ?? null,
@@ -54,8 +60,11 @@ export const insertTeamsFromSeasons = async (): Promise<void> => {
           update: data,
           create: { id: t.id, ...data },
         });
+        upsertedTeamIds.add(t.id);
       }
-      console.log(`${teams.length} teams upserted for season ${season.id}`);
+      console.log(
+        `${newTeams.length} teams upserted for season ${season.id} (${teams.length - newTeams.length} already upserted)`
+      );
     }
   }
   console.log('Teams successfully inserted from seasons');

@@ -82,6 +82,9 @@ const importLeagueSquads = async (
 
 /**
  * Imports the squad of one team for one season.
+ * The entries of the squad are written in parallel, during the pause that
+ * follows the API call: the next call still waits at least 1.2 s, and the
+ * writes no longer add their duration to the import (ADR-18).
  * @param run - The state of the import run
  * @param seasonId - The ID of the season
  * @param team - The team, as returned by SportMonks
@@ -104,43 +107,50 @@ const importTeamSquad = async (
         error
       );
     }
-    return;
-  } finally {
     await pauseBetweenApiCalls();
+    return;
   }
 
   if (squads.length === 0)
     console.warn(`No squad found for team ${team.name} in season ${seasonId}`);
-  for (const squad of squads) {
-    await upsertSquadEntry(run, seasonId, squad);
-  }
+  const [, written] = await Promise.all([
+    pauseBetweenApiCalls(),
+    Promise.all(squads.map((squad) => upsertSquadEntry(run, seasonId, squad))),
+  ]);
+  const upserted = written.filter(Boolean).length;
+  if (upserted > 0)
+    console.log(
+      `${upserted} players upserted for team ${team.name} in season ${seasonId}`
+    );
 };
 
 /**
  * Upserts one player and their membership in a team for a season.
  * Skipped when the player is missing from the API response, or when the team
  * is not in the database.
+ * The player is written before the squad entry, which references it.
  * @param run - The state of the import run
  * @param seasonId - The ID of the season
  * @param squad - The squad entry, as returned by SportMonks
+ * @returns Whether the entry was written
  */
 const upsertSquadEntry = async (
   run: ImportRun,
   seasonId: number,
   squad: ApiSquad
-): Promise<void> => {
+): Promise<boolean> => {
   const player = squad.player;
   if (!player || !player.id) {
     console.warn(
       `Player ${squad.player_id} missing in API response, skipping.`
     );
-    return;
+    return false;
   }
   if (!run.knownTeamIds.has(squad.team_id)) {
     console.warn(
       `Skipping squad ${squad.id} because team ${squad.team_id} does not exist in DB`
     );
-    return;
+    return false;
   }
 
   const playerData = {
@@ -181,7 +191,7 @@ const upsertSquadEntry = async (
     update: squadData,
     create: { id: squad.id, ...squadData },
   });
-  console.log(`Player ${squad.player_id} upserted for season ${seasonId}`);
+  return true;
 };
 
 runScript(import.meta.url, insertAllSquads);
