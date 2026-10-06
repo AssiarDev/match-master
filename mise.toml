@@ -1,0 +1,12 @@
+[tools]
+node = "22.14"
+cocogitto = "7.0.0"
+typos = "1.42.3"
+
+[tasks.check]
+description = "Same checks as the pre-commit hook"
+run = [
+  "npm --prefix server run typecheck",
+  "npm --prefix server run prettier:check",
+  "typos",
+]
