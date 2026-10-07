@@ -6,6 +6,7 @@ Merci de ton intérêt pour le projet ! Ce guide détaille comment configurer l'
 
 - [Docker](https://www.docker.com/) et Docker Compose
 - Un compte [Sportmonks](https://www.sportmonks.com/) pour obtenir un `API_TOKEN`
+- [mise](https://mise.jdx.dev/) pour installer les outils de développement (voir l'étape 2)
 
 ## 🔧 Installation
 
@@ -16,27 +17,57 @@ git clone <url-du-repo>
 cd match-master
 ```
 
-### 2. Installer Cocogitto (hook de commit)
+### 2. Installer les outils de développement
 
-Ce projet utilise [Cocogitto](https://docs.cocogitto.io/) pour enforcer les [Conventional Commits](https://www.conventionalcommits.org/).
+Les outils de développement sont déclarés dans [`mise.toml`](mise.toml) et installés avec [mise](https://mise.jdx.dev/), aux mêmes versions en local et en CI :
 
-**macOS / Linux**
+- **Node**, pour les hooks de commit et les scripts npm lancés hors Docker ;
+- **[Cocogitto](https://docs.cocogitto.io/)** (`cog`), qui fait respecter les [Conventional Commits](https://www.conventionalcommits.org/) ;
+- **[typos](https://github.com/crate-ci/typos)**, qui détecte les fautes de frappe avant chaque commit.
+
+**Installer mise**
 
 ```sh
-brew install cocogitto
+# macOS
+brew install mise
+
+# Linux
+curl -fsSL https://mise.run | sh
+
+# Windows
+winget install jdx.mise
+```
+
+Rendre ensuite les outils accessibles au terminal et aux hooks git :
+
+- **bash / zsh** : ajouter `eval "$(mise activate bash)"` (ou `zsh`) à la fin de `~/.bashrc` (ou `~/.zshrc`) ;
+- **Windows** : ajouter `%LOCALAPPDATA%\mise\shims` au `PATH` de l'utilisateur.
+
+Pour les autres shells, voir la [documentation de mise](https://mise.jdx.dev/installing-mise.html).
+
+**Installer les outils et les hooks**
+
+À la racine du projet :
+
+```sh
+mise install
+npm --prefix server install
 cog install-hook --all
 ```
 
-**Windows**
+- `mise install` installe Node, `cog` et `typos`. Si mise indique que le fichier `mise.toml` n'est pas approuvé, lancer `mise trust` puis relancer `mise install`.
+- `npm --prefix server install` installe les dépendances utilisées par le hook pre-commit (vérification des types et Prettier).
+- `cog install-hook --all` installe les hooks git définis dans `cog.toml`.
+
+Pour lancer les mêmes vérifications que le hook pre-commit, sans créer de commit :
 
 ```sh
-cargo install cocogitto
-cog install-hook --all
+mise run check
 ```
-
-> Si `cargo` n'est pas disponible, installe [Rust](https://rustup.rs/) au préalable.
 
 > Cette étape est à refaire sur chaque nouvelle machine après un clone.
+
+> La version de Node est fixée à deux endroits : dans `mise.toml` (local et CI) et dans le `FROM` de `server/Dockerfile`. Si tu changes l'une, change aussi l'autre.
 
 ### 3. Configurer les variables d'environnement
 

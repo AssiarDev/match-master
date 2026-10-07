@@ -32,6 +32,7 @@ L'objectif futur de Match Master est d'élargir ces fonctionnalités à **tous l
 
 - [Docker](https://www.docker.com/) et Docker Compose
 - Un compte [Sportmonks](https://www.sportmonks.com/) pour obtenir un `API_TOKEN`
+- Pour contribuer : [mise](https://mise.jdx.dev/), qui installe Node, Cocogitto et typos (voir [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## 🚀 Lancement rapide
 
