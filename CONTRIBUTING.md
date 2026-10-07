@@ -6,6 +6,7 @@ Merci de ton intérêt pour le projet ! Ce guide détaille comment configurer l'
 
 - [Docker](https://www.docker.com/) et Docker Compose
 - Un compte [Sportmonks](https://www.sportmonks.com/) pour obtenir un `API_TOKEN`
+- [mise](https://mise.jdx.dev/) pour installer les outils de développement (voir l'étape 2)
 
 ## 🔧 Installation
 
@@ -16,27 +17,60 @@ git clone <url-du-repo>
 cd match-master
 ```
 
-### 2. Installer Cocogitto (hook de commit)
+### 2. Installer les outils de développement
 
-Ce projet utilise [Cocogitto](https://docs.cocogitto.io/) pour enforcer les [Conventional Commits](https://www.conventionalcommits.org/).
+Les outils de développement sont déclarés dans [`mise.toml`](mise.toml) et installés avec [mise](https://mise.jdx.dev/), aux mêmes versions en local et en CI :
 
-**macOS / Linux**
+- **Node**, pour les hooks de commit et les scripts npm lancés hors Docker ;
+- **[Cocogitto](https://docs.cocogitto.io/)** (`cog`), qui fait respecter les [Conventional Commits](https://www.conventionalcommits.org/) ;
+- **[typos](https://github.com/crate-ci/typos)**, qui détecte les fautes de frappe avant chaque commit.
 
-```sh
-brew install cocogitto
-cog install-hook --all
-```
-
-**Windows**
+**Installer mise**
 
 ```sh
-cargo install cocogitto
-cog install-hook --all
+# macOS
+brew install mise
+
+# Linux
+curl -fsSL https://mise.run | sh
+
+# Windows
+winget install jdx.mise
 ```
 
-> Si `cargo` n'est pas disponible, installe [Rust](https://rustup.rs/) au préalable.
+Rendre ensuite les outils accessibles au terminal et aux hooks git :
+
+- **bash / zsh** : ajouter `eval "$(mise activate bash)"` (ou `zsh`) à la fin de `~/.bashrc` (ou `~/.zshrc`) ;
+- **Windows** : ajouter `C:\Users\<ton-nom>\AppData\Local\mise\shims` au `PATH` de l'utilisateur, au-dessus de `.cargo\bin` s'il y figure. Le nouveau `PATH` ne s'applique qu'aux programmes lancés ensuite : redémarrer Windows (pas une simple mise en veille), ou au moins l'Explorateur Windows depuis le Gestionnaire des tâches.
+- **Windows, si Node.js est déjà installé** (dans `C:\Program Files\nodejs`) : le désinstaller, puis lancer `mise use -g node@24`. Le `PATH` système passe avant le `PATH` utilisateur : sans cela, `node` et `npm` restent ceux de l'ancienne installation, même dans le projet.
+
+Pour les autres shells, voir la [documentation de mise](https://mise.jdx.dev/installing-mise.html).
+
+**Installer les outils et les hooks**
+
+À la racine du projet :
+
+```sh
+mise install
+mise run hooks:install
+```
+
+- `mise install` installe Node, `cog` et `typos`. Si mise indique que le fichier `mise.toml` n'est pas approuvé, lancer `mise trust` puis relancer `mise install`.
+- `mise run hooks:install` installe les dépendances de `server/`, utilisées par le hook pre-commit (vérification des types et Prettier), puis les hooks git définis dans `cog.toml`. Sans mise, l'équivalent est `cd server && npm install`, puis `cog install-hook --all --overwrite` depuis la racine.
 
 > Cette étape est à refaire sur chaque nouvelle machine après un clone.
+
+**Tâches mise**
+
+`mise.toml` définit des raccourcis pour les opérations courantes. `mise tasks` les liste :
+
+| Tâche                    | Rôle                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `mise run check`         | Lance les mêmes vérifications que le hook pre-commit, sans créer de commit    |
+| `mise run hooks:install` | Installe les dépendances de `server/` et les hooks git                        |
+| `mise run db:import`     | Importe toutes les données Sportmonks dans la base Docker locale (étape 6)    |
+
+> La version de Node (Node 24, dernière version disponible) est déclarée à deux endroits : dans `mise.toml` (local et CI) et dans le `FROM` de `server/Dockerfile`. Si tu changes l'une, change aussi l'autre.
 
 ### 3. Configurer les variables d'environnement
 
@@ -77,6 +111,8 @@ Une seule commande importe toutes les données depuis l'API Sportmonks, dans le 
 ```sh
 docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/importAll.ts
 ```
+
+Avec mise, depuis n'importe quel dossier du projet : `mise run db:import`.
 
 Comptez une vingtaine de minutes (19 min mesurées le 25/09/2026) : les scripts marquent une pause de 1,2 s entre deux appels à l'API pour ne pas dépasser le quota Sportmonks.
 
