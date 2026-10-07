@@ -93,6 +93,16 @@
 
 
 - - -
+## [0.3.1](https://github.com/AssiarDev/match-master/compare/dc7064c19062d39d917a1d121363a930fc5e8065..0.3.1) - 2026-10-07
+#### Bug Fixes
+- **(deps)** patch vulnerable transitive dependencies (#39) - ([970c24b](https://github.com/AssiarDev/match-master/commit/970c24be1bfbdb437cab832323841779b1eb9c35)) - Assiar
+#### Chores
+- manage dev tools with mise (#38) - ([201ded1](https://github.com/AssiarDev/match-master/commit/201ded19f057174ff43415ef3f1c40a57c19e926)) - Assiar
+#### Performance
+- **(import)** overlap database writes with the API pause (#35) - ([dc7064c](https://github.com/AssiarDev/match-master/commit/dc7064c19062d39d917a1d121363a930fc5e8065)) - Assiar
+
+- - -
+
 ## [0.3.0](https://github.com/AssiarDev/match-master/compare/3e263aaca69541406e9e259fef74e65f9621f7ac..0.3.0) - 2026-09-25
 #### Features
 - **(import)** schedule the weekly data import with GitHub Actions (#34) - ([ad301c6](https://github.com/AssiarDev/match-master/commit/ad301c69880d3399792dd8c23884a17f8015acac)) - Assiar
