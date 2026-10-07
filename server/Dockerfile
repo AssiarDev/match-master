@@ -1,4 +1,4 @@
-FROM node:22.14
+FROM node:24
 
 # Create the working folder in the container
 WORKDIR /app

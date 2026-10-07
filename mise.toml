@@ -1,5 +1,5 @@
 [tools]
-node = "22.14"
+node = "24"
 cocogitto = "7.0.0"
 typos = "1.42.3"
 
@@ -10,3 +10,15 @@ run = [
   "npm --prefix server run prettier:check",
   "typos",
 ]
+
+[tasks."hooks:install"]
+description = "Install server dependencies and git hooks"
+run = [
+  "cd server && npm install",
+  "cog install-hook --all --overwrite",
+]
+
+[tasks."db:import"]
+description = "Import all SportMonks data into the local Docker database"
+dir = "server"
+run = "docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/importAll.ts"
