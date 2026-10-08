@@ -28,6 +28,12 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # Depuis la 1.16.12, @swc/core refuse de charger son binaire natif sous
+      # Windows quand un autre compte peut modifier le dossier de cache
+      # (droit hérité du profil utilisateur), ce qui empêche Jest de démarrer
+      # en local. A retirer quand une version de swc corrigera ce comportement.
+      - dependency-name: "@swc/core"
+        versions: [">=1.16.12"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
