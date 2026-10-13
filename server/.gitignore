@@ -6,3 +6,4 @@ prisma/generate
 .idea/
 genrated/prisma
 coverage
+.claude/work/
