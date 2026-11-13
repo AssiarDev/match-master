@@ -21,4 +21,4 @@ run = [
 [tasks."db:import"]
 description = "Import all SportMonks data into the local Docker database"
 dir = "server"
-run = "docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/importAll.ts"
+run = "docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/importAll.ts"

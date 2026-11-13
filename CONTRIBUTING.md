@@ -109,7 +109,7 @@ docker-compose exec backend npm run migrate:dev
 Une seule commande importe toutes les données depuis l'API Sportmonks, dans le bon ordre (ligues → saisons → équipes → liens équipes/compétitions → effectifs de la saison en cours) :
 
 ```sh
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/importAll.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/importAll.ts
 ```
 
 Avec mise, depuis n'importe quel dossier du projet : `mise run db:import`.
@@ -125,11 +125,11 @@ En cas d'échec, le script s'arrête avec un code de sortie non nul et affiche l
 Chaque étape peut aussi être lancée seule, notamment pour mettre à jour uniquement les effectifs. Elles dépendent de l'étape précédente : une étape lancée sur une base sans ligues s'arrête avec un message qui l'indique.
 
 ```sh
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertLeagues.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertAllSeasons.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertTeamsFromSeasons.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertTeamLeague.ts
-docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/insertAllSquads.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/insertLeagues.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/insertAllSeasons.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/insertTeamsFromSeasons.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/insertTeamLeague.ts
+docker-compose exec backend npx dotenv run -f .env.development -- tsx insert-db/insertAllSquads.ts
 ```
 
 #### Supprimer une compétition
@@ -137,7 +137,7 @@ docker-compose exec backend npx dotenv -e .env.development -- tsx insert-db/inse
 Supprime une compétition, ses favoris et ses liens avec les équipes :
 
 ```sh
-docker-compose exec backend npx dotenv -e .env.development -- tsx scripts/delete-league.ts <leagueId>
+docker-compose exec backend npx dotenv run -f .env.development -- tsx scripts/delete-league.ts <leagueId>
 ```
 
 Pour qu'elle ne soit pas recréée au prochain import, ajoutez aussi son identifiant à `EXCLUDED_LEAGUE_IDS` dans `server/insert-db/insertLeagues.ts`.
