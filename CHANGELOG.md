@@ -93,6 +93,20 @@
 
 
 - - -
+## [0.3.2](https://github.com/AssiarDev/match-master/compare/7f2c6b367ddf980fdbc6936784005563eadc819b..0.3.2) - 2026-11-13
+#### Bug Fixes
+- (**scripts**) use dotenv run instead of dotenv-cli (#51) - ([d060212](https://github.com/AssiarDev/match-master/commit/d06021222221e2bdd9612b9d5350ab8c566c63b1)) - Assiar
+#### Continuous Integration
+- migrate cocogitto-action to v4 and bump actions/checkout to v7 (#50) - ([5e52d68](https://github.com/AssiarDev/match-master/commit/5e52d68a732f0c490a209c1b960683e9aa6fd242)) - Assiar
+#### Chores
+- (**deps**) bump the npm-minor-and-patch group across 1 directory with 2 updates (#49) - ([aec054e](https://github.com/AssiarDev/match-master/commit/aec054e06efc4ffe6e6e9a8431e44dce9f2ec031)) - dependabot[bot]
+- (**deps**) bump the npm-minor-and-patch group across 1 directory with 10 updates (#48) - ([1cc0777](https://github.com/AssiarDev/match-master/commit/1cc077744832e3df94164115281d9bf7c0f3aa7a)) - dependabot[bot]
+- (**deps**) bump dotenv from 17.4.2 to 18.0.5 in /server (#44) - ([3f8de9f](https://github.com/AssiarDev/match-master/commit/3f8de9ff4aaf3e54ae8a14b12caf526141958980)) - dependabot[bot]
+- (**deps**) ignore @swc/core >=1.16.12 in Dependabot (#41) - ([7f2c6b3](https://github.com/AssiarDev/match-master/commit/7f2c6b367ddf980fdbc6936784005563eadc819b)) - Assiar
+- align .env.example with config.ts and run CI once per PR (#46) - ([c48bee9](https://github.com/AssiarDev/match-master/commit/c48bee97d97973fccf33f8dca551b55ff885b0a8)) - Assiar
+
+- - -
+
 ## [0.3.1](https://github.com/AssiarDev/match-master/compare/dc7064c19062d39d917a1d121363a930fc5e8065..0.3.1) - 2026-10-07
 #### Bug Fixes
 - **(deps)** patch vulnerable transitive dependencies (#39) - ([970c24b](https://github.com/AssiarDev/match-master/commit/970c24be1bfbdb437cab832323841779b1eb9c35)) - Assiar
